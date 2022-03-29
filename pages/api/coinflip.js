@@ -26,7 +26,7 @@ export default function handler(req, res) {
     coinFlipContractData.methods.getBalance(tokenContract._address).call().then(response=>{
       console.log(response);
       //res.send(response);
-      if(req.body._betAmount * 2 > response)
+      if((req.body._betAmount) * 2 > response)
       {
         console.log("entering chorai mode");
         if(req.body.betChoice==true){
