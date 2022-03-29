@@ -1,4 +1,4 @@
-import { Flex, STextacer, Text, Button, Spinner,InputGroup,Input } from "@chakra-ui/react";
+import { Flex, Text, Button, Spinner,InputGroup,Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3 from "web3";
@@ -27,6 +27,7 @@ export default function Home({
   });
 
   const [_betAmount,setBetAmount]=useState(null);
+
   // useEffect(() => {
   //   const checkConnection = async () => {
   //     // Check if browser is running Metamask
@@ -62,13 +63,15 @@ export default function Home({
   //   checkConnection();
   // }, []);
 
-  useEffect(async () => {
-    await loadWeb3Data();
-    await loadBlockchainData();
+  useEffect(() => {
+    const init = async () => {
+      await loadWeb3Data();
+      await loadBlockchainData();
+    }
+    init();
   }, []);
 
   const loadWeb3Data = async () => {
-    setIsLoading(true);
     if (window.ethereum) {
       window.web3 = new Web3(window.ethereum);
       await window.ethereum.enable();
@@ -85,7 +88,6 @@ export default function Home({
   };
 
   const loadBlockchainData = async () => {
-    setIsLoading(true);
     const web3 = window.web3;
     const coinFlipaddress = COINFLIP_CONTRACT_ADDRESS;
     const tokenContractAddres = TOKEN_CONTRACT_ADDRESS;
@@ -242,22 +244,22 @@ export default function Home({
     setBetAmount(e.target.value);
   }
 
-  if (isLoading) {
-    return (
-      <Flex
-        width="100vw"
-        height="100vh"
-        alignItems="center"
-        justifyContent="center"
-        direction={"column"}
-      >
-        <Spinner color="red.500" size="xl" />
-        <Text textAlign={"center"} fontSize={"1xl"}>
-          Please Wait! Do not refresh or close the browser.
-        </Text>
-      </Flex>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <Flex
+  //       width="100vw"
+  //       height="100vh"
+  //       alignItems="center"
+  //       justifyContent="center"
+  //       direction={"column"}
+  //     >
+  //       <Spinner color="red.500" size="xl" />
+  //       <Text textAlign={"center"} fontSize={"1xl"}>
+  //         Please Wait! Do not refresh or close the browser.
+  //       </Text>
+  //     </Flex>
+  //   );
+  // }
 
   return (
     <Flex
@@ -270,6 +272,7 @@ export default function Home({
       <Text fontSize={"4xl"} mt="5rem">
         Casino Dapp First Demo
       </Text>
+      {isLoading &&  <Spinner color="red.500" size="xl" />}
       <Flex width={"100%"} mt={"5rem"}>
         <Flex
           width={"50%"}
@@ -288,7 +291,7 @@ export default function Home({
           </Text>
           {/* <Text>Total Round: {coinFlip.totalRound}</Text> */}
 
-          <Button onClick={() => safeApproveERC20ToCoinFlip()}>
+          <Button onClick={() => safeApproveERC20ToCoinFlip()} disabled={isLoading}>
             Approve CasinoToken to CoinFlip
           </Button>
           {/* <Button onClick={() => transferERC20TocoinFlip()}>transfer ERC20 To coinFlip </Button> */}
@@ -303,23 +306,27 @@ export default function Home({
         >
          
           <Text fontSize={"2xl"}>Place your bet</Text>
-          <InputGroup bgColor="gray.100" mb={4} border="none" borderColor="#fff" borderRadius="10px" >
+          <InputGroup bgColor="gray.100" mb={4} border="none" borderColor="#fff" borderRadius="10px"  width={"30%"}>
               <Input type="number" placeholder="0.00" borderRadius="10px" color={"gray.900"} fontSize="md" onChange={()=>handleChange(event)}/>
           </InputGroup> 
-          <Button
-            onClick={() => coinFlip(true)}
-            width={"5rem"}
-            bgColor={"orange.400"}
-          >
-            Heads{" "}
-          </Button>
-          <Button
-            onClick={() => coinFlip(false)}
-            width={"5rem"}
-            bgColor={"yellow.400"}
-          >
-            Tails{" "}
-          </Button>
+          <Flex gap={5}>
+            <Button
+            disabled={isLoading}
+              onClick={() => coinFlip(true)}
+              width={"5rem"}
+              bgColor={"orange.400"}
+            >
+              Head
+            </Button>
+            <Button
+              disabled={isLoading}
+              onClick={() => coinFlip(false)}
+              width={"5rem"}
+              bgColor={"yellow.400"}
+            >
+              Tail
+            </Button>
+          </Flex>
           {/* <Button onClick={() => allRoundsData()}>All Rounds Data </Button>
       <Button onClick={() => eachTextlayerRoundsData()}>
         Each Textlayer Rounds Data{" "}
