@@ -122,12 +122,12 @@ export default function Home({
     axios
       .post("/api/coinflip", {
         betChoice: betChoice,
-        _betAmount: _betAmount,
+        _betAmount: _betAmount*1e18,
       })
       .then((commitment) => {
         console.log(commitment);
         var _takeBet = state.coinFlipContractData.methods
-          .takeBet(state.tokenContractData._address, betChoice, _betAmount)
+          .takeBet(state.tokenContractData._address, betChoice, _betAmount*1e18)
           .send({ from: state.account.accounts[0] })
           .then((reponse) => {
             console.log(reponse);
