@@ -1,4 +1,4 @@
-import { Flex, STextacer, Text, Button, Spinner } from "@chakra-ui/react";
+import { Flex, STextacer, Text, Button, Spinner,InputGroup,Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3 from "web3";
@@ -6,7 +6,7 @@ import CoinFlipPrediction from "../lib/abi.json";
 import Mgtoken from "../lib/tokenContractAbi.json";
 import Swal from "sweetalert2";
 
-let _betAmount = 10;
+
 
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
@@ -26,6 +26,7 @@ export default function Home({
     },
   });
 
+  const [_betAmount,setBetAmount]=useState(null);
   // useEffect(() => {
   //   const checkConnection = async () => {
   //     // Check if browser is running Metamask
@@ -236,6 +237,11 @@ export default function Home({
       });
   }
 
+  function handleChange(e){
+    console.log(e.target.value);
+    setBetAmount(e.target.value);
+  }
+
   if (isLoading) {
     return (
       <Flex
@@ -295,7 +301,11 @@ export default function Home({
           alignItems={"center"}
           gap={"5"}
         >
+         
           <Text fontSize={"2xl"}>Place your bet</Text>
+          <InputGroup bgColor="gray.100" mb={4} border="none" borderColor="#fff" borderRadius="10px" >
+              <Input type="number" placeholder="0.00" borderRadius="10px" color={"gray.900"} fontSize="md" onChange={()=>handleChange(event)}/>
+          </InputGroup> 
           <Button
             onClick={() => coinFlip(true)}
             width={"5rem"}
