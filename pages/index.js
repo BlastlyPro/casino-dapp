@@ -8,13 +8,7 @@ import Swal from "sweetalert2";
 
 
 
-export default function Home({
-  COINFLIP_CONTRACT_ADDRESS,
-  TOKEN_CONTRACT_ADDRESS,
-  NODE_PRODIVER_URL,
-  SITENAME,
-  NETWORK_ID,
-}) {
+export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,NODE_PRODIVER_URL,SITENAME,NETWORK_ID,}) {
   console.log(SITENAME);
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState({
@@ -103,26 +97,31 @@ export default function Home({
     console.log(coinFlipContract);
     console.log(tokenContract);
     console.log(accounts[0]);
-    //console.log(await contract.methods.getBalance().call());
+    
+    const contractBalance=await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
+    contractBalance=web3.utils.fromWei(contractBalance,'ether')
     setState({
       account: {
         accounts: accounts,
       },
+      web3:web3,
       coinFlipContractData: coinFlipContract,
       tokenContractData: tokenContract,
       coinFlip: {
         totalRound: totalRounds,
+        contractBalance:contractBalance
       },
     });
     setIsLoading(false);
   };
 
   function coinFlip(betChoice) {
+    var bta=state.web3.utils.toWei(String(_betAmount),'ether');
     setIsLoading(true);
     axios
       .post("/api/coinflip", {
         betChoice: betChoice,
-        _betAmount: _betAmount,
+        _betAmount: bta,
       })
       .then((commitment) => {
         console.log(commitment);
@@ -145,9 +144,7 @@ export default function Home({
   }
 
   function safeApproveERC20ToCoinFlip() {
-    var _safeApproveERC20ToCoinFlip = state.tokenContractData.methods
-      .approve(state.coinFlipContractData._address, 1000000000000)
-      .send({ from: state.account.accounts[0] })
+    var _safeApproveERC20ToCoinFlip = state.tokenContractData.methods.approve(state.coinFlipContractData._address, state.web3.utils.toWei('1000000000000','ether')).send({ from: state.account.accounts[0] })
       .then((reponse) => {
         //reveal(betChoice);
         console.log(reponse);
@@ -285,12 +282,16 @@ export default function Home({
           <Text>
             Connected Account:{" "}
             {state.account.accounts &&
-              String(state.account.accounts).substring(0, 5) +
-                " ... " +
-                String(state.account.accounts).slice(-4)}
+              String(state.account.accounts).substring(0, 5) +" ... " +String(state.account.accounts).slice(-4)}
+
           </Text>
           {/* <Text>Total Round: {coinFlip.totalRound}</Text> */}
-
+          { state.coinFlip ? (
+              <Text>
+                Total Contract Balance:{state.coinFlip.contractBalance}
+              </Text>              
+            ):(<Text>No Contract Balance</Text>)
+          }
           <Button onClick={() => safeApproveERC20ToCoinFlip()} disabled={isLoading}>
             Approve CasinoToken to CoinFlip
           </Button>
