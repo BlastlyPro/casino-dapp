@@ -98,7 +98,7 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
     console.log(tokenContract);
     console.log(accounts[0]);
     
-    const contractBalance=await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
+    let contractBalance=await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
     contractBalance=web3.utils.fromWei(contractBalance,'ether')
     setState({
       account: {
