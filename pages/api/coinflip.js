@@ -25,8 +25,11 @@ export default function handler(req, res) {
     let randomNumber;
     coinFlipContractData.methods.getBalance(tokenContract._address).call().then(response=>{
       console.log(response);
-      //res.send(response);
-      if((req.body._betAmount) * 2 > response)
+      var contractBalance=_web3.utils.fromWei(response,'ether');
+
+      //////////////////Daddu Please Check/////////
+      //if((req.body._betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
+      if( contractBalance < _web3.utils.fromWei('70000','ether'))
       {
         console.log("entering chorai mode");
         if(req.body.betChoice==true){
