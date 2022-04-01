@@ -125,8 +125,8 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       })
       .then((commitment) => {
         console.log(commitment);
-        var _takeBet = state.coinFlipContractData.methods
-          .takeBet(state.tokenContractData._address, betChoice, _betAmount)
+        state.coinFlipContractData.methods
+          .takeBet(state.tokenContractData._address, betChoice, bta)
           .send({ from: state.account.accounts[0] })
           .then((reponse) => {
             console.log(reponse);
@@ -287,8 +287,8 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
           </Text>
           {/* <Text>Total Round: {coinFlip.totalRound}</Text> */}
           { state.coinFlip ? (
-              <Text>
-                Total Contract Balance:{state.coinFlip.contractBalance}
+              <Text fontWeight={"bold"}>
+                Total Contract Balance: {Number(state.coinFlip.contractBalance).toFixed(5)}
               </Text>              
             ):(<Text>No Contract Balance</Text>)
           }
@@ -308,7 +308,7 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
          
           <Text fontSize={"2xl"}>Place your bet</Text>
           <InputGroup bgColor="gray.100" mb={4} border="none" borderColor="#fff" borderRadius="10px"  width={"30%"}>
-              <Input type="number" placeholder="0.00" borderRadius="10px" color={"gray.900"} fontSize="md" onChange={()=>handleChange(event)}/>
+              <Input type="number" placeholder="0.00" borderRadius="10px" color={"gray.900"} fontSize="md" onChange={(e)=>handleChange(e)}/>
           </InputGroup> 
           <Flex gap={5}>
             <Button
