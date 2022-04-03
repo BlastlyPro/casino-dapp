@@ -1,22 +1,26 @@
-import { Flex, Text, Button, Spinner,InputGroup,Input,  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer, } from "@chakra-ui/react";
+import {
+  Flex,
+  Text,
+  Button,
+  Spinner,
+  InputGroup,
+  Input,
+} from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3 from "web3";
 import CoinFlipPrediction from "../lib/abi.json";
 import Mgtoken from "../lib/tokenContractAbi.json";
 import Swal from "sweetalert2";
+import TransactionTable from "../components/TransactionTable";
 
-
-
-export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,NODE_PRODIVER_URL,SITENAME,NETWORK_ID,}) {
+export default function Home({
+  COINFLIP_CONTRACT_ADDRESS,
+  TOKEN_CONTRACT_ADDRESS,
+  NODE_PRODIVER_URL,
+  SITENAME,
+  NETWORK_ID,
+}) {
   console.log(SITENAME);
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState({
@@ -28,7 +32,7 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
     },
   });
 
-  const [_betAmount,setBetAmount]=useState(null);
+  const [_betAmount, setBetAmount] = useState(null);
 
   // useEffect(() => {
   //   const checkConnection = async () => {
@@ -69,9 +73,9 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
     const init = async () => {
       await loadWeb3Data();
       await loadBlockchainData();
-    }
+    };
     init();
-  },[]);
+  }, []);
 
   const loadWeb3Data = async () => {
     if (window.ethereum) {
@@ -102,43 +106,52 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       tokenContractAddres
     );
     let totalRound = await coinFlipContract.methods.totalRound().call();
-    let _allRounds=[];
-    for(var i=1;i<=totalRound;i++){
-      var roundObj=await coinFlipContract.methods.allRounds(i).call();
-      roundObj.player2BetAmount= web3.utils.fromWei(roundObj.player2BetAmount,'ether')
-      roundObj.player2BetChoice= roundObj.player2BetChoice==true ? "Heads" : "Tails";
-      roundObj.winningPosition= roundObj.winningPosition==true ? "Heads" : "Tails";
+    let _allRounds = [];
+    for (var i = 1; i <= totalRound; i++) {
+      var roundObj = await coinFlipContract.methods.allRounds(i).call();
+      roundObj.player2BetAmount = web3.utils.fromWei(
+        roundObj.player2BetAmount,
+        "ether"
+      );
+      roundObj.player2BetChoice =
+        roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      roundObj.winningPosition =
+        roundObj.winningPosition == true ? "Heads" : "Tails";
       _allRounds.push(roundObj);
     }
     console.log(coinFlipContract);
     console.log(tokenContract);
     console.log(accounts[0]);
-    
-    let contractBalance=await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
-    let walletBalance=await tokenContract.methods.balanceOf(accounts[0]).call();
-    walletBalance=web3.utils.fromWei(walletBalance,'ether')
+
+    let contractBalance = await coinFlipContract.methods
+      .getBalance(TOKEN_CONTRACT_ADDRESS)
+      .call();
+    let walletBalance = await tokenContract.methods
+      .balanceOf(accounts[0])
+      .call();
+    walletBalance = web3.utils.fromWei(walletBalance, "ether");
     console.log(walletBalance);
-    contractBalance=web3.utils.fromWei(contractBalance,'ether')
+    contractBalance = web3.utils.fromWei(contractBalance, "ether");
     setState({
       account: {
         accounts: accounts,
       },
-      web3:web3,
+      web3: web3,
       coinFlipContractData: coinFlipContract,
       tokenContractData: tokenContract,
       coinFlip: {
         totalRound: totalRound,
-        contractBalance:contractBalance,
-        walletBalance:walletBalance,
-        allRounds:_allRounds
+        contractBalance: contractBalance,
+        walletBalance: walletBalance,
+        allRounds: _allRounds,
       },
     });
 
     setIsLoading(false);
   };
 
-  function coinFlip(betChoice) {    
-    var bta=state.web3.utils.toWei(String(_betAmount),'ether');
+  function coinFlip(betChoice) {
+    var bta = state.web3.utils.toWei(String(_betAmount), "ether");
     setIsLoading(true);
     axios
       .post("/api/coinflip", {
@@ -147,7 +160,13 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       })
       .then((commitment) => {
         console.log(commitment.data.secretChoice);
-        state.coinFlipContractData.methods.takeBet(state.tokenContractData._address, betChoice, bta,commitment.data.secretChoice)
+        state.coinFlipContractData.methods
+          .takeBet(
+            state.tokenContractData._address,
+            betChoice,
+            bta,
+            commitment.data.secretChoice
+          )
           .send({ from: state.account.accounts[0] })
           .then((reponse) => {
             console.log(reponse);
@@ -165,7 +184,12 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
   }
 
   function safeApproveERC20ToCoinFlip() {
-    var _safeApproveERC20ToCoinFlip = state.tokenContractData.methods.approve(state.coinFlipContractData._address, state.web3.utils.toWei('1000000000000','ether')).send({ from: state.account.accounts[0] })
+    var _safeApproveERC20ToCoinFlip = state.tokenContractData.methods
+      .approve(
+        state.coinFlipContractData._address,
+        state.web3.utils.toWei("1000000000000", "ether")
+      )
+      .send({ from: state.account.accounts[0] })
       .then((reponse) => {
         //reveal(betChoice);
         console.log(reponse);
@@ -175,11 +199,13 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       });
   }
 
-
   function reveal(data) {
     console.log(data);
     axios
-      .post("/api/revealResult", {"secretChoice": data.secretChoice, "nonce": data.nonce})
+      .post("/api/revealResult", {
+        secretChoice: data.secretChoice,
+        nonce: data.nonce,
+      })
       .then((response) => {
         console.log(response.data.events.GameMessage.returnValues.mesg);
         setIsLoading(false);
@@ -232,7 +258,7 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       });
   }
 
-  function handleChange(e){
+  function handleChange(e) {
     console.log(e.target.value);
     setBetAmount(e.target.value);
   }
@@ -265,7 +291,7 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       <Text fontSize={"4xl"} mt="5rem">
         Casino Dapp First Demo
       </Text>
-      {isLoading &&  <Spinner color="red.500" size="xl" />}
+      {isLoading && <Spinner color="red.500" size="xl" />}
       <Flex width={"100%"} mt={"5rem"}>
         <Flex
           width={"50%"}
@@ -278,59 +304,30 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
           <Text>
             Connected Account:{" "}
             {state.account.accounts &&
-              String(state.account.accounts).substring(0, 5) +" ... " +String(state.account.accounts).slice(-4)}
-
+              String(state.account.accounts).substring(0, 5) +
+                " ... " +
+                String(state.account.accounts).slice(-4)}
           </Text>
-          
-          { state.coinFlip ? (
+
+          {state.coinFlip ? (
             <>
               <Text fontWeight={"bold"}>
-                Total Contract Balance: {Number(state.coinFlip.contractBalance).toFixed(5)}                
+                Total Contract Balance:{" "}
+                {Number(state.coinFlip.contractBalance).toFixed(5)}
               </Text>
               <Text fontWeight={"bold"}>
-                Wallet Balance: {Number(state.coinFlip.walletBalance).toFixed(5)}                
-              </Text>              
-              <Text>
-                Total Round: {state.coinFlip.totalRound}
+                Wallet Balance:{" "}
+                {Number(state.coinFlip.walletBalance).toFixed(5)}
               </Text>
-              { 
-                state.coinFlip.allRounds && state.coinFlip.allRounds.length > 0 ? (
-                  <TableContainer>
-                    <Table variant='simple'>
-                      <TableCaption>Previous Rounds Results</TableCaption>
-                      <Thead>
-                        <Tr>
-                          <Th>Round ID</Th>
-                          <Th>Player</Th>
-                          <Th>Amount</Th>
-                          <Th>Choice</Th>
-                          <Th>Result</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                      {
-                        state.coinFlip.allRounds.map((round,i) => 
-                         <Tr>
-                            <Td>{i}</Td>
-                            <Td>{round.player2Address}</Td>
-                            <Td>{round.player2BetAmount}</Td>
-                            <Td>{round.player2BetChoice}</Td>
-                            <Td>{round.winningPosition}</Td>
-                        </Tr>
-                        )
-                      }
- 
-                      </Tbody>
-                    </Table>
-                  </TableContainer>                 
-
-                ) : "No result Show"
-
-            }             
-             </> 
-            ):(<Text>No Contract Balance</Text>)
-          }
-          <Button onClick={() => safeApproveERC20ToCoinFlip()} disabled={isLoading}>
+              <Text>Total Round: {state.coinFlip.totalRound}</Text>
+            </>
+          ) : (
+            <Text>No Contract Balance</Text>
+          )}
+          <Button
+            onClick={() => safeApproveERC20ToCoinFlip()}
+            disabled={isLoading}
+          >
             Approve CasinoToken to CoinFlip
           </Button>
           {/* <Button onClick={() => transferERC20TocoinFlip()}>transfer ERC20 To coinFlip </Button> */}
@@ -343,14 +340,27 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
           alignItems={"center"}
           gap={"5"}
         >
-         
           <Text fontSize={"2xl"}>Place your bet</Text>
-          <InputGroup bgColor="gray.100" mb={4} border="none" borderColor="#fff" borderRadius="10px"  width={"30%"}>
-              <Input type="number" placeholder="0.00" borderRadius="10px" color={"gray.900"} fontSize="md" onChange={(e)=>handleChange(e)}/>
-          </InputGroup> 
+          <InputGroup
+            bgColor="gray.100"
+            mb={4}
+            border="none"
+            borderColor="#fff"
+            borderRadius="10px"
+            width={"30%"}
+          >
+            <Input
+              type="number"
+              placeholder="0.00"
+              borderRadius="10px"
+              color={"gray.900"}
+              fontSize="md"
+              onChange={(e) => handleChange(e)}
+            />
+          </InputGroup>
           <Flex gap={5}>
             <Button
-            disabled={isLoading}
+              disabled={isLoading}
               onClick={() => coinFlip(true)}
               width={"5rem"}
               bgColor={"orange.400"}
@@ -373,6 +383,12 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
           {/* <Text>-----------Reveal Result------------------</Text>
             <Button onClick={() => result007()}>Reveal Result</Button> */}
         </Flex>
+      </Flex>
+      <Flex direction={"column"} mt={"3rem"}>
+        <Text fontSize={"2xl"}>Transaction History</Text>
+        {state.coinFlip ? (
+          <TransactionTable allRounds={state.coinFlip.allRounds} />
+        ) : null}
       </Flex>
     </Flex>
   );
