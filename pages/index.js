@@ -93,7 +93,7 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       tokenContractAbi,
       tokenContractAddres
     );
-    const totalRounds = await coinFlipContract.methods.totalRound().call();
+    let totalRounds = await coinFlipContract.methods.totalRound().call();
     console.log(coinFlipContract);
     console.log(tokenContract);
     console.log(accounts[0]);
@@ -285,11 +285,13 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
               String(state.account.accounts).substring(0, 5) +" ... " +String(state.account.accounts).slice(-4)}
 
           </Text>
-          {/* <Text>Total Round: {coinFlip.totalRound}</Text> */}
+          
           { state.coinFlip ? (
               <Text fontWeight={"bold"}>
                 Total Contract Balance: {Number(state.coinFlip.contractBalance).toFixed(5)}
-              </Text>              
+                Total Round: {state.coinFlip.totalRound}
+              </Text>    
+
             ):(<Text>No Contract Balance</Text>)
           }
           <Button onClick={() => safeApproveERC20ToCoinFlip()} disabled={isLoading}>
