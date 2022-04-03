@@ -647,7 +647,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     address public player2;
     bool public player2Choice;
     uint256 player2Betamount;
-    address mgToken = 0x85EAC5Ac2F758618dFa09bDbe0cf174e7d574D5B;
+    address mgToken = 0x5E0bE16D0604c8011B1950698fb09a402bc8A853;
     uint256 public expiration = 2**256-1;
 
     event BetPlaced(address indexed sender, bool, uint256 amount);
