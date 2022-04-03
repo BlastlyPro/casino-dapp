@@ -175,31 +175,6 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       });
   }
 
-  function safeIncreaseERC20Allowance() {
-    var _safeApproveERC20ToCoinFlip = state.coinFlipContractData.methods
-      .safeIncreaseERC20Allowance(state.tokenContractData._address, _betAmount)
-      .send({ from: state.account.accounts[0] })
-      .then((reponse) => {
-        //reveal(betChoice);
-        console.log(reponse);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
-
-  function transferERC20ToCoinFlip() {
-    var _transferERC20ToCoinFlip = state.coinFlipContractData.methods
-      .transferERC20ToCoinFlip(state.tokenContractData._address, _betAmount)
-      .send({ from: state.account.accounts[0] })
-      .then((reponse) => {
-        //reveal(betChoice);
-        console.log(reponse);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
 
   function reveal(data) {
     console.log(data);
