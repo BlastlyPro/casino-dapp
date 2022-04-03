@@ -659,8 +659,9 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
 
     struct Round {
         uint256 betAmount;
+        bool playerBetChoice
         bool winningPosition;
-        bool playerWins;
+        address winnerAddress;
     }    
 
     function CoinFlip(bytes32 commitment) public  {
@@ -685,12 +686,14 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         // player2Betamount= msg.value;
         player2Betamount= _betAmount;
         totalRound++;
-        Round memory r;
+        Round storage r;
         r.betAmount=_betAmount;
+        r.playerBetChoice=choice;
         r.winningPosition=choice;
+        r.winnerAddress=address(this);
         allRounds[totalRound]=r;
-        eachPlayerRounds[msg.sender][totalRound]=r;
-        countOfEachPlayerRound[msg.sender].push(totalRound);
+        // eachPlayerRounds[msg.sender][totalRound]=r;
+        // countOfEachPlayerRound[msg.sender].push(totalRound);
         expiration = block.timestamp + 24 hours;        
         emit BetPlaced(msg.sender, choice, player2Betamount);
     }
@@ -700,17 +703,22 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //require(block.timestamp < expiration);
       require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment);        
       //Round memory r=allRounds[totalRound];
-      Round memory r=eachPlayerRounds[player2][totalRound];
-      r.winningPosition=choice;
-      allRounds[totalRound]=r;
-      eachPlayerRounds[player2][totalRound]=r;
+     // Round memory r=eachPlayerRounds[player2][totalRound];
+      Round storage r=allRounds[totalRound];
+          
+      //eachPlayerRounds[player2][totalRound]=r;
+
         if (player2Choice == choice) {
             // payable(player2).transfer(address(this).balance);
+            r.winningPosition=choice;
+            r.winnerAddress=player2;
             IERC20(mgToken).safeTransfer(player2,player2Betamount*2);
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");
         }
+
+        allRounds[totalRound]=r;
     }
 
 
