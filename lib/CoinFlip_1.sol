@@ -647,7 +647,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     address public player2;
     bool public player2Choice;
     uint256 player2Betamount;
-    address mgToken = 0x85EAC5Ac2F758618dFa09bDbe0cf174e7d574D5B;
+    address mgToken = 0x5E0bE16D0604c8011B1950698fb09a402bc8A853;
     uint256 public expiration = 2**256-1;
 
     event BetPlaced(address indexed sender, bool, uint256 amount);
@@ -680,20 +680,20 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //msg.sender.transfer(address(this).balance);
     }
 
-    function takeBet(IERC20 token, bool choice, uint256 _betAmount) external payable {
+    function takeBet(IERC20 token, bool choice, uint256 _betAmount, bool _secretchoice) external payable {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
         token.safeTransferFrom(msg.sender,address(this),_betAmount);
         totalRound++;
-        Round memory r;
+        Round storage r=allRounds[totalRound];
         r.player2BetAmount=_betAmount;
         r.player2Address=msg.sender;
         r.player2BetChoice=choice;
-        r.winningPosition=choice;
+        r.winningPosition=_secretchoice;
         r.winnerAddress=address(this);
         allRounds[totalRound]=r;
         expiration = block.timestamp + 24 hours;        
-        emit BetPlaced(msg.sender, choice, player2Betamount);
+        emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
     }
 
     function reveal(bool choice, uint256 nonce) external {
@@ -701,7 +701,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
       require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
       Round storage r2=allRounds[totalRound];     
         if (r2.player2BetChoice == choice) {
-            r2.winningPosition=choice;
+            r2.winningPosition=r2.player2BetChoice;
             r2.winnerAddress=r2.player2Address;
             if(choice==true){
                 headWins++;
@@ -709,7 +709,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
             if(choice==false){
                 tailsWins++;
             }
-            IERC20(mgToken).safeTransfer(r2.winnerAddress,r2.player2BetAmount*2);
+            IERC20(mgToken).transfer(r2.winnerAddress,r2.player2BetAmount);
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");

@@ -94,6 +94,10 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
       tokenContractAddres
     );
     let totalRounds = await coinFlipContract.methods.totalRound().call();
+    for(var i=1;i<=totalRounds;i++){
+      var roundObj=await coinFlipContract.methods.allRounds(i).call();
+      console.log(roundObj);
+    }
     console.log(coinFlipContract);
     console.log(tokenContract);
     console.log(accounts[0]);
@@ -124,9 +128,8 @@ export default function Home({COINFLIP_CONTRACT_ADDRESS,TOKEN_CONTRACT_ADDRESS,N
         _betAmount: bta,
       })
       .then((commitment) => {
-        console.log(commitment);
-        state.coinFlipContractData.methods
-          .takeBet(state.tokenContractData._address, betChoice, bta)
+        console.log(commitment.data.secretChoice);
+        state.coinFlipContractData.methods.takeBet(state.tokenContractData._address, betChoice, bta,commitment.data.secretChoice)
           .send({ from: state.account.accounts[0] })
           .then((reponse) => {
             console.log(reponse);
