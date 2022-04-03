@@ -658,9 +658,11 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     mapping (address => uint256[]) public countOfEachPlayerRound;
 
     struct Round {
-        uint256 betAmount;
+        uint256 player2BetAmount;
+        bool player2BetChoice;
         bool winningPosition;
-        bool playerWins;
+        address winnerAddress;
+        address player2Address
     }    
 
     function CoinFlip(bytes32 commitment) public  {
@@ -680,37 +682,31 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
         token.safeTransferFrom(msg.sender,address(this),_betAmount);
-        player2 = msg.sender;
-        player2Choice = choice;
-        // player2Betamount= msg.value;
-        player2Betamount= _betAmount;
         totalRound++;
         Round memory r;
-        r.betAmount=_betAmount;
+        r.player2BetAmount=_betAmount;
+        r.player2Address=msg.sender;
+        r.player2BetChoice=choice;
         r.winningPosition=choice;
+        r.winnerAddress=address(this);
         allRounds[totalRound]=r;
-        eachPlayerRounds[msg.sender][totalRound]=r;
-        countOfEachPlayerRound[msg.sender].push(totalRound);
         expiration = block.timestamp + 24 hours;        
         emit BetPlaced(msg.sender, choice, player2Betamount);
     }
 
     function reveal(bool choice, uint256 nonce) external {
-       // require(player2 != 0);
-        //require(block.timestamp < expiration);
-      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment);        
-      //Round memory r=allRounds[totalRound];
-      Round memory r=eachPlayerRounds[player2][totalRound];
-      r.winningPosition=choice;
-      allRounds[totalRound]=r;
-      eachPlayerRounds[player2][totalRound]=r;
-        if (player2Choice == choice) {
-            // payable(player2).transfer(address(this).balance);
-            IERC20(mgToken).safeTransfer(player2,player2Betamount*2);
+
+      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
+      Round storage r2=allRounds[totalRound];     
+        if (r2.player2BetChoice == choice) {
+            r2.winningPosition=choice;
+            r2.winnerAddress=r2.player2Address;
+            IERC20(mgToken).safeTransfer(r2.winnerAddress,r2.player2BetAmount*2);
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");
         }
+        allRounds[totalRound]=r2;
     }
 
 
