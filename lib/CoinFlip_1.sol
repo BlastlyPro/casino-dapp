@@ -653,14 +653,18 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     event BetPlaced(address indexed sender, bool, uint256 amount);
     event GameMessage(string mesg);
     uint256 public totalRound=0;
+    uint256 public headWins=0;
+    uint256 public tailsWins=0;
     mapping (uint256 => Round) public allRounds;
     mapping (address => mapping (uint256 => Round)) public eachPlayerRounds;
     mapping (address => uint256[]) public countOfEachPlayerRound;
 
     struct Round {
-        uint256 betAmount;
+        uint256 player2BetAmount;
+        bool player2BetChoice;
         bool winningPosition;
-        bool playerWins;
+        address winnerAddress;
+        address player2Address;
     }    
 
     function CoinFlip(bytes32 commitment) public  {
@@ -676,41 +680,41 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //msg.sender.transfer(address(this).balance);
     }
 
-    function takeBet(IERC20 token, bool choice, uint256 _betAmount) external payable {
+    function takeBet(IERC20 token, bool choice, uint256 _betAmount, bool _secretchoice) external payable {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
         token.safeTransferFrom(msg.sender,address(this),_betAmount);
-        player2 = msg.sender;
-        player2Choice = choice;
-        // player2Betamount= msg.value;
-        player2Betamount= _betAmount;
         totalRound++;
-        Round memory r;
-        r.betAmount=_betAmount;
-        r.winningPosition=choice;
+        Round storage r=allRounds[totalRound];
+        r.player2BetAmount=_betAmount;
+        r.player2Address=msg.sender;
+        r.player2BetChoice=choice;
+        r.winningPosition=_secretchoice;
+        r.winnerAddress=address(this);
         allRounds[totalRound]=r;
-        eachPlayerRounds[msg.sender][totalRound]=r;
-        countOfEachPlayerRound[msg.sender].push(totalRound);
         expiration = block.timestamp + 24 hours;        
-        emit BetPlaced(msg.sender, choice, player2Betamount);
+        emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
     }
 
     function reveal(bool choice, uint256 nonce) external {
-       // require(player2 != 0);
-        //require(block.timestamp < expiration);
-      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment);        
-      //Round memory r=allRounds[totalRound];
-      Round memory r=eachPlayerRounds[player2][totalRound];
-      r.winningPosition=choice;
-      allRounds[totalRound]=r;
-      eachPlayerRounds[player2][totalRound]=r;
-        if (player2Choice == choice) {
-            // payable(player2).transfer(address(this).balance);
-            IERC20(mgToken).safeTransfer(player2,player2Betamount*2);
+
+      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
+      Round storage r2=allRounds[totalRound];     
+        if (r2.player2BetChoice == choice) {
+            r2.winningPosition=r2.player2BetChoice;
+            r2.winnerAddress=r2.player2Address;
+            if(choice==true){
+                headWins++;
+            }
+            if(choice==false){
+                tailsWins++;
+            }
+            IERC20(mgToken).transfer(r2.winnerAddress,r2.player2BetAmount);
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");
         }
+        allRounds[totalRound]=r2;
     }
 
 
