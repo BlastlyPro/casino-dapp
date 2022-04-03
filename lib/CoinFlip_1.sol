@@ -653,6 +653,8 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     event BetPlaced(address indexed sender, bool, uint256 amount);
     event GameMessage(string mesg);
     uint256 public totalRound=0;
+    uint256 public headWins=0;
+    uint256 public tailsWins=0;
     mapping (uint256 => Round) public allRounds;
     mapping (address => mapping (uint256 => Round)) public eachPlayerRounds;
     mapping (address => uint256[]) public countOfEachPlayerRound;
@@ -662,7 +664,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         bool player2BetChoice;
         bool winningPosition;
         address winnerAddress;
-        address player2Address
+        address player2Address;
     }    
 
     function CoinFlip(bytes32 commitment) public  {
@@ -701,6 +703,12 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         if (r2.player2BetChoice == choice) {
             r2.winningPosition=choice;
             r2.winnerAddress=r2.player2Address;
+            if(choice==true){
+                headWins++;
+            }
+            if(choice==false){
+                tailsWins++;
+            }
             IERC20(mgToken).safeTransfer(r2.winnerAddress,r2.player2BetAmount*2);
             emit GameMessage("You win. check your wallet");
         } else {
