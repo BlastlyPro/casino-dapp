@@ -33,7 +33,7 @@ export default function handler(req, res) {
       console.log(contractBalance);
       //////////////////Daddu Please Check/////////
       //if((req.body._betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
-      if( contractBalance < 1000 && contractBalance < normalBetAmount)
+      if( contractBalance < 1000 || contractBalance < normalBetAmount)
       {
         console.log("entering chorai mode");
         if(req.body.betChoice==true){
