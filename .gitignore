@@ -33,3 +33,7 @@ yarn-error.log*
 
 package-lock.json
 yarn-lock.json
+
+.env
+bash.exe*
+package-lock.json
