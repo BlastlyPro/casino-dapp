@@ -665,6 +665,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         bool winningPosition;
         address winnerAddress;
         address player2Address;
+        string txnHash;
     }    
 
     function CoinFlip(bytes32 commitment) public  {
@@ -691,15 +692,17 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         r.player2BetChoice=choice;
         r.winningPosition=_secretchoice;
         r.winnerAddress=address(this);
+        r.txnHash="none";
         allRounds[totalRound]=r;
         expiration = block.timestamp + 24 hours;        
         emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
     }
 
-    function reveal(bool choice, uint256 nonce) external {
+    function reveal(bool choice, uint256 nonce, string memory _txnHash) external {
 
       require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
-      Round storage r2=allRounds[totalRound];     
+      Round storage r2=allRounds[totalRound];
+      r2.txnHash=_txnHash;
         if (r2.player2BetChoice == choice) {
             r2.winningPosition=r2.player2BetChoice;
             r2.winnerAddress=r2.player2Address;

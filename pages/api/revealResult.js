@@ -17,7 +17,7 @@ export default function handler(req, res) {
     const coinFlipContractData = new _web3.eth.Contract(CoinFlipPrediction.abi, COINFLIP_CONTRACT_ADDRESS);
 
     ////////////////Smart Contract Coin Reveal Call //////////////////
-    coinFlipContractData.methods.reveal(req.body.secretChoice, req.body.nonce).send({ from: _account.address })
+    coinFlipContractData.methods.reveal(req.body.secretChoice, req.body.nonce, req.body.txnHash).send({ from: _account.address })
       .then((result) => {
         res.status(200).json(result);
       })
