@@ -106,14 +106,10 @@ export default function Home({
     let _allRounds = [];
     for (var i = 1; i <= totalRound; i++) {
       var roundObj = await coinFlipContract.methods.allRounds(i).call();
-      roundObj.player2BetAmount = web3.utils.fromWei(
-        roundObj.player2BetAmount,
-        "ether"
-      );
-      roundObj.player2BetChoice =
-        roundObj.player2BetChoice == true ? "Heads" : "Tails";
-      roundObj.winningPosition =
-        roundObj.winningPosition == true ? "Heads" : "Tails";
+      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
+      roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
+      console.log(roundObj);
       _allRounds.push(roundObj);
     }
     console.log(coinFlipContract);
@@ -147,27 +143,25 @@ export default function Home({
     setIsLoading(false);
   };
 
-  function coinFlip(betChoice) {
-    var bta = state.web3.utils.toWei(String(_betAmount), "ether");
+  async function coinFlip(betChoice) {
+
+    var allowance= await state.tokenContractData.methods.allowance(state.account.accounts[0],state.coinFlipContractData._address).call();
+    allowance= state.web3.utils.fromWei(allowance, "ether");
+    console.log(allowance);
+
+    //////////////////////////////
+    var bta = state.web3.utils.toWei(String(_betAmount), "ether");    
     setIsLoading(true);
-    axios
-      .post("/api/coinflip", {
-        betChoice: betChoice,
-        _betAmount: bta,
-      })
-      .then((commitment) => {
+    if(allowance < bta){
+      await safeApproveERC20ToCoinFlip();
+    }
+    axios.post("/api/coinflip", {betChoice: betChoice,_betAmount: bta,}).then((commitment) => {
         console.log(commitment.data.secretChoice);
-        state.coinFlipContractData.methods
-          .takeBet(
-            state.tokenContractData._address,
-            betChoice,
-            bta,
-            commitment.data.secretChoice
-          )
-          .send({ from: state.account.accounts[0] })
-          .then((reponse) => {
+        state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
+          .send({ from: state.account.accounts[0] }).then((reponse) => {
             console.log(reponse);
-            reveal(commitment.data);
+            console.log(reponse.transactionHash);
+            reveal(commitment.data, reponse.transactionHash);
           })
           .catch((err) => {
             setIsLoading(false);
@@ -180,14 +174,9 @@ export default function Home({
       });
   }
 
-  function safeApproveERC20ToCoinFlip() {
-    state.tokenContractData.methods
-      .approve(
-        state.coinFlipContractData._address,
-        state.web3.utils.toWei("1000000000000", "ether")
-      )
-      .send({ from: state.account.accounts[0] })
-      .then((reponse) => {
+  async function safeApproveERC20ToCoinFlip() {
+   await state.tokenContractData.methods.approve(state.coinFlipContractData._address,state.web3.utils.toWei("1000000000000", "ether"))
+      .send({ from: state.account.accounts[0] }).then((reponse) => {
         //reveal(betChoice);
         console.log(reponse);
       })
@@ -196,12 +185,13 @@ export default function Home({
       });
   }
 
-  function reveal(data) {
+  function reveal(data, txnHash) {
     console.log(data);
     axios
       .post("/api/revealResult", {
         secretChoice: data.secretChoice,
         nonce: data.nonce,
+        txnHash:txnHash
       })
       .then((response) => {
         console.log(response.data.events.GameMessage.returnValues.mesg);
@@ -321,12 +311,12 @@ export default function Home({
           ) : (
             <Text>No Contract Balance</Text>
           )}
-          <Button
+          {/* <Button
             onClick={() => safeApproveERC20ToCoinFlip()}
             disabled={isLoading}
           >
             Approve CasinoToken to CoinFlip
-          </Button>
+          </Button> */}
           {/* <Button onClick={() => transferERC20TocoinFlip()}>transfer ERC20 To coinFlip </Button> */}
         </Flex>
 
