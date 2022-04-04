@@ -131,8 +131,8 @@
   {
     "inputs": [
       {
-        "internalType": "contract IERC20",
-        "name": "token",
+        "internalType": "address",
+        "name": "_player2Address",
         "type": "address"
       },
       {
@@ -146,9 +146,24 @@
         "type": "uint256"
       },
       {
+        "internalType": "bytes32",
+        "name": "commitment",
+        "type": "bytes32"
+      },
+      {
         "internalType": "bool",
         "name": "_secretchoice",
         "type": "bool"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_txnHash",
+        "type": "string"
       }
     ],
     "name": "takeBet",

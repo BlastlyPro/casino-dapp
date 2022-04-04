@@ -681,21 +681,41 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //msg.sender.transfer(address(this).balance);
     }
 
-    function takeBet(IERC20 token, bool choice, uint256 _betAmount, bool _secretchoice) external payable {
+    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external payable {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
-        token.safeTransferFrom(msg.sender,address(this),_betAmount);
+        player1Commitment=commitment;
+        player1 = address(this);
+        IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
         totalRound++;
         Round storage r=allRounds[totalRound];
         r.player2BetAmount=_betAmount;
-        r.player2Address=msg.sender;
+        r.player2Address=_player2Address;
         r.player2BetChoice=choice;
         r.winningPosition=_secretchoice;
         r.winnerAddress=address(this);
-        r.txnHash="none";
-        allRounds[totalRound]=r;
+         r.txnHash=_txnHash;
         expiration = block.timestamp + 24 hours;        
         emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
+
+        require(keccak256(abi.encodePacked(_secretchoice, nonce))== player1Commitment);
+          
+          
+            if (r.player2BetChoice == _secretchoice) {
+                r.winningPosition=r.player2BetChoice;
+                r.winnerAddress=r.player2Address;
+                if(choice==true){
+                    headWins++;
+                }
+                if(choice==false){
+                    tailsWins++;
+                }
+                IERC20(mgToken).transfer(r.winnerAddress,r.player2BetAmount);
+                emit GameMessage("You win. check your wallet");
+            } else {
+                emit GameMessage("You lost. try again");
+            }
+            allRounds[totalRound]=r;        
     }
 
     function reveal(bool choice, uint256 nonce, string memory _txnHash) external {
