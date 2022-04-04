@@ -17,11 +17,8 @@ import TransactionTable from "../components/TransactionTable";
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
   TOKEN_CONTRACT_ADDRESS,
-  NODE_PRODIVER_URL,
-  SITENAME,
   NETWORK_ID,
 }) {
-  console.log(SITENAME);
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState({
     account: {},
@@ -184,7 +181,7 @@ export default function Home({
   }
 
   function safeApproveERC20ToCoinFlip() {
-    var _safeApproveERC20ToCoinFlip = state.tokenContractData.methods
+    state.tokenContractData.methods
       .approve(
         state.coinFlipContractData._address,
         state.web3.utils.toWei("1000000000000", "ether")

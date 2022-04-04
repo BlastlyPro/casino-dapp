@@ -1,5 +1,5 @@
 {
-  "contractName": "CoinFlipPrediction",
+  "contractName": "CoinFlipContract",
   "abi": [
   {
     "anonymous": false,
