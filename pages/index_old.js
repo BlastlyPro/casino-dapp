@@ -145,46 +145,38 @@ export default function Home({
 
   async function coinFlip(betChoice) {
 
+    var allowance= await state.tokenContractData.methods.allowance(state.account.accounts[0],state.coinFlipContractData._address).call();
+    allowance= state.web3.utils.fromWei(allowance, "ether");
+    console.log(allowance);
+
+    //////////////////////////////
     var bta = state.web3.utils.toWei(String(_betAmount), "ether");    
     setIsLoading(true);
-     await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
-          console.log(reponse.transactionHash);
-////////////////////////////////////////////
-        axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0], txnHash:reponse.transactionHash}).then((response) => {
-            console.log(response);
+    if(allowance < bta){
+      await safeApproveERC20ToCoinFlip();
+    }
+    axios.post("/api/coinflip", {betChoice: betChoice,_betAmount: bta,}).then((commitment) => {
+        console.log(commitment.data.secretChoice);
+        state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
+          .send({ from: state.account.accounts[0] }).then((reponse) => {
+            console.log(reponse);
+            console.log(reponse.transactionHash);
+            reveal(commitment.data, reponse.transactionHash);
+          })
+          .catch((err) => {
             setIsLoading(false);
-            Swal.fire({
-              title: "Result",
-              text: response.data.events.GameMessage.returnValues.mesg,
-              icon: "success",
-            });            
-          //   state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
-          //     .send({ from: state.account.accounts[0] }).then((reponse) => {
-          //       console.log(reponse);
-          //       console.log(reponse.transactionHash);
-          //       reveal(commitment.data, reponse.transactionHash);
-          //     })
-          //     .catch((err) => {
-          //       setIsLoading(false);
-          //       console.log(err.message);
-          //     });
-          // })
-          // .catch((err) => {
-          //   setIsLoading(false);
-          //   console.log(err.message);
+            console.log(err.message);
           });
-//////////////////////////////////////////          
-
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
-
-
+      })
+      .catch((err) => {
+        setIsLoading(false);
+        console.log(err.message);
+      });
   }
 
-  async function safeApproveERC20ToCoinFlip(bta) {
-   await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
+  async function safeApproveERC20ToCoinFlip() {
+   await state.tokenContractData.methods.approve(state.coinFlipContractData._address,state.web3.utils.toWei("1000000000000", "ether"))
+      .send({ from: state.account.accounts[0] }).then((reponse) => {
         //reveal(betChoice);
         console.log(reponse);
       })
