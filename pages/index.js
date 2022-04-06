@@ -13,6 +13,8 @@ import CoinFlipPrediction from "../lib/abi.json";
 import Mgtoken from "../lib/tokenContractAbi.json";
 import Swal from "sweetalert2";
 import TransactionTable from "../components/TransactionTable";
+import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
 
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
@@ -280,9 +282,11 @@ export default function Home({
       width={"100vw"}
       height={"100vh"}
       alignItems={"center"}
-      gap={"5"}
+    gap="1"
       direction={"column"}
     >
+   <Navbar/>
+   
       <Text fontSize={"4xl"} mt="5rem">
         Casino Dapp First Demo
       </Text>
@@ -385,7 +389,9 @@ export default function Home({
           <TransactionTable allRounds={state.coinFlip.allRounds} />
         ) : null}
       </Flex>
+      <Footer/>
     </Flex>
+  
   );
 }
 
