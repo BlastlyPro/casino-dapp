@@ -28,7 +28,7 @@ export default function Home({
       totalRound: 0,
     },
   });
-
+  const [allRounds, setAllRounds]=useState(null);
   const [_betAmount, setBetAmount] = useState(null);
 
   // useEffect(() => {
@@ -106,6 +106,7 @@ export default function Home({
     let _allRounds = [];
     await axios.get('/api/allRounds').then((response) => {
       _allRounds=response.data;
+      setAllRounds(_allRounds);
       
     })
     
@@ -138,8 +139,8 @@ export default function Home({
         totalRound: totalRound,
         contractBalance: contractBalance,
         walletBalance: walletBalance,
-        balanceInsideContract:balanceInsideContract,
-        allRounds: _allRounds
+        balanceInsideContract:balanceInsideContract
+   
       },
     });
 
@@ -151,7 +152,7 @@ export default function Home({
     var bta = state.web3.utils.toWei(String(_betAmount), "ether");    
     setIsLoading(true);
      await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
-////////////////////////////////////////////
+    ////////////////////////////////////////////
         axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0]}).then((response) => {
             setIsLoading(false);
             Swal.fire({
@@ -174,7 +175,7 @@ export default function Home({
           //   setIsLoading(false);
           //   console.log(err.message);
           });
-//////////////////////////////////////////          
+    //////////////////////////////////////////          
 
         })
         .catch((err) => {
@@ -193,6 +194,25 @@ export default function Home({
     })
   }
 
+  async function updateFile(){
+    console.log(state.coinFlip.totalRound)
+    let updateRounds=[];
+    for (var i = 0; i < state.coinFlip.totalRound; i++) {
+
+      var roundObj = await state.coinFlipContractData.methods.allRounds(i+1).call();
+      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
+      roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
+      console.log(roundObj);
+      if(!allRounds[i]){
+        allRounds.push(roundObj);
+      }
+      roundObj.txnHash=allRounds[i].txnHash
+      updateRounds.push(roundObj);
+    }
+
+    setAllRounds(updateRounds);
+  }
   async function safeApproveERC20ToCoinFlip(bta) {
    await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
         //reveal(betChoice);
@@ -313,7 +333,7 @@ export default function Home({
                 {Number(state.coinFlip.balanceInsideContract).toFixed(2)} {" "}
                 <Button  bgColor={"yellow.400"} onClick={() => claimBonus()}>Claim Bonus</Button>
               </Text>              
-              
+              <Button  bgColor={"yellow.400"} onClick={() => updateFile()}>Update File</Button>
               <Text>Total Round: {state.coinFlip.totalRound}</Text>
             </>
           ) : (
@@ -382,7 +402,7 @@ export default function Home({
       <Flex direction={"column"} mt={"3rem"}>
         <Text fontSize={"2xl"}>Transaction History</Text>
         {state.coinFlip ? (
-          <TransactionTable allRounds={state.coinFlip.allRounds} />
+          <TransactionTable allRounds={allRounds} />
         ) : null}
       </Flex>
     </Flex>
