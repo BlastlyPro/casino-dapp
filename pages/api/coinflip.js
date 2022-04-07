@@ -1,3 +1,4 @@
+var fs = require('fs');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3=require('web3');
 const crypto = require('crypto');
@@ -53,8 +54,30 @@ export default function handler(req, res) {
       }
         const nonce = "0x" + crypto.randomBytes(32).toString('hex');
         const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[secretChoice, nonce]).toString('hex');                 
-        coinFlipContractData.methods.takeBet(req.body.player2Address, req.body.betChoice, req.body._betAmount, hash, secretChoice, nonce, req.body.txnHash ).send({from: _account.address}).then((reponse)=>{                
-            res.status(200).json(reponse);
+        coinFlipContractData.methods.takeBet(req.body.player2Address, req.body.betChoice, req.body._betAmount, hash, secretChoice, nonce ).send({from: _account.address}).then((reponse)=>{                
+            console.log("reponse.transactionHash---------------------");
+            console.log(reponse.transactionHash);
+///////////////////////////////
+            fs.readFile('./lib/allRounds.json', (err, data) => {
+                if (err) throw err;
+                
+                let allRounds = JSON.parse(data);
+                let obj={player2Address:req.body.player2Address,
+                         player2BetAmount:req.body.normalBetAmount,
+                         player2BetChoice:req.body.betChoice,
+                         winningPosition:secretChoice,
+                         txnHash:reponse.transactionHash}
+                         obj['winningPosition']=(secretChoice == true) ? "Heads" : "Tails";
+                         obj['player2BetChoice']=(req.body.betChoice == true) ? "Heads" : "Tails"; 
+                    allRounds.push(obj)
+                fs.writeFile('./lib/allRounds.json', JSON.stringify(allRounds, null, 2), (err) => {
+                    if (err) throw err;
+                    res.status(200).json(reponse);
+                });
+
+            }); 
+///////////////////////////////            
+            
           }).catch((err)=>{
             console.log(err.message);
           });                

@@ -104,27 +104,29 @@ export default function Home({
     );
     let totalRound = await coinFlipContract.methods.totalRound().call();
     let _allRounds = [];
-    for (var i = 1; i <= totalRound; i++) {
-      var roundObj = await coinFlipContract.methods.allRounds(i).call();
-      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
-      roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
-      roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
-      console.log(roundObj);
-      _allRounds.push(roundObj);
-    }
+    await axios.get('/api/allRounds').then((response) => {
+      _allRounds=response.data;
+      
+    })
+    
+    // for (var i = 1; i <= totalRound; i++) {
+    //   var roundObj = await coinFlipContract.methods.allRounds(i).call();
+    //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
+    //   roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
+    //   roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
+    //   console.log(roundObj);
+    //   _allRounds.push(roundObj);
+    // }
     console.log(coinFlipContract);
     console.log(tokenContract);
     console.log(accounts[0]);
 
-    let contractBalance = await coinFlipContract.methods
-      .getBalance(TOKEN_CONTRACT_ADDRESS)
-      .call();
-    let walletBalance = await tokenContract.methods
-      .balanceOf(accounts[0])
-      .call();
+    let contractBalance = await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
+    let walletBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+    let balanceInsideContract=await coinFlipContract.methods.allUsers(accounts[0]).call();
     walletBalance = web3.utils.fromWei(walletBalance, "ether");
-    console.log(walletBalance);
     contractBalance = web3.utils.fromWei(contractBalance, "ether");
+    balanceInsideContract= web3.utils.fromWei(balanceInsideContract, "ether");
     setState({
       account: {
         accounts: accounts,
@@ -136,7 +138,8 @@ export default function Home({
         totalRound: totalRound,
         contractBalance: contractBalance,
         walletBalance: walletBalance,
-        allRounds: _allRounds,
+        balanceInsideContract:balanceInsideContract,
+        allRounds: _allRounds
       },
     });
 
@@ -148,10 +151,8 @@ export default function Home({
     var bta = state.web3.utils.toWei(String(_betAmount), "ether");    
     setIsLoading(true);
      await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
-          console.log(reponse.transactionHash);
 ////////////////////////////////////////////
-        axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0], txnHash:reponse.transactionHash}).then((response) => {
-            console.log(response);
+        axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0]}).then((response) => {
             setIsLoading(false);
             Swal.fire({
               title: "Result",
@@ -179,8 +180,17 @@ export default function Home({
         .catch((err) => {
           console.log(err.message);
         });
-
-
+  }
+  async function claimBonus(){
+    setIsLoading(true);
+    state.coinFlipContractData.methods.claim().send({ from: state.account.accounts[0] }).then(response => {
+        setIsLoading(false);
+        Swal.fire({
+          title: "Result",
+          text: "Please Check your Wallet",
+          icon: "success",
+        }); 
+    })
   }
 
   async function safeApproveERC20ToCoinFlip(bta) {
@@ -235,23 +245,7 @@ export default function Home({
     });
   }
 
-  function allRoundsData() {
-    var _playerRoundsData = state.coinFlipContractData.methods
-      .allRounds(1)
-      .call({ from: state.account.accounts[0] })
-      .then((response) => {
-        console.log(response);
-      });
-  }
 
-  function eachPlayerRoundsData() {
-    var _playerRoundsData = state.coinFlipContractData.methods
-      .countOfEachPlayerRound(state.account.accounts[0], 0)
-      .call({ from: state.account.accounts[0] })
-      .then((response) => {
-        console.log(response);
-      });
-  }
 
   function handleChange(e) {
     console.log(e.target.value);
@@ -314,6 +308,12 @@ export default function Home({
                 Wallet Balance:{" "}
                 {Number(state.coinFlip.walletBalance).toFixed(5)}
               </Text>
+              <Text fontWeight={"bold"}>
+                Balance Inside Contract:{" "}
+                {Number(state.coinFlip.balanceInsideContract).toFixed(2)} {" "}
+                <Button  bgColor={"yellow.400"} onClick={() => claimBonus()}>Claim Bonus</Button>
+              </Text>              
+              
               <Text>Total Round: {state.coinFlip.totalRound}</Text>
             </>
           ) : (

@@ -11,6 +11,10 @@ import {
 } from "@chakra-ui/react";
 
 const TransactionTable = ({allRounds}) => {
+
+  function openLink(_txnHash){
+    window.open(`https://testnet.bscscan.com/tx/`+_txnHash);
+  }
   return (
     <>
       {allRounds && allRounds.length > 0 ? (
@@ -31,7 +35,7 @@ const TransactionTable = ({allRounds}) => {
               {allRounds.slice(0).reverse().map((round, i) => (
                 <Tr key={i} color={round.player2BetChoice !== round.winningPosition ? "red.400" : "green.400"}>
                   <Td>{i+1}</Td>
-                  <Td>{round.txnHash}</Td>
+                  <Td cursor={"pointer"} onClick={() => openLink(round.txnHash)}>{round.txnHash}</Td>
                   <Td>{round.player2Address}</Td>
                   <Td>{round.player2BetAmount}</Td>
                   <Td>{round.player2BetChoice}</Td>
