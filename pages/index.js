@@ -200,18 +200,22 @@ export default function Home({
     for (var i = 0; i < state.coinFlip.totalRound; i++) {
 
       var roundObj = await state.coinFlipContractData.methods.allRounds(i+1).call();
+      console.log(await state.coinFlipContractData.methods.allRounds(i+1).call());
       roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
       roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
       roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
-      console.log(roundObj);
+      
       if(!allRounds[i]){
         allRounds.push(roundObj);
       }
       roundObj.txnHash=allRounds[i].txnHash
-      updateRounds.push(roundObj);
+      updateRounds.push(roundObj);     
     }
-
+    
     setAllRounds(updateRounds);
+     axios.post('/api/updateFile',{updateRounds:updateRounds}).then(response => {
+      console.log(response);
+     })
   }
   async function safeApproveERC20ToCoinFlip(bta) {
    await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
