@@ -703,6 +703,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         bool winningPosition;
         address winnerAddress;
         address player2Address;
+        string txnHash;
     }    
     struct User {
         uint256 bonus;
@@ -720,12 +721,12 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //msg.sender.transfer(address(this).balance);
     }
 
-    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce) external  {
+    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external  {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
         player1Commitment=commitment;
         player1 = address(this);
-        IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
+        //IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
         totalRound++;
         Round storage r=allRounds[totalRound];
         r.player2BetAmount=_betAmount;
@@ -733,6 +734,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         r.player2BetChoice=choice;
         r.winningPosition=_secretchoice;
         r.winnerAddress=address(this);
+        r.txnHash=_txnHash;
         expiration = block.timestamp + 24 hours;        
         emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
 

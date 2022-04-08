@@ -104,20 +104,15 @@ export default function Home({
     );
     let totalRound = await coinFlipContract.methods.totalRound().call();
     let _allRounds = [];
-    await axios.get('/api/allRounds').then((response) => {
-      _allRounds=response.data;
-      setAllRounds(_allRounds);
-      
-    })
     
-    // for (var i = 1; i <= totalRound; i++) {
-    //   var roundObj = await coinFlipContract.methods.allRounds(i).call();
-    //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
-    //   roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
-    //   roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
-    //   console.log(roundObj);
-    //   _allRounds.push(roundObj);
-    // }
+    for (var i = 1; i <= totalRound; i++) {
+      var roundObj = await coinFlipContract.methods.allRounds(i).call();
+      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
+      roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
+      _allRounds.push(roundObj);
+    }
+    setAllRounds(_allRounds);
     console.log(coinFlipContract);
     console.log(tokenContract);
     console.log(accounts[0]);
@@ -151,9 +146,10 @@ export default function Home({
 
     var bta = state.web3.utils.toWei(String(_betAmount), "ether");    
     setIsLoading(true);
-     await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
+     await state.tokenContractData.methods.transfer(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
+      console.log(reponse.transactionHash)
     ////////////////////////////////////////////
-        axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0]}).then((response) => {
+        axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0], txnHash: reponse.transactionHash}).then((response) => {
             setIsLoading(false);
             Swal.fire({
               title: "Result",
@@ -194,29 +190,6 @@ export default function Home({
     })
   }
 
-  async function updateFile(){
-    console.log(state.coinFlip.totalRound)
-    let updateRounds=[];
-    for (var i = 0; i < state.coinFlip.totalRound; i++) {
-
-      var roundObj = await state.coinFlipContractData.methods.allRounds(i+1).call();
-      console.log(await state.coinFlipContractData.methods.allRounds(i+1).call());
-      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
-      roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
-      roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
-      
-      if(!allRounds[i]){
-        allRounds.push(roundObj);
-      }
-      roundObj.txnHash=allRounds[i].txnHash
-      updateRounds.push(roundObj);     
-    }
-    
-    setAllRounds(updateRounds);
-     axios.post('/api/updateFile',{updateRounds:updateRounds}).then(response => {
-      console.log(response);
-     })
-  }
   async function safeApproveERC20ToCoinFlip(bta) {
    await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
         //reveal(betChoice);
@@ -337,7 +310,6 @@ export default function Home({
                 {Number(state.coinFlip.balanceInsideContract).toFixed(2)} {" "}
                 <Button  bgColor={"yellow.400"} onClick={() => claimBonus()}>Claim Bonus</Button>
               </Text>              
-              <Button  bgColor={"yellow.400"} onClick={() => updateFile()}>Update File</Button>
               <Text>Total Round: {state.coinFlip.totalRound}</Text>
             </>
           ) : (

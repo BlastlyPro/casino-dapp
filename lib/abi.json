@@ -161,6 +161,11 @@
         "internalType": "uint256",
         "name": "nonce",
         "type": "uint256"
+      },
+      {
+        "internalType": "string",
+        "name": "_txnHash",
+        "type": "string"
       }
     ],
     "name": "takeBet",
@@ -264,6 +269,11 @@
         "internalType": "address",
         "name": "player2Address",
         "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "txnHash",
+        "type": "string"
       }
     ],
     "stateMutability": "view",
