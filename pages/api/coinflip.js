@@ -58,7 +58,7 @@ export default function handler(req, res) {
             console.log("reponse.transactionHash---------------------");
             console.log(reponse.transactionHash);
 ///////////////////////////////
-            fs.readFile('./lib/allRounds.json', (err, data) => {
+            fs.readFile('allRounds.json', (err, data) => {
                 if (err) throw err;
                 
                 let allRounds = JSON.parse(data);
@@ -70,7 +70,7 @@ export default function handler(req, res) {
                          obj['winningPosition']=(secretChoice == true) ? "Heads" : "Tails";
                          obj['player2BetChoice']=(req.body.betChoice == true) ? "Heads" : "Tails"; 
                     allRounds.push(obj)
-                fs.writeFile('./lib/allRounds.json', JSON.stringify(allRounds, null, 2), (err) => {
+                fs.writeFile('allRounds.json', JSON.stringify(allRounds, null, 2), (err) => {
                     if (err) throw err;
                     res.status(200).json(reponse);
                 });
