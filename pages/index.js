@@ -190,59 +190,6 @@ export default function Home({
     })
   }
 
-  async function safeApproveERC20ToCoinFlip(bta) {
-   await state.tokenContractData.methods.approve(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
-        //reveal(betChoice);
-        console.log(reponse);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
-
-  function reveal(data, txnHash) {
-    console.log(data);
-    axios
-      .post("/api/revealResult", {
-        secretChoice: data.secretChoice,
-        nonce: data.nonce,
-        txnHash:txnHash
-      })
-      .then((response) => {
-        console.log(response.data.events.GameMessage.returnValues.mesg);
-        setIsLoading(false);
-        Swal.fire({
-          title: "Result",
-          text: response.data.events.GameMessage.returnValues.mesg,
-          icon: "success",
-        });
-        // state.coinFlipContractData.methods
-        //   .totalRound()
-        //   .call()
-        //   .then((res) => {
-        //     setState({
-        //       coinFlip: {
-        //         totalRound: res,
-        //       },
-        //     });
-        //   });
-      })
-      .catch((err) => {
-        setIsLoading(false);
-        console.log(err.message);
-      });
-  }
-
-  function result007() {
-    // var _takeBet=  state.contractData.methods.result007().call({from:state.account.accounts[0]}).then(response=>{
-    //   console.log(response);
-    // });
-    axios.get("/api/revealResult").then((response) => {
-      console.log(response);
-    });
-  }
-
-
 
   function handleChange(e) {
     console.log(e.target.value);
