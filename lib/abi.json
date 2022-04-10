@@ -35,6 +35,13 @@
   },
   {
     "inputs": [],
+    "name": "claim",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "claimTimeout",
     "outputs": [],
     "stateMutability": "nonpayable",
@@ -168,7 +175,7 @@
     ],
     "name": "takeBet",
     "outputs": [],
-    "stateMutability": "payable",
+    "stateMutability": "nonpayable",
     "type": "function"
   },
   {
@@ -278,6 +285,25 @@
     "type": "function"
   },
   {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "name": "allUsers",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "bonus",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "inputs": [],
     "name": "betAmount",
     "outputs": [
@@ -285,79 +311,6 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "countOfEachPlayerRound",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "stateMutability": "view",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "address",
-        "name": "",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "",
-        "type": "uint256"
-      }
-    ],
-    "name": "eachPlayerRounds",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "player2BetAmount",
-        "type": "uint256"
-      },
-      {
-        "internalType": "bool",
-        "name": "player2BetChoice",
-        "type": "bool"
-      },
-      {
-        "internalType": "bool",
-        "name": "winningPosition",
-        "type": "bool"
-      },
-      {
-        "internalType": "address",
-        "name": "winnerAddress",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "player2Address",
-        "type": "address"
-      },
-      {
-        "internalType": "string",
-        "name": "txnHash",
-        "type": "string"
       }
     ],
     "stateMutability": "view",
