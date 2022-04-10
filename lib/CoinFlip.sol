@@ -29,6 +29,44 @@ abstract contract Context {
 
 pragma solidity ^0.8.0;
 
+
+
+library SafeMath {
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
+
+        return c;
+    }
+
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b <= a, "SafeMath: subtraction overflow");
+        uint256 c = a - b;
+
+        return c;
+    }
+
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+
+        uint256 c = a * b;
+        require(c / a == b, "SafeMath: multiplication overflow");
+
+        return c;
+    }
+
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b > 0, "SafeMath: division by zero");
+        uint256 c = a / b;
+
+        return c;
+    }
+}
+
+pragma solidity ^0.8.0;
+
 /**
  * @dev Contract module which provides a basic access control mechanism, where
  * there is an account (an owner) that can be granted exclusive access to
@@ -639,6 +677,7 @@ pragma abicoder v2;
 contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
 
     using SafeERC20 for IERC20;
+    using SafeMath for uint256;
     address public player1;
     bytes32 public player1Commitment;
 
@@ -656,8 +695,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     uint256 public headWins=0;
     uint256 public tailsWins=0;
     mapping (uint256 => Round) public allRounds;
-    mapping (address => mapping (uint256 => Round)) public eachPlayerRounds;
-    mapping (address => uint256[]) public countOfEachPlayerRound;
+    mapping (address => User) public allUsers;
 
     struct Round {
         uint256 player2BetAmount;
@@ -667,7 +705,9 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         address player2Address;
         string txnHash;
     }    
-
+    struct User {
+        uint256 bonus;
+    }
     function CoinFlip(bytes32 commitment) public  {
         player1 = msg.sender;
         player1Commitment = commitment;
@@ -681,12 +721,12 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         //msg.sender.transfer(address(this).balance);
     }
 
-    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external payable {
+    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external  {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
         player1Commitment=commitment;
         player1 = address(this);
-        IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
+        //IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
         totalRound++;
         Round storage r=allRounds[totalRound];
         r.player2BetAmount=_betAmount;
@@ -694,7 +734,7 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         r.player2BetChoice=choice;
         r.winningPosition=_secretchoice;
         r.winnerAddress=address(this);
-         r.txnHash=_txnHash;
+        r.txnHash=_txnHash;
         expiration = block.timestamp + 24 hours;        
         emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
 
@@ -710,19 +750,26 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
                 if(choice==false){
                     tailsWins++;
                 }
-                IERC20(mgToken).transfer(r.winnerAddress,r.player2BetAmount);
+                User storage u=allUsers[r.player2Address];
+                u.bonus=u.bonus.add(r.player2BetAmount.mul(2));
                 emit GameMessage("You win. check your wallet");
             } else {
                 emit GameMessage("You lost. try again");
             }
             allRounds[totalRound]=r;        
+         }
+
+    function claim() external{
+        IERC20(mgToken).transfer(msg.sender,allUsers[msg.sender].bonus);
+        User storage u2=allUsers[msg.sender];
+        u2.bonus=0;
+        allUsers[msg.sender]=u2;
     }
 
-    function reveal(bool choice, uint256 nonce, string memory _txnHash) external {
+    function reveal(bool choice, uint256 nonce) external {
 
       require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
       Round storage r2=allRounds[totalRound];
-      r2.txnHash=_txnHash;
         if (r2.player2BetChoice == choice) {
             r2.winningPosition=r2.player2BetChoice;
             r2.winnerAddress=r2.player2Address;

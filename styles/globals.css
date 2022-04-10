@@ -14,3 +14,79 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.lightning {
+  -webkit-animation-name: thunder;
+  animation-name: thunder;
+  -webkit-animation-duration: 5s;
+  animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+@-webkit-keyframes thunder {
+  0% {
+    opacity: 0%;
+  }
+  3% {
+    opacity: 100%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/lightning.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  6% {
+    opacity: 40%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/lightning.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  9% {
+    opacity: 80%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/lightning.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  11% {
+    opacity: 0%;
+  }
+  20% {
+    opacity: 0%;
+  }
+}
+
+@keyframes thunder {
+  0% {
+    opacity: 0%;
+  }
+  3% {
+    opacity: 100%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/lightning.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  6% {
+    opacity: 40%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/lightning.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  9% {
+    opacity: 80%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/lightning.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  11% {
+    opacity: 0%;
+  }
+  20% {
+    opacity: 0%;
+  }
+}
+/*# sourceMappingURL=styles.css.map */

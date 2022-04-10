@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   Flex,
   Image,
@@ -25,9 +23,8 @@ export default function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
   const mobileNav = useDisclosure();
   return (
-    /* mother flex for all start */
-    <React.Fragment>
-      <Flex w="100%" h="100%" alignItems="center" justifyContent="center">
+    <>
+      <Flex w="100%" pt={"2"} alignItems="center" justifyContent="center">
         <SimpleGrid
           columns={[3, 3, 3, 3, 3]}
           spacing={["3rem", "4rem", "8rem", "7rem", "6rem"]}
@@ -60,12 +57,7 @@ export default function Navbar() {
               </Button>
             </Link>
 
-            <Flex
-              bgColor="gray.400"
-              borderRadius="2rem"
-              p="1rem"
-              gap="0.5rem"
-            >
+            <Flex bgColor="gray.400" borderRadius="2rem" p="1rem" gap="0.5rem">
               <Link href="">
                 <Button fontSize="xs" variant="link" color="#FFFFFF">
                   Coin Toss
@@ -107,7 +99,6 @@ export default function Navbar() {
               borderRadius="1rem"
               p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]}
               fontSize="xs"
-           
               color="#FFFFFF"
             >
               Connect Your wallet
@@ -196,7 +187,6 @@ export default function Navbar() {
           </VStack>
         </Box>
       </Flex>
-    </React.Fragment>
-    /* mother flex for all end */
+    </>
   );
 }

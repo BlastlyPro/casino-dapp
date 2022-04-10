@@ -18,9 +18,17 @@ export default function Footer() {
     <Flex
       w="100%"
       bgColor="#E2E8F0"
+<<<<<<< HEAD
       h="100%"
       alignItems="center"
       justifyContent="center"
+=======
+      alignItems="center"
+      justifyContent="center"
+      bottom={"0"}
+      position="fixed"
+      padding={"1rem"}
+>>>>>>> features/claim
     >
       <SimpleGrid
         columns={[4, 4, 4, 4, 4]}
@@ -81,4 +89,8 @@ export default function Footer() {
     </Flex>
     /* mother flex for all end */
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> features/claim
