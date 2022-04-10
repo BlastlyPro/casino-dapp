@@ -35,8 +35,8 @@ const TransactionTable = ({allRounds}) => {
               {allRounds.slice(0).reverse().map((round, i) => (
                 <Tr key={i} color={round.player2BetChoice !== round.winningPosition ? "red.400" : "green.400"}>
                   <Td>{i+1}</Td>
-                  <Td cursor={"pointer"} onClick={() => openLink(round.txnHash)}>{round.txnHash}</Td>
-                  <Td>{round.player2Address}</Td>
+                  <Td cursor={"pointer"} onClick={() => openLink(round.txnHash)}>{round.txnHash.substring(0, 7) + " ... " + round.txnHash.slice(-6)}</Td>
+                  <Td>{round.player2Address.substring(0, 5) + " ... " + round.player2Address.slice(-4)}</Td>
                   <Td>{round.player2BetAmount}</Td>
                   <Td>{round.player2BetChoice}</Td>
                   <Td>{round.winningPosition}</Td>

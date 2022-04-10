@@ -1,4 +1,5 @@
 import {
+  Box,
   Flex,
   Text,
   Button,
@@ -13,6 +14,8 @@ import CoinFlipPrediction from "../lib/abi.json";
 import Mgtoken from "../lib/tokenContractAbi.json";
 import Swal from "sweetalert2";
 import TransactionTable from "../components/TransactionTable";
+import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
@@ -214,16 +217,37 @@ export default function Home({
   // }
 
   return (
-    <Flex
+    <Box
       width={"100vw"}
       height={"100vh"}
-      alignItems={"center"}
-      gap={"5"}
-      direction={"column"}
+      backgroundImage={'url("/images/main-bg.jpg")'}
+      backgroundRepeat={"no-repeat"}
+      backgroundSize={"cover"}
+      position={"relative"}
     >
-      <Text fontSize={"4xl"} mt="5rem">
-        Casino Dapp First Demo
-      </Text>
+      <Box
+        width={"100vw"}
+        height={"100vh"}
+        // mixBlendMode={"lighten"}
+        // backgroundImage={'url("/images/lightning.jpg")'}
+        // backgroundRepeat={"no-repeat"}
+        // backgroundSize={"cover"}
+        className="lightning"
+        position={"absolute"}
+      >
+        </Box>
+      <Flex
+        width={"100"}
+        height={"100%"}
+        alignItems={"center"}
+        gap={"5"}
+        direction={"column"}
+        color={"white"}
+      >
+        
+      
+      <Navbar />
+
       {isLoading && <Spinner color="red.500" size="xl" />}
       <Flex width={"100%"} mt={"5rem"}>
         <Flex
@@ -233,7 +257,6 @@ export default function Home({
           alignItems={"center"}
           gap={"5"}
         >
-          {/* <Text>Connected Account: {state.account.accounts}{state.account.accounts.substring(0, 5) + " ... " + state.account.accounts.slice(-4)}</Text> */}
           <Text>
             Connected Account:{" "}
             {state.account.accounts &&
@@ -262,13 +285,6 @@ export default function Home({
           ) : (
             <Text>No Contract Balance</Text>
           )}
-          {/* <Button
-            onClick={() => safeApproveERC20ToCoinFlip()}
-            disabled={isLoading}
-          >
-            Approve CasinoToken to CoinFlip
-          </Button> */}
-          {/* <Button onClick={() => transferERC20TocoinFlip()}>transfer ERC20 To coinFlip </Button> */}
         </Flex>
 
         <Flex
@@ -314,12 +330,6 @@ export default function Home({
               Tail
             </Button>
           </Flex>
-          {/* <Button onClick={() => allRoundsData()}>All Rounds Data </Button>
-      <Button onClick={() => eachTextlayerRoundsData()}>
-        Each Textlayer Rounds Data{" "}
-      </Button> */}
-          {/* <Text>-----------Reveal Result------------------</Text>
-            <Button onClick={() => result007()}>Reveal Result</Button> */}
         </Flex>
       </Flex>
       <Flex direction={"column"} mt={"3rem"}>
@@ -328,7 +338,10 @@ export default function Home({
           <TransactionTable allRounds={allRounds} />
         ) : null}
       </Flex>
-    </Flex>
+
+      <Footer />
+      </Flex>
+    </Box>
   );
 }
 
