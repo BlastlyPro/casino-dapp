@@ -33,11 +33,4 @@ yarn-error.log*
 
 package-lock.json
 yarn-lock.json
-<<<<<<< HEAD
-
-.env
-bash.exe*
-package-lock.json
-=======
 .babelrc
->>>>>>> features/claim
