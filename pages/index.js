@@ -16,6 +16,7 @@ import Swal from "sweetalert2";
 import TransactionTable from "../components/TransactionTable";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import CoinToss from "../components/CoinToss";
 
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
@@ -247,6 +248,7 @@ export default function Home({
         
       
       <Navbar />
+      <CoinToss/>
 
       {isLoading && <Spinner color="red.500" size="xl" />}
       <Flex width={"100%"} mt={"5rem"}>
