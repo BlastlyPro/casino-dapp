@@ -16,7 +16,7 @@ import Swal from "sweetalert2";
 import TransactionTable from "../components/TransactionTable";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
-import CoinToss from "../components/CoinToss";
+import CoinToss from "../components/CoinToss/CoinToss";
 
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
@@ -32,7 +32,7 @@ export default function Home({
       totalRound: 0,
     },
   });
-  const [allRounds, setAllRounds]=useState(null);
+  const [allRounds, setAllRounds] = useState(null);
   const [_betAmount, setBetAmount] = useState(null);
 
   // useEffect(() => {
@@ -108,12 +108,17 @@ export default function Home({
     );
     let totalRound = await coinFlipContract.methods.totalRound().call();
     let _allRounds = [];
-    
+
     for (var i = 1; i <= totalRound; i++) {
       var roundObj = await coinFlipContract.methods.allRounds(i).call();
-      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount,"ether");
-      roundObj.player2BetChoice =roundObj.player2BetChoice == true ? "Heads" : "Tails";
-      roundObj.winningPosition =roundObj.winningPosition == true ? "Heads" : "Tails";
+      roundObj.player2BetAmount = web3.utils.fromWei(
+        roundObj.player2BetAmount,
+        "ether"
+      );
+      roundObj.player2BetChoice =
+        roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      roundObj.winningPosition =
+        roundObj.winningPosition == true ? "Heads" : "Tails";
       _allRounds.push(roundObj);
     }
     setAllRounds(_allRounds);
@@ -121,12 +126,18 @@ export default function Home({
     console.log(tokenContract);
     console.log(accounts[0]);
 
-    let contractBalance = await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
-    let walletBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
-    let balanceInsideContract=await coinFlipContract.methods.allUsers(accounts[0]).call();
+    let contractBalance = await coinFlipContract.methods
+      .getBalance(TOKEN_CONTRACT_ADDRESS)
+      .call();
+    let walletBalance = await tokenContract.methods
+      .balanceOf(accounts[0])
+      .call();
+    let balanceInsideContract = await coinFlipContract.methods
+      .allUsers(accounts[0])
+      .call();
     walletBalance = web3.utils.fromWei(walletBalance, "ether");
     contractBalance = web3.utils.fromWei(contractBalance, "ether");
-    balanceInsideContract= web3.utils.fromWei(balanceInsideContract, "ether");
+    balanceInsideContract = web3.utils.fromWei(balanceInsideContract, "ether");
     setState({
       account: {
         accounts: accounts,
@@ -138,8 +149,7 @@ export default function Home({
         totalRound: totalRound,
         contractBalance: contractBalance,
         walletBalance: walletBalance,
-        balanceInsideContract:balanceInsideContract
-   
+        balanceInsideContract: balanceInsideContract,
       },
     });
 
@@ -147,53 +157,64 @@ export default function Home({
   };
 
   async function coinFlip(betChoice) {
-
-    var bta = state.web3.utils.toWei(String(_betAmount), "ether");    
+    var bta = state.web3.utils.toWei(String(_betAmount), "ether");
     setIsLoading(true);
-     await state.tokenContractData.methods.transfer(state.coinFlipContractData._address,bta).send({ from: state.account.accounts[0] }).then((reponse) => {
-      console.log(reponse.transactionHash)
-    ////////////////////////////////////////////
-        axios.post("/api/coinflip", {betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount,player2Address: state.account.accounts[0], txnHash: reponse.transactionHash}).then((response) => {
+    await state.tokenContractData.methods
+      .transfer(state.coinFlipContractData._address, bta)
+      .send({ from: state.account.accounts[0] })
+      .then((reponse) => {
+        console.log(reponse.transactionHash);
+        ////////////////////////////////////////////
+        axios
+          .post("/api/coinflip", {
+            betChoice: betChoice,
+            _betAmount: bta,
+            normalBetAmount: _betAmount,
+            player2Address: state.account.accounts[0],
+            txnHash: reponse.transactionHash,
+          })
+          .then((response) => {
             setIsLoading(false);
             Swal.fire({
               title: "Result",
               text: response.data.events.GameMessage.returnValues.mesg,
               icon: "success",
-            });            
-          //   state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
-          //     .send({ from: state.account.accounts[0] }).then((reponse) => {
-          //       console.log(reponse);
-          //       console.log(reponse.transactionHash);
-          //       reveal(commitment.data, reponse.transactionHash);
-          //     })
-          //     .catch((err) => {
-          //       setIsLoading(false);
-          //       console.log(err.message);
-          //     });
-          // })
-          // .catch((err) => {
-          //   setIsLoading(false);
-          //   console.log(err.message);
+            });
+            //   state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
+            //     .send({ from: state.account.accounts[0] }).then((reponse) => {
+            //       console.log(reponse);
+            //       console.log(reponse.transactionHash);
+            //       reveal(commitment.data, reponse.transactionHash);
+            //     })
+            //     .catch((err) => {
+            //       setIsLoading(false);
+            //       console.log(err.message);
+            //     });
+            // })
+            // .catch((err) => {
+            //   setIsLoading(false);
+            //   console.log(err.message);
           });
-    //////////////////////////////////////////          
-
-        })
-        .catch((err) => {
-          console.log(err.message);
-        });
+        //////////////////////////////////////////
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
   }
-  async function claimBonus(){
+  async function claimBonus() {
     setIsLoading(true);
-    state.coinFlipContractData.methods.claim().send({ from: state.account.accounts[0] }).then(response => {
+    state.coinFlipContractData.methods
+      .claim()
+      .send({ from: state.account.accounts[0] })
+      .then((response) => {
         setIsLoading(false);
         Swal.fire({
           title: "Result",
           text: "Please Check your Wallet",
           icon: "success",
-        }); 
-    })
+        });
+      });
   }
-
 
   function handleChange(e) {
     console.log(e.target.value);
@@ -229,14 +250,9 @@ export default function Home({
       <Box
         width={"100vw"}
         height={"100vh"}
-        // mixBlendMode={"lighten"}
-        // backgroundImage={'url("/images/lightning.jpg")'}
-        // backgroundRepeat={"no-repeat"}
-        // backgroundSize={"cover"}
         className="lightning"
         position={"absolute"}
-      >
-        </Box>
+      ></Box>
       <Flex
         width={"100"}
         height={"100%"}
@@ -245,103 +261,68 @@ export default function Home({
         direction={"column"}
         color={"white"}
       >
-        
-      
-      <Navbar />
-      <CoinToss/>
+        <Navbar />
+        <CoinToss
+          handleChange={handleChange}
+          coinFlip={coinFlip}
+          allRounds={allRounds}
+        />
 
-      {isLoading && <Spinner color="red.500" size="xl" />}
-      <Flex width={"100%"} mt={"5rem"}>
-        <Flex
-          width={"50%"}
-          direction={"column"}
-          justifyContent="center"
-          alignItems={"center"}
-          gap={"5"}
-        >
-          <Text>
-            Connected Account:{" "}
-            {state.account.accounts &&
-              String(state.account.accounts).substring(0, 5) +
-                " ... " +
-                String(state.account.accounts).slice(-4)}
-          </Text>
-
-          {state.coinFlip ? (
-            <>
-              <Text fontWeight={"bold"}>
-                Total Contract Balance:{" "}
-                {Number(state.coinFlip.contractBalance).toFixed(5)}
-              </Text>
-              <Text fontWeight={"bold"}>
-                Wallet Balance:{" "}
-                {Number(state.coinFlip.walletBalance).toFixed(5)}
-              </Text>
-              <Text fontWeight={"bold"}>
-                Balance Inside Contract:{" "}
-                {Number(state.coinFlip.balanceInsideContract).toFixed(2)} {" "}
-                <Button  bgColor={"yellow.400"} onClick={() => claimBonus()}>Claim Bonus</Button>
-              </Text>              
-              <Text>Total Round: {state.coinFlip.totalRound}</Text>
-            </>
-          ) : (
-            <Text>No Contract Balance</Text>
-          )}
-        </Flex>
-
-        <Flex
-          width={"50%"}
-          direction={"column"}
-          justifyContent="center"
-          alignItems={"center"}
-          gap={"5"}
-        >
-          <Text fontSize={"2xl"}>Place your bet</Text>
-          <InputGroup
-            bgColor="gray.100"
-            mb={4}
-            border="none"
-            borderColor="#fff"
-            borderRadius="10px"
-            width={"30%"}
+        {isLoading && <Spinner color="red.500" size="xl" />}
+        <Flex width={"100%"} mt={"5rem"}>
+          <Flex
+            width={"50%"}
+            direction={"column"}
+            justifyContent="center"
+            alignItems={"center"}
+            gap={"5"}
           >
-            <Input
-              type="number"
-              placeholder="0.00"
-              borderRadius="10px"
-              color={"gray.900"}
-              fontSize="md"
-              onChange={(e) => handleChange(e)}
-            />
-          </InputGroup>
-          <Flex gap={5}>
-            <Button
-              disabled={isLoading}
-              onClick={() => coinFlip(true)}
-              width={"5rem"}
-              bgColor={"orange.400"}
-            >
-              Head
-            </Button>
-            <Button
-              disabled={isLoading}
-              onClick={() => coinFlip(false)}
-              width={"5rem"}
-              bgColor={"yellow.400"}
-            >
-              Tail
-            </Button>
-          </Flex>
-        </Flex>
-      </Flex>
-      <Flex direction={"column"} mt={"3rem"}>
-        <Text fontSize={"2xl"}>Transaction History</Text>
-        {state.coinFlip ? (
-          <TransactionTable allRounds={allRounds} />
-        ) : null}
-      </Flex>
+            <Text>
+              Connected Account:{" "}
+              {state.account.accounts &&
+                String(state.account.accounts).substring(0, 5) +
+                  " ... " +
+                  String(state.account.accounts).slice(-4)}
+            </Text>
 
-      <Footer />
+            {state.coinFlip ? (
+              <>
+                <Text fontWeight={"bold"}>
+                  Total Contract Balance:{" "}
+                  {Number(state.coinFlip.contractBalance).toFixed(5)}
+                </Text>
+                <Text fontWeight={"bold"}>
+                  Wallet Balance:{" "}
+                  {Number(state.coinFlip.walletBalance).toFixed(5)}
+                </Text>
+                <Text fontWeight={"bold"}>
+                  Balance Inside Contract:{" "}
+                  {Number(state.coinFlip.balanceInsideContract).toFixed(2)}{" "}
+                  <Button bgColor={"yellow.400"} onClick={() => claimBonus()}>
+                    Claim Bonus
+                  </Button>
+                </Text>
+                <Text>Total Round: {state.coinFlip.totalRound}</Text>
+              </>
+            ) : (
+              <Text>No Contract Balance</Text>
+            )}
+          </Flex>
+
+          <Flex
+            width={"50%"}
+            direction={"column"}
+            justifyContent="center"
+            alignItems={"center"}
+            gap={"5"}
+          ></Flex>
+        </Flex>
+        <Flex direction={"column"} mt={"3rem"}>
+          <Text fontSize={"2xl"}>Transaction History</Text>
+          {state.coinFlip ? <TransactionTable allRounds={allRounds} /> : null}
+        </Flex>
+
+        <Footer />
       </Flex>
     </Box>
   );
