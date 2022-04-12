@@ -28,7 +28,13 @@ import {
     </Text>
     {/* mother flex for combined left leader board and right all bets start */}
 
-<Flex>
+<Flex w="100%">
+
+{/* mother flex for left portion start */}
+<Flex w="40%" >
+
+</Flex>
+{/* mother flex for left portion end */}
 
 </Flex>
 

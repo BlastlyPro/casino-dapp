@@ -342,8 +342,8 @@ export default function CoinToss() {
        30 BNB
      </Text>
      <Image
-       width="34.29px"
-       height="34.29px"
+       width="34.28px"
+       height="34.3px"
        src="/Heads.png"
        alt="Heads"
      />
