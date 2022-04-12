@@ -53,7 +53,7 @@ export default function CoinToss({ handleChange, coinFlip, allRounds }) {
         >
           <Flex
             bgColor={"rgba(86, 146, 250, 0.6)"}
-            w="35rem"
+            w="97%"
             h="25.437rem"
             opacity={".9"}
             backdrop-filter="blur(20px)"
@@ -138,7 +138,6 @@ export default function CoinToss({ handleChange, coinFlip, allRounds }) {
 
             <Flex alignSelf={"center"}>
               <Flex
-                left="2.5rem"
                 h="3rem"
                 border="none"
                 w="13.125rem"
@@ -146,6 +145,7 @@ export default function CoinToss({ handleChange, coinFlip, allRounds }) {
                 fontSize="xs"
                 color={"black"}
                 borderRadius="30px"
+                marginLeft={"2.5rem"}
               >
                 <Flex
                   pl="0.3rem"
