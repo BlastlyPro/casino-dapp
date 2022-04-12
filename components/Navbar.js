@@ -1,6 +1,6 @@
 import {
   Flex,
-  Image,
+ 
   Text,
   SimpleGrid,
   Link,
@@ -8,12 +8,14 @@ import {
   Icon,
   chakra,
   Box,
+
   useColorModeValue,
   useDisclosure,
   VStack,
   IconButton,
   CloseButton,
 } from "@chakra-ui/react";
+import Image from 'next/image'
 import { AiOutlineMenu } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import { ImTwitter } from "react-icons/im";
@@ -31,10 +33,9 @@ export default function Navbar() {
         >
           {/* flex for company start */}
 
-          <Flex alignItems="center" justifyContent="center">
-            <Text fontSize="lg" fontWeight="bold" color="#000000">
-              Company
-            </Text>
+          <Flex  alignItems="center" justifyContent="center">
+        <Image width="80.84px" height="42px" src="/Logo.png" alt="Logo" />
+        
           </Flex>
           {/* flex for company end */}
 
@@ -57,7 +58,8 @@ export default function Navbar() {
               </Button>
             </Link>
 
-            <Flex bgColor="gray.400" borderRadius="2rem" p="1rem" gap="0.5rem">
+            <Flex bgColor="gray.400" borderRadius="2rem"     px="1rem"
+            py="0.5rem" gap="0.5rem">
               <Link href="">
                 <Button fontSize="xs" variant="link" color="#FFFFFF">
                   Coin Toss
@@ -95,11 +97,11 @@ export default function Navbar() {
 
           <Flex alignItems="center" justifyContent="center">
             <Text
-              bgColor="#000000"
+              bgColor="#BBD3FD"
               borderRadius="1rem"
               p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]}
               fontSize="xs"
-              color="#FFFFFF"
+              color="#102542"
             >
               Connect Your wallet
             </Text>
@@ -146,33 +148,23 @@ export default function Navbar() {
                 <Icon as={RiArrowDropDownLine} fontSize="md" color="gray.500" />
               </Button>
             </Link>
+            <Link href="">
+            <Button fontSize="xs" variant="link" color="gray.500">
+              Coin Toss
+            </Button>
+          </Link>
 
-            <Flex
-              bgColor="gray.400"
-              borderRadius="1rem"
-              p="0.3rem"
-              gap="0.5rem"
-              direction=""
-            >
-              <Link href="">
-                <Button fontSize="xs" variant="link" color="#FFFFFF">
-                  Coin Toss
-                </Button>
-              </Link>
+          <Link href="">
+            <Button fontSize="xs" variant="link" color="gray.500">
+              History
+            </Button>
+          </Link>
 
-              <Link href="">
-                <Button fontSize="xs" variant="link" color="#FFFFFF">
-                  History
-                </Button>
-              </Link>
-
-              <Link href="">
-                <Button fontSize="xs" variant="link" color="#FFFFFF">
-                  How it works?
-                </Button>
-              </Link>
-            </Flex>
-
+          <Link href="">
+            <Button fontSize="xs" variant="link" color="gray.500">
+              How it works?
+            </Button>
+          </Link>
             <Link href="">
               <Button fontSize="xs" variant="link" color="gray.500">
                 Exchange
