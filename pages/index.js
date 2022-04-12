@@ -252,20 +252,10 @@ export default function Home({
       <Navbar />
       <CoinToss/>
 
-      <Box w="100vw"
-      h="86.0625rem"
-      backgroundImage={'url("/rest.png")'}
-      backgroundRepeat={"no-repeat"}
-      backgroundSize={"cover"}
-      >
-<History/>
+     
+      <History/>
     
       <HowItWorks/>
-
-
-      </Box>
-     
-
       {isLoading && <Spinner color="red.500" size="xl" />}
       <Flex width={"100%"} mt={"5rem"}>
         <Flex
