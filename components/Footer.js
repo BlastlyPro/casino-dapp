@@ -17,7 +17,8 @@ export default function Footer() {
     /* mother flex for all start */
     <Flex
       w="100%"
-      bgColor="#E2E8F0"
+      bgColor="#BBD3FD33"
+      fill={"rgba(187, 211, 253, 0.2)"}
       alignItems="center"
       justifyContent="center"
       bottom={"0"}
