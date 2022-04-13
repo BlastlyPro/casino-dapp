@@ -20,6 +20,7 @@ import { AiOutlineMenu } from "react-icons/ai";
 import { FaFacebook } from "react-icons/fa";
 import { ImTwitter } from "react-icons/im";
 import { RiArrowDropDownLine } from "react-icons/ri";
+import { ConnectButton } from 'web3uikit';
 
 export default function Navbar() {
   const bg = useColorModeValue("white", "gray.800");
@@ -96,7 +97,7 @@ export default function Navbar() {
           {/* flex for wallet start */}
 
           <Flex alignItems="center" justifyContent="center">
-            <Text
+            {/* <Text
               bgColor="#BBD3FD"
               borderRadius="1rem"
               p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]}
@@ -104,7 +105,8 @@ export default function Navbar() {
               color="#102542"
             >
               Connect Your wallet
-            </Text>
+            </Text> */}
+            <ConnectButton moralisAuth={true}/>
           </Flex>
           {/* flex for wallet end */}
         </SimpleGrid>
