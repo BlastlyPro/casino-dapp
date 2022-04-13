@@ -17,6 +17,8 @@ import TransactionTable from "../components/TransactionTable";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import CoinToss from "../components/CoinToss/CoinToss";
+import HowItWorks from "../components/HowItWorks";
+import History from "../components/History";
 
 export default function Home({
   COINFLIP_CONTRACT_ADDRESS,
@@ -267,7 +269,18 @@ export default function Home({
           coinFlip={coinFlip}
           allRounds={allRounds}
         />
-
+        <Box w="100vw"
+        h="86.0625rem"
+        backgroundImage={'url("/rest.png")'}
+        backgroundRepeat={"no-repeat"}
+        backgroundSize={"cover"}
+        >
+        <History/>
+        <HowItWorks/>
+  
+  
+        </Box>
+  
         {isLoading && <Spinner color="red.500" size="xl" />}
         <Flex width={"100%"} mt={"5rem"}>
           <Flex

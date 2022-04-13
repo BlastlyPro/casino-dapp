@@ -21,8 +21,7 @@ export default function Footer() {
       fill={"rgba(187, 211, 253, 0.2)"}
       alignItems="center"
       justifyContent="center"
-      bottom={"0"}
-      position="fixed"
+  
       padding={"1rem"}
     >
       <SimpleGrid
