@@ -111,7 +111,7 @@ export default function HowItWorks() {
   <Flex w="90%" direction={"column"}>
     <Text fontSize="md" fontWeight="bold" color={"#BBD3FD"}> Pick the value of your bet
     </Text>
-    <Text fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>It only depends on you how much you're willing to bet on your luck
+    <Text fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>It only depends on you how much you&apos;re willing to bet on your luck
     </Text>
   </Flex>
 </Flex>
