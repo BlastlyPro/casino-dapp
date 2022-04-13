@@ -282,7 +282,7 @@ export default function Home({
         </Box>
   
         {isLoading && <Spinner color="red.500" size="xl" />}
-        <Flex width={"100%"} mt={"5rem"}>
+        {/* <Flex width={"100%"} mt={"5rem"}>
           <Flex
             width={"50%"}
             direction={"column"}
@@ -333,7 +333,7 @@ export default function Home({
         <Flex direction={"column"} mt={"3rem"}>
           <Text fontSize={"2xl"}>Transaction History</Text>
           {state.coinFlip ? <TransactionTable allRounds={allRounds} /> : null}
-        </Flex>
+        </Flex> */}
 
         <Footer />
       </Flex>

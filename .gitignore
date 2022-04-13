@@ -32,5 +32,5 @@ yarn-error.log*
 .vercel
 
 package-lock.json
-yarn-lock.json
+yarn.lock
 .babelrc
