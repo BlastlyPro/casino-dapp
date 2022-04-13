@@ -271,7 +271,7 @@ export default function Home({
         />
         <Box w="100vw"
         h="86.0625rem"
-        backgroundImage={'url("/rest.png")'}
+        backgroundImage={'url("/RestCompressed.jpg")'}
         backgroundRepeat={"no-repeat"}
         backgroundSize={"cover"}
         >
