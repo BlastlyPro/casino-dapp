@@ -687,6 +687,10 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     bool public player2Choice;
     uint256 player2Betamount;
     address mgToken = 0x5E0bE16D0604c8011B1950698fb09a402bc8A853;
+    address GAS_FEE_WALLET_ADDRESS=0xA90b645ae458A8B4268deDFcE9219a2249856552;
+    uint256 public constant PERCENTS_DIVIDER = 1000;
+    uint256 public constant PROJECT_FEE = 15;
+    uint256 public houseTotalFee;
     uint256 public expiration = 2**256-1;
 
     event BetPlaced(address indexed sender, bool, uint256 amount);
@@ -708,22 +712,24 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     struct User {
         uint256 bonus;
     }
-    function CoinFlip(bytes32 commitment) public  {
-        player1 = msg.sender;
-        player1Commitment = commitment;
-    }
+    // function CoinFlip(bytes32 commitment) public  {
+    //     player1 = msg.sender;
+    //     player1Commitment = commitment;
+    // }
 
-    function cancel() public {
-        require(msg.sender == player1);
-        //require(player2 == null);
+    // function cancel() public {
+    //     require(msg.sender == player1);
+    //     //require(player2 == null);
 
-        betAmount = 0;
-        //msg.sender.transfer(address(this).balance);
-    }
+    //     betAmount = 0;
+    //     //msg.sender.transfer(address(this).balance);
+    // }
 
     function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external  {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
+        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+        
         player1Commitment=commitment;
         player1 = address(this);
         //IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
@@ -760,7 +766,11 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
          }
 
     function claim() external{
-        IERC20(mgToken).transfer(msg.sender,allUsers[msg.sender].bonus);
+        uint256 fee = allUsers[msg.sender].bonus.mul(PROJECT_FEE).div(PERCENTS_DIVIDER);
+        houseTotalFee= houseTotalFee + fee;
+        uint256 userBonus=allUsers[msg.sender].bonus.sub(fee);
+        // IERC20(mgToken).transfer(msg.sender,allUsers[msg.sender].bonus);
+        IERC20(mgToken).transfer(msg.sender,userBonus);
         User storage u2=allUsers[msg.sender];
         u2.bonus=0;
         allUsers[msg.sender]=u2;

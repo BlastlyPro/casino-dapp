@@ -126,15 +126,12 @@ export default function Home({
     console.log(tokenContract);
     console.log(accounts[0]);
 
-    let contractBalance = await coinFlipContract.methods
-      .getBalance(TOKEN_CONTRACT_ADDRESS)
-      .call();
-    let walletBalance = await tokenContract.methods
-      .balanceOf(accounts[0])
-      .call();
-    let balanceInsideContract = await coinFlipContract.methods
-      .allUsers(accounts[0])
-      .call();
+    let contractBalance = await coinFlipContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
+    let walletBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
+    let balanceInsideContract = await coinFlipContract.methods.allUsers(accounts[0]).call();
+    let PROJECT_FEE = await coinFlipContract.methods.PROJECT_FEE().call();
+    PROJECT_FEE=(PROJECT_FEE/1000)*100;
+
     walletBalance = web3.utils.fromWei(walletBalance, "ether");
     contractBalance = web3.utils.fromWei(contractBalance, "ether");
     balanceInsideContract = web3.utils.fromWei(balanceInsideContract, "ether");
@@ -150,6 +147,7 @@ export default function Home({
         contractBalance: contractBalance,
         walletBalance: walletBalance,
         balanceInsideContract: balanceInsideContract,
+        PROJECT_FEE:PROJECT_FEE
       },
     });
 
@@ -262,12 +260,17 @@ export default function Home({
         color={"white"}
       >
         <Navbar />
+        {state.coinFlip ? (
         <CoinToss
+          coinFlipContractData={state.coinFlipContractData}
           handleChange={handleChange}
           coinFlip={coinFlip}
           allRounds={allRounds}
-        />
-
+          totalRound={state.coinFlip.totalRound}
+          contractBalance={state.coinFlip.contractBalance}
+          PROJECT_FEE={state.coinFlip.PROJECT_FEE}    
+        />) : "No Balance"
+        }
         {isLoading && <Spinner color="red.500" size="xl" />}
         <Flex width={"100%"} mt={"5rem"}>
           <Flex
