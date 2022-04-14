@@ -31,7 +31,7 @@ export default function handler(req, res) {
       console.log(normalBetAmount);
       var contractBalance=_web3.utils.fromWei(response,'ether');
       console.log("contractBalance--------------------");
-      console.log(contractBalance);
+      console.log(contractBalance);    
       //////////////////Daddu Please Check/////////
       //if((req.body._betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
       if( contractBalance < 1000 || contractBalance < normalBetAmount)

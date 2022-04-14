@@ -7,10 +7,9 @@ const RightColumn = ({ allRounds }) => {
   }
 
   return (
-    <Flex w="20%" direction={"column"} gap="0.5rem">
+    <Flex w="25%" direction={"column"} gap="0.5rem">
       <Flex pb="1.5rem">
         <Text fontSize="md" fontWeight={"bold"} color={"#FFFFFF"}>
-          {" "}
           Latest results
         </Text>
       </Flex>
@@ -23,19 +22,10 @@ const RightColumn = ({ allRounds }) => {
               .reverse()
               .map((round, i) => (
                 <>
-                  <Flex
-                    _hover={{ transform: "scale(1.1)",  cursor:"pointer" }}
-                    transition={"all .3s"}
-                    onClick={() => openLink(round.txnHash)}
-                    justifyContent={"space-between"}
-                    pb="1.5rem"
-                    key={i}
-                  >
+                  <Flex _hover={{ transform: "scale(1.1)", cursor: "pointer" }} transition={"all .3s"} onClick={() => openLink(round.txnHash)} justifyContent={"space-between"} alignItems={"center"} py={"1rem"} key={i}>
                     <Flex alignItems={"center"} justifyContent={"center"}>
                       <Text fontSize="xs" color={"#FFFFFF"} fontWeight="bold" textDecoration={"underline"}>
-                        {round.player2Address.substring(0, 4) +
-                          " ... " +
-                          round.player2Address.slice(-3)}
+                        {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}
                       </Text>
                     </Flex>
 
@@ -43,26 +33,8 @@ const RightColumn = ({ allRounds }) => {
                       <Text fontSize="xs" color={"rgba(255, 255, 255, 0.6)"}>
                         {round.player2BetAmount} MGT
                       </Text>
-                      <Image
-                        width="34px"
-                        height="34px"
-                        src={
-                          round.player2BetChoice === "Heads"
-                            ? "/Heads.png"
-                            : "/Tails.png"
-                        }
-                        alt="Tails"
-                      />
-                      <Image
-                        width="16px"
-                        height="16px"
-                        src={
-                          round.player2BetChoice !== round.winningPosition
-                            ? "/cross.png"
-                            : "/right.png"
-                        }
-                        alt="right"
-                      />
+                      <Image width="34px" height="34px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt="Tails" />
+                      <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
                     </Flex>
                   </Flex>
                   <Divider w="100%" />

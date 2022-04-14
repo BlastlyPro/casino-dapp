@@ -1,6 +1,5 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "../styles/globals.css";
-import { MoralisProvider } from "react-moralis";
 
 const theme = extendTheme({
   colors: {
@@ -18,11 +17,9 @@ const theme = extendTheme({
 
 function MyApp({ Component, pageProps }) {
   return (
-    <MoralisProvider serverUrl="https://hhxc96acrrh0.usemoralis.com:2053/server" appId="CxJg1cSlT7EFzXHRQgV6aHBNNrifmNg99dyCup4z">
-      <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
-      </ChakraProvider>
-    </MoralisProvider>
+    <ChakraProvider theme={theme}>
+      <Component {...pageProps} />
+    </ChakraProvider>
   );
 }
 

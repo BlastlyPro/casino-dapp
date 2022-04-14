@@ -29,6 +29,44 @@ abstract contract Context {
 
 pragma solidity ^0.8.0;
 
+
+
+library SafeMath {
+    function add(uint256 a, uint256 b) internal pure returns (uint256) {
+        uint256 c = a + b;
+        require(c >= a, "SafeMath: addition overflow");
+
+        return c;
+    }
+
+    function sub(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b <= a, "SafeMath: subtraction overflow");
+        uint256 c = a - b;
+
+        return c;
+    }
+
+    function mul(uint256 a, uint256 b) internal pure returns (uint256) {
+        if (a == 0) {
+            return 0;
+        }
+
+        uint256 c = a * b;
+        require(c / a == b, "SafeMath: multiplication overflow");
+
+        return c;
+    }
+
+    function div(uint256 a, uint256 b) internal pure returns (uint256) {
+        require(b > 0, "SafeMath: division by zero");
+        uint256 c = a / b;
+
+        return c;
+    }
+}
+
+pragma solidity ^0.8.0;
+
 /**
  * @dev Contract module which provides a basic access control mechanism, where
  * there is an account (an owner) that can be granted exclusive access to
@@ -639,6 +677,7 @@ pragma abicoder v2;
 contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
 
     using SafeERC20 for IERC20;
+    using SafeMath for uint256;
     address public player1;
     bytes32 public player1Commitment;
 
@@ -647,70 +686,115 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     address public player2;
     bool public player2Choice;
     uint256 player2Betamount;
-    address mgToken = 0x85EAC5Ac2F758618dFa09bDbe0cf174e7d574D5B;
+    address mgToken = 0x5E0bE16D0604c8011B1950698fb09a402bc8A853;
+    address GAS_FEE_WALLET_ADDRESS=0xA90b645ae458A8B4268deDFcE9219a2249856552;
+    uint256 public constant PERCENTS_DIVIDER = 1000;
+    uint256 public constant PROJECT_FEE = 15;
+    uint256 public houseTotalFee;
     uint256 public expiration = 2**256-1;
 
     event BetPlaced(address indexed sender, bool, uint256 amount);
     event GameMessage(string mesg);
     uint256 public totalRound=0;
+    uint256 public headWins=0;
+    uint256 public tailsWins=0;
     mapping (uint256 => Round) public allRounds;
-    mapping (address => mapping (uint256 => Round)) public eachPlayerRounds;
-    mapping (address => uint256[]) public countOfEachPlayerRound;
+    mapping (address => User) public allUsers;
 
     struct Round {
-        uint256 betAmount;
+        uint256 player2BetAmount;
+        bool player2BetChoice;
         bool winningPosition;
-        bool playerWins;
+        address winnerAddress;
+        address player2Address;
+        string txnHash;
     }    
-
-    function CoinFlip(bytes32 commitment) public  {
-        player1 = msg.sender;
-        player1Commitment = commitment;
+    struct User {
+        uint256 bonus;
     }
+    // function CoinFlip(bytes32 commitment) public  {
+    //     player1 = msg.sender;
+    //     player1Commitment = commitment;
+    // }
 
-    function cancel() public {
-        require(msg.sender == player1);
-        //require(player2 == null);
+    // function cancel() public {
+    //     require(msg.sender == player1);
+    //     //require(player2 == null);
 
-        betAmount = 0;
-        //msg.sender.transfer(address(this).balance);
-    }
+    //     betAmount = 0;
+    //     //msg.sender.transfer(address(this).balance);
+    // }
 
-    function takeBet(IERC20 token, bool choice, uint256 _betAmount) external payable {
+    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external  {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
-        token.safeTransferFrom(msg.sender,address(this),_betAmount);
-        player2 = msg.sender;
-        player2Choice = choice;
-        // player2Betamount= msg.value;
-        player2Betamount= _betAmount;
+        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+        
+        player1Commitment=commitment;
+        player1 = address(this);
+        //IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
         totalRound++;
-        Round memory r;
-        r.betAmount=_betAmount;
-        r.winningPosition=choice;
-        allRounds[totalRound]=r;
-        eachPlayerRounds[msg.sender][totalRound]=r;
-        countOfEachPlayerRound[msg.sender].push(totalRound);
+        Round storage r=allRounds[totalRound];
+        r.player2BetAmount=_betAmount;
+        r.player2Address=_player2Address;
+        r.player2BetChoice=choice;
+        r.winningPosition=_secretchoice;
+        r.winnerAddress=address(this);
+        r.txnHash=_txnHash;
         expiration = block.timestamp + 24 hours;        
-        emit BetPlaced(msg.sender, choice, player2Betamount);
+        emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
+
+        require(keccak256(abi.encodePacked(_secretchoice, nonce))== player1Commitment);
+          
+          
+            if (r.player2BetChoice == _secretchoice) {
+                r.winningPosition=r.player2BetChoice;
+                r.winnerAddress=r.player2Address;
+                if(choice==true){
+                    headWins++;
+                }
+                if(choice==false){
+                    tailsWins++;
+                }
+                User storage u=allUsers[r.player2Address];
+                u.bonus=u.bonus.add(r.player2BetAmount.mul(2));
+                emit GameMessage("You win. check your wallet");
+            } else {
+                emit GameMessage("You lost. try again");
+            }
+            allRounds[totalRound]=r;        
+         }
+
+    function claim() external{
+        uint256 fee = allUsers[msg.sender].bonus.mul(PROJECT_FEE).div(PERCENTS_DIVIDER);
+        houseTotalFee= houseTotalFee + fee;
+        uint256 userBonus=allUsers[msg.sender].bonus.sub(fee);
+        // IERC20(mgToken).transfer(msg.sender,allUsers[msg.sender].bonus);
+        IERC20(mgToken).transfer(msg.sender,userBonus);
+        User storage u2=allUsers[msg.sender];
+        u2.bonus=0;
+        allUsers[msg.sender]=u2;
     }
 
     function reveal(bool choice, uint256 nonce) external {
-       // require(player2 != 0);
-        //require(block.timestamp < expiration);
-      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment);        
-      //Round memory r=allRounds[totalRound];
-      Round memory r=eachPlayerRounds[player2][totalRound];
-      r.winningPosition=choice;
-      allRounds[totalRound]=r;
-      eachPlayerRounds[player2][totalRound]=r;
-        if (player2Choice == choice) {
-            // payable(player2).transfer(address(this).balance);
-            IERC20(mgToken).safeTransfer(player2,player2Betamount*2);
+
+      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
+      Round storage r2=allRounds[totalRound];
+        if (r2.player2BetChoice == choice) {
+            r2.winningPosition=r2.player2BetChoice;
+            r2.winnerAddress=r2.player2Address;
+            if(choice==true){
+                headWins++;
+            }
+            if(choice==false){
+                tailsWins++;
+            }
+            IERC20(mgToken).transfer(r2.winnerAddress,r2.player2BetAmount);
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");
         }
+        allRounds[totalRound]=r2;
     }
 
 
