@@ -5,11 +5,11 @@ import LeftColumn from "./LeftColumn";
 import RightColumn from "./RightColumn";
 import Swal from "sweetalert2";
 
-export default function CoinToss({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE }) {
+export default function CoinToss({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
   const [choice, setChoice] = useState(null);
 
   const callCoinFlip = (selectedChoice) => {
-    if (!selectedChoice) {
+    if (selectedChoice==null || selectedChoice==undefined) {
       Swal.fire({
         title: "Please select a side!",
         icon: "error",
@@ -27,7 +27,7 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
     <Text fontSize="sm" fontWeight="bold" color={ "RGBA(255, 255, 255, 0.8)"} pb="2rem"> Try your luck and choose between 2 sides of the coin </Text>
   </Flex>
   <Flex w="100%" justifyContent={ "center"} gap="2">
-    <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} /> {/* flex for midle Start */}
+    <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip}/> {/* flex for midle Start */}
     <Flex w="40%" alignItems="center" justifyContent="center" direction="column">
       <Flex bgColor={ "rgba(86, 146, 250, 0.6)"} w="97%" h="25.437rem" opacity={ ".9"} backdrop-filter="blur(20px)" borderRadius="1rem" direction={ "Column"}>
         <Flex direction={ "Column"} pt="1.5rem">
@@ -66,7 +66,7 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
             <Text _hover={{transform: "scale(1.2)"}} transition={ "all .5s"}> Place Your Bet!</Text>
           </Button>
         </Flex>
-        <Text textAlign="center" fontSize="sm" color={ "white"} p="2rem"> Winning Payout: 1980.00BNB </Text>
+        <Text textAlign="center" fontSize="sm" color={ "white"} p="2rem"> Winning Payout: 2x </Text>
       </Flex>
     </Flex>
     <RightColumn allRounds={allRounds} /> </Flex>

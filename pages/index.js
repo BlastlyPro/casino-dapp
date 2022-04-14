@@ -133,7 +133,8 @@ export default function Home({
     let balanceInsideContract = await coinFlipContract.methods.allUsers(accounts[0]).call();
     let PROJECT_FEE = await coinFlipContract.methods.PROJECT_FEE().call();
     PROJECT_FEE=(PROJECT_FEE/1000)*100;
-
+    let houseTotalFee = await coinFlipContract.methods.houseTotalFee().call();
+    houseTotalFee=web3.utils.fromWei(houseTotalFee, "ether");
     walletBalance = web3.utils.fromWei(walletBalance, "ether");
     contractBalance = web3.utils.fromWei(contractBalance, "ether");
     balanceInsideContract = web3.utils.fromWei(balanceInsideContract, "ether");
@@ -149,7 +150,8 @@ export default function Home({
         contractBalance: contractBalance,
         walletBalance: walletBalance,
         balanceInsideContract: balanceInsideContract,
-        PROJECT_FEE:PROJECT_FEE
+        PROJECT_FEE:PROJECT_FEE,
+        houseTotalFee:houseTotalFee
       },
     });
 
@@ -243,8 +245,8 @@ export default function Home({
       <Box width={ "100vw"} height={ "100vh"} className="lightning" position={ "absolute"}></Box>
       <Flex width={ "100"} height={ "100%"} alignItems={ "center"} gap={ "5"} direction={ "column"} color={ "white"}>
         <Navbar /> {state.coinFlip ? (
-        <CoinToss coinFlipContractData={state.coinFlipContractData} handleChange={handleChange} coinFlip={coinFlip} allRounds={allRounds} totalRound={state.coinFlip.totalRound} contractBalance={state.coinFlip.contractBalance} PROJECT_FEE={state.coinFlip.PROJECT_FEE} _coinFlip={state.coinFlip} />) : "No Balance" }
-        {isLoading && <Spinner color="red.500" size="xl" />}
+        <CoinToss coinFlipContractData={state.coinFlipContractData} handleChange={handleChange} coinFlip={coinFlip} allRounds={allRounds} totalRound={state.coinFlip.totalRound} contractBalance={state.coinFlip.contractBalance} PROJECT_FEE={state.coinFlip.PROJECT_FEE} _coinFlip={state.coinFlip} />) : "No Balance" } {isLoading &&
+        <Spinner color="red.500" size="xl" />}
         <Flex width={ "100%"} mt={ "5rem"}>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}>
             <Text> Connected Account:{" "} {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
