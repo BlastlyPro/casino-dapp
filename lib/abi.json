@@ -34,13 +34,6 @@
     "type": "function"
   },
   {
-    "inputs": [],
-    "name": "claimTimeout",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
     "anonymous": false,
     "inputs": [
       {
@@ -95,24 +88,6 @@
   {
     "inputs": [
       {
-        "internalType": "bool",
-        "name": "choice",
-        "type": "bool"
-      },
-      {
-        "internalType": "uint256",
-        "name": "nonce",
-        "type": "uint256"
-      }
-    ],
-    "name": "reveal",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
         "internalType": "address",
         "name": "_player2Address",
         "type": "address"
@@ -154,37 +129,8 @@
     "type": "function"
   },
   {
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "to",
-        "type": "address"
-      }
-    ],
+    "inputs": [],
     "name": "transferERC20",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "contract IERC20",
-        "name": "token",
-        "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "_betAmount",
-        "type": "uint256"
-      }
-    ],
-    "name": "transferERC20ToCoinFlip",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"

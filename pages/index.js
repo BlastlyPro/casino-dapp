@@ -131,7 +131,8 @@ export default function Home({
     let balanceInsideContract = await coinFlipContract.methods.allUsers(accounts[0]).call();
     let PROJECT_FEE = await coinFlipContract.methods.PROJECT_FEE().call();
     PROJECT_FEE=(PROJECT_FEE/1000)*100;
-
+    let houseTotalFee = await coinFlipContract.methods.houseTotalFee().call();
+    houseTotalFee=web3.utils.fromWei(houseTotalFee, "ether");
     walletBalance = web3.utils.fromWei(walletBalance, "ether");
     contractBalance = web3.utils.fromWei(contractBalance, "ether");
     balanceInsideContract = web3.utils.fromWei(balanceInsideContract, "ether");
@@ -147,7 +148,8 @@ export default function Home({
         contractBalance: contractBalance,
         walletBalance: walletBalance,
         balanceInsideContract: balanceInsideContract,
-        PROJECT_FEE:PROJECT_FEE
+        PROJECT_FEE:PROJECT_FEE,
+        houseTotalFee:houseTotalFee
       },
     });
 
@@ -268,7 +270,8 @@ export default function Home({
           allRounds={allRounds}
           totalRound={state.coinFlip.totalRound}
           contractBalance={state.coinFlip.contractBalance}
-          PROJECT_FEE={state.coinFlip.PROJECT_FEE}    
+          PROJECT_FEE={state.coinFlip.PROJECT_FEE}
+          _coinFlip={state.coinFlip}    
         />) : "No Balance"
         }
         {isLoading && <Spinner color="red.500" size="xl" />}

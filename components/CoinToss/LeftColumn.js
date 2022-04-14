@@ -15,9 +15,10 @@ import {
 import Image from "next/image";
 import { FiShoppingCart } from "react-icons/fi";
 
-const LeftColumn = ({coinFlipContractData, totalRound, contractBalance, PROJECT_FEE}) => {
+const LeftColumn = ({coinFlipContractData, totalRound, contractBalance, PROJECT_FEE, _coinFlip}) => {
 
   console.log(contractBalance);
+
   return (
     <Flex pt="1rem" w="20%" direction={ "column"}> {/* mother flex for total bet and symbol start */}
       <Flex direction="column" w="100%">
@@ -47,6 +48,8 @@ const LeftColumn = ({coinFlipContractData, totalRound, contractBalance, PROJECT_
           <Flex direction={ "column"}>
             <Text fontSize="xs" color={ "rgba(255, 255, 255, 0.6)"}> House Edge </Text>
             <Text fontSize="sm" color={ "FFFFFF"}> {PROJECT_FEE}% </Text>
+            <Text fontSize="xs" color={ "rgba(255, 255, 255, 0.6)"}> House Fee Collected </Text>
+            <Text fontSize="sm" color={ "FFFFFF"}> {_coinFlip.houseTotalFee} MGT</Text>            
           </Flex>
         </Flex>
       </Flex> {/* mother flex for house edge and symbol end */}
