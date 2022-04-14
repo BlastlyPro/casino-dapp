@@ -1,12 +1,4 @@
-import {
-  Box,
-  Flex,
-  Text,
-  Button,
-  Spinner,
-  InputGroup,
-  Input,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Spinner, InputGroup, Input } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3 from "web3";
@@ -20,11 +12,7 @@ import CoinToss from "../components/CoinToss/CoinToss";
 import HowItWorks from "../components/HowItWorks";
 import History from "../components/History";
 
-export default function Home({
-  COINFLIP_CONTRACT_ADDRESS,
-  TOKEN_CONTRACT_ADDRESS,
-  NETWORK_ID,
-}) {
+export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NETWORK_ID }) {
   const [isLoading, setIsLoading] = useState(false);
   const [state, setState] = useState({
     account: {},
@@ -90,9 +78,7 @@ export default function Home({
       setIsLoading(false);
     } else {
       setIsLoading(false);
-      window.alert(
-        "Non-Ethereum browser detected. You should consider trying MetaMask!"
-      );
+      window.alert("Non-Ethereum browser detected. You should consider trying MetaMask!");
     }
   };
 
@@ -104,23 +90,15 @@ export default function Home({
     const tokenContractAbi = Mgtoken.abi;
     const accounts = await web3.eth.getAccounts();
     const coinFlipContract = new web3.eth.Contract(abi, coinFlipaddress);
-    const tokenContract = new web3.eth.Contract(
-      tokenContractAbi,
-      tokenContractAddres
-    );
+    const tokenContract = new web3.eth.Contract(tokenContractAbi, tokenContractAddres);
     let totalRound = await coinFlipContract.methods.totalRound().call();
     let _allRounds = [];
 
     for (var i = 1; i <= totalRound; i++) {
       var roundObj = await coinFlipContract.methods.allRounds(i).call();
-      roundObj.player2BetAmount = web3.utils.fromWei(
-        roundObj.player2BetAmount,
-        "ether"
-      );
-      roundObj.player2BetChoice =
-        roundObj.player2BetChoice == true ? "Heads" : "Tails";
-      roundObj.winningPosition =
-        roundObj.winningPosition == true ? "Heads" : "Tails";
+      roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+      roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
       _allRounds.push(roundObj);
     }
     setAllRounds(_allRounds);
@@ -132,9 +110,9 @@ export default function Home({
     let walletBalance = await tokenContract.methods.balanceOf(accounts[0]).call();
     let balanceInsideContract = await coinFlipContract.methods.allUsers(accounts[0]).call();
     let PROJECT_FEE = await coinFlipContract.methods.PROJECT_FEE().call();
-    PROJECT_FEE=(PROJECT_FEE/1000)*100;
+    PROJECT_FEE = (PROJECT_FEE / 1000) * 100;
     let houseTotalFee = await coinFlipContract.methods.houseTotalFee().call();
-    houseTotalFee=web3.utils.fromWei(houseTotalFee, "ether");
+    houseTotalFee = web3.utils.fromWei(houseTotalFee, "ether");
     walletBalance = web3.utils.fromWei(walletBalance, "ether");
     contractBalance = web3.utils.fromWei(contractBalance, "ether");
     balanceInsideContract = web3.utils.fromWei(balanceInsideContract, "ether");
@@ -150,8 +128,8 @@ export default function Home({
         contractBalance: contractBalance,
         walletBalance: walletBalance,
         balanceInsideContract: balanceInsideContract,
-        PROJECT_FEE:PROJECT_FEE,
-        houseTotalFee:houseTotalFee
+        PROJECT_FEE: PROJECT_FEE,
+        houseTotalFee: houseTotalFee,
       },
     });
 
@@ -241,19 +219,41 @@ export default function Home({
   // }
 
   return (
-    <Box width={ "100vw"} height={ "100vh"} backgroundImage={ 'url("/images/main-bg.jpg")'} backgroundRepeat={ "no-repeat"} backgroundSize={ "cover"} position={ "relative"}>
-      <Box width={ "100vw"} height={ "100vh"} className="lightning" position={ "absolute"}></Box>
-      <Flex width={ "100"} height={ "100%"} alignItems={ "center"} gap={ "5"} direction={ "column"} color={ "white"}>
-        <Navbar /> {state.coinFlip ? (
-        <CoinToss coinFlipContractData={state.coinFlipContractData} handleChange={handleChange} coinFlip={coinFlip} allRounds={allRounds} totalRound={state.coinFlip.totalRound} contractBalance={state.coinFlip.contractBalance} PROJECT_FEE={state.coinFlip.PROJECT_FEE} _coinFlip={state.coinFlip} />) : "No Balance" } {isLoading &&
-        <Spinner color="red.500" size="xl" />}
-        <Flex width={ "100%"} mt={ "5rem"}>
+    <Box width={"100vw"} height={"100vh"} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
+      <Box width={"100vw"} height={"100vh"} className="lightning" position={"absolute"}></Box>
+      <Flex width={"100%"} height={"100%"} alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
+        <Navbar />
+
+        {isLoading && <Spinner color="red.500" size="xl" />}
+
+        {state.coinFlip ? (
+          <CoinToss
+            coinFlipContractData={state.coinFlipContractData}
+            handleChange={handleChange}
+            coinFlip={coinFlip}
+            allRounds={allRounds}
+            totalRound={state.coinFlip.totalRound}
+            contractBalance={state.coinFlip.contractBalance}
+            PROJECT_FEE={state.coinFlip.PROJECT_FEE}
+            _coinFlip={state.coinFlip}
+          />
+        ) : (
+          "No Balance"
+        )}
+
+        <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
+          <History allRounds={allRounds} />
+          <HowItWorks />
+          <Footer />
+        </Box>
+
+        {/* <Flex width={ "100%"} mt={ "5rem"}>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}>
-            <Text> Connected Account:{" "} {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
+            <Text> Connected Account: {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
             <>
-              <Text fontWeight={ "bold"}> Total Contract Balance:{" "} {Number(state.coinFlip.contractBalance).toFixed(5)} </Text>
-              <Text fontWeight={ "bold"}> Wallet Balance:{" "} {Number(state.coinFlip.walletBalance).toFixed(5)} </Text>
-              <Text fontWeight={ "bold"}> Balance Inside Contract:{" "} {Number(state.coinFlip.balanceInsideContract).toFixed(2)}{" "}
+              <Text fontWeight={ "bold"} color="blackAlpha.400"> Total Contract Balance: {Number(state.coinFlip.contractBalance).toFixed(5)} </Text>
+              <Text fontWeight={ "bold"} color="blackAlpha.400"> Wallet Balance: {Number(state.coinFlip.walletBalance).toFixed(5)} </Text>
+              <Text fontWeight={ "bold"} color="blackAlpha.400"> Balance Inside Contract: {Number(state.coinFlip.balanceInsideContract).toFixed(2)}
                 <Button bgColor={ "yellow.400"} onClick={()=> claimBonus()}> Claim Bonus </Button>
               </Text>
               <Text>Total Round: {state.coinFlip.totalRound}</Text>
@@ -261,19 +261,18 @@ export default function Home({
               <Text>No Contract Balance</Text> )} 
           </Flex>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}></Flex>
-        </Flex>
-        <Flex direction={ "column"} mt={ "3rem"}>
+        </Flex> */}
+        {/* <Flex direction={ "column"} mt={ "3rem"}>
           <Text fontSize={ "2xl"}>Transaction History</Text> {state.coinFlip ?
-          <TransactionTable allRounds={allRounds} /> : null} </Flex>
-        <Footer /> 
+          <TransactionTable allRounds={allRounds} /> : null}
+        </Flex> */}
       </Flex>
     </Box>
   );
 }
 
 export const getServerSideProps = async () => {
-  const COINFLIP_CONTRACT_ADDRESS =
-    process.env.COINFLIP_CONTRACT_ADDRESS || null;
+  const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS || null;
   const TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS || null;
   const NODE_PRODIVER_URL = process.env.NODE_PRODIVER_URL || null;
   const SITENAME = process.env.SITENAME || null;

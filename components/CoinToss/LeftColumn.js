@@ -20,7 +20,7 @@ const LeftColumn = ({coinFlipContractData, totalRound, contractBalance, PROJECT_
   console.log(contractBalance);
 
   return (
-    <Flex pt="1rem" w="20%" direction={ "column"}> {/* mother flex for total bet and symbol start */}
+    <Flex pt="1rem" w="25%" direction={ "column"}> {/* mother flex for total bet and symbol start */}
       <Flex direction="column" w="100%">
         <Flex gap="1rem" pb="2rem">
           <Flex alignItems={ "center"} justifyContent={ "center"}>
