@@ -687,6 +687,10 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     bool public player2Choice;
     uint256 player2Betamount;
     address mgToken = 0x5E0bE16D0604c8011B1950698fb09a402bc8A853;
+    address GAS_FEE_WALLET_ADDRESS=0xA90b645ae458A8B4268deDFcE9219a2249856552;
+    uint256 public constant PERCENTS_DIVIDER = 1000;
+    uint256 public constant PROJECT_FEE = 15;
+    uint256 public houseTotalFee;
     uint256 public expiration = 2**256-1;
 
     event BetPlaced(address indexed sender, bool, uint256 amount);
@@ -708,22 +712,12 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
     struct User {
         uint256 bonus;
     }
-    function CoinFlip(bytes32 commitment) public  {
-        player1 = msg.sender;
-        player1Commitment = commitment;
-    }
-
-    function cancel() public {
-        require(msg.sender == player1);
-        //require(player2 == null);
-
-        betAmount = 0;
-        //msg.sender.transfer(address(this).balance);
-    }
 
     function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external  {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
+        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+        
         player1Commitment=commitment;
         player1 = address(this);
         //IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
@@ -739,17 +733,16 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
         emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
 
         require(keccak256(abi.encodePacked(_secretchoice, nonce))== player1Commitment);
-          
-          
+
+            if(r.winningPosition==true){
+                headWins++;
+            }
+            if(r.winningPosition==false){
+                tailsWins++;
+            }          
             if (r.player2BetChoice == _secretchoice) {
                 r.winningPosition=r.player2BetChoice;
                 r.winnerAddress=r.player2Address;
-                if(choice==true){
-                    headWins++;
-                }
-                if(choice==false){
-                    tailsWins++;
-                }
                 User storage u=allUsers[r.player2Address];
                 u.bonus=u.bonus.add(r.player2BetAmount.mul(2));
                 emit GameMessage("You win. check your wallet");
@@ -760,52 +753,27 @@ contract CoinFlipPrediction is Ownable, Pausable, ReentrancyGuard {
          }
 
     function claim() external{
-        IERC20(mgToken).transfer(msg.sender,allUsers[msg.sender].bonus);
+        uint256 fee = allUsers[msg.sender].bonus.mul(PROJECT_FEE).div(PERCENTS_DIVIDER);
+        houseTotalFee= houseTotalFee + fee;
+        uint256 userBonus=allUsers[msg.sender].bonus.sub(fee);
+        // IERC20(mgToken).transfer(msg.sender,allUsers[msg.sender].bonus);
+        IERC20(mgToken).transfer(msg.sender,userBonus);
         User storage u2=allUsers[msg.sender];
         u2.bonus=0;
         allUsers[msg.sender]=u2;
     }
 
-    function reveal(bool choice, uint256 nonce) external {
-
-      require(keccak256(abi.encodePacked(choice, nonce))== player1Commitment); 
-      Round storage r2=allRounds[totalRound];
-        if (r2.player2BetChoice == choice) {
-            r2.winningPosition=r2.player2BetChoice;
-            r2.winnerAddress=r2.player2Address;
-            if(choice==true){
-                headWins++;
-            }
-            if(choice==false){
-                tailsWins++;
-            }
-            IERC20(mgToken).transfer(r2.winnerAddress,r2.player2BetAmount);
-            emit GameMessage("You win. check your wallet");
-        } else {
-            emit GameMessage("You lost. try again");
-        }
-        allRounds[totalRound]=r2;
-    }
 
 
     function getBalance(IERC20 tokenAddress) external view returns (uint256){
           return tokenAddress.balanceOf(address(this));
     }
 
-    function claimTimeout() public {
-        require(block.timestamp >= expiration);
-        payable(player2).transfer(address(this).balance);
-    }
 
-
-    function transferERC20ToCoinFlip(IERC20 token, uint256 _betAmount) public  {                      
-        token.safeTransferFrom(msg.sender,address(this),_betAmount);        
-    } 
-
-    function transferERC20(IERC20 token, address to) public onlyOwner {
+    function transferERC20() public onlyOwner {
         
-        uint256 erc20balance = token.balanceOf(address(this));
-        token.transfer(to, erc20balance);
+        uint256 erc20balance = IERC20(mgToken).balanceOf(address(this));
+        IERC20(mgToken).transfer(msg.sender,erc20balance);
         
     }     
 }
