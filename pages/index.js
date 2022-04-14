@@ -239,96 +239,31 @@ export default function Home({
   // }
 
   return (
-    <Box
-      width={"100vw"}
-      height={"100vh"}
-      backgroundImage={'url("/images/main-bg.jpg")'}
-      backgroundRepeat={"no-repeat"}
-      backgroundSize={"cover"}
-      position={"relative"}
-    >
-      <Box
-        width={"100vw"}
-        height={"100vh"}
-        className="lightning"
-        position={"absolute"}
-      ></Box>
-      <Flex
-        width={"100"}
-        height={"100%"}
-        alignItems={"center"}
-        gap={"5"}
-        direction={"column"}
-        color={"white"}
-      >
-        <Navbar />
-        {state.coinFlip ? (
-        <CoinToss
-          coinFlipContractData={state.coinFlipContractData}
-          handleChange={handleChange}
-          coinFlip={coinFlip}
-          allRounds={allRounds}
-          totalRound={state.coinFlip.totalRound}
-          contractBalance={state.coinFlip.contractBalance}
-          PROJECT_FEE={state.coinFlip.PROJECT_FEE}
-          _coinFlip={state.coinFlip}    
-        />) : "No Balance"
-        }
-        {isLoading && <Spinner color="red.500" size="xl" />}
-        <Flex width={"100%"} mt={"5rem"}>
-          <Flex
-            width={"50%"}
-            direction={"column"}
-            justifyContent="center"
-            alignItems={"center"}
-            gap={"5"}
-          >
-            <Text>
-              Connected Account:{" "}
-              {state.account.accounts &&
-                String(state.account.accounts).substring(0, 5) +
-                  " ... " +
-                  String(state.account.accounts).slice(-4)}
-            </Text>
-
-            {state.coinFlip ? (
-              <>
-                <Text fontWeight={"bold"}>
-                  Total Contract Balance:{" "}
-                  {Number(state.coinFlip.contractBalance).toFixed(5)}
-                </Text>
-                <Text fontWeight={"bold"}>
-                  Wallet Balance:{" "}
-                  {Number(state.coinFlip.walletBalance).toFixed(5)}
-                </Text>
-                <Text fontWeight={"bold"}>
-                  Balance Inside Contract:{" "}
-                  {Number(state.coinFlip.balanceInsideContract).toFixed(2)}{" "}
-                  <Button bgColor={"yellow.400"} onClick={() => claimBonus()}>
-                    Claim Bonus
-                  </Button>
-                </Text>
-                <Text>Total Round: {state.coinFlip.totalRound}</Text>
-              </>
-            ) : (
-              <Text>No Contract Balance</Text>
-            )}
+    <Box width={ "100vw"} height={ "100vh"} backgroundImage={ 'url("/images/main-bg.jpg")'} backgroundRepeat={ "no-repeat"} backgroundSize={ "cover"} position={ "relative"}>
+      <Box width={ "100vw"} height={ "100vh"} className="lightning" position={ "absolute"}></Box>
+      <Flex width={ "100"} height={ "100%"} alignItems={ "center"} gap={ "5"} direction={ "column"} color={ "white"}>
+        <Navbar /> {state.coinFlip ? (
+        <CoinToss coinFlipContractData={state.coinFlipContractData} handleChange={handleChange} coinFlip={coinFlip} allRounds={allRounds} totalRound={state.coinFlip.totalRound} contractBalance={state.coinFlip.contractBalance} PROJECT_FEE={state.coinFlip.PROJECT_FEE} _coinFlip={state.coinFlip} />) : "No Balance" } {isLoading &&
+        <Spinner color="red.500" size="xl" />}
+        <Flex width={ "100%"} mt={ "5rem"}>
+          <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}>
+            <Text> Connected Account:{" "} {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
+            <>
+              <Text fontWeight={ "bold"}> Total Contract Balance:{" "} {Number(state.coinFlip.contractBalance).toFixed(5)} </Text>
+              <Text fontWeight={ "bold"}> Wallet Balance:{" "} {Number(state.coinFlip.walletBalance).toFixed(5)} </Text>
+              <Text fontWeight={ "bold"}> Balance Inside Contract:{" "} {Number(state.coinFlip.balanceInsideContract).toFixed(2)}{" "}
+                <Button bgColor={ "yellow.400"} onClick={()=> claimBonus()}> Claim Bonus </Button>
+              </Text>
+              <Text>Total Round: {state.coinFlip.totalRound}</Text>
+              </> ) : (
+              <Text>No Contract Balance</Text> )} 
           </Flex>
-
-          <Flex
-            width={"50%"}
-            direction={"column"}
-            justifyContent="center"
-            alignItems={"center"}
-            gap={"5"}
-          ></Flex>
+          <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}></Flex>
         </Flex>
-        <Flex direction={"column"} mt={"3rem"}>
-          <Text fontSize={"2xl"}>Transaction History</Text>
-          {state.coinFlip ? <TransactionTable allRounds={allRounds} /> : null}
-        </Flex>
-
-        <Footer />
+        <Flex direction={ "column"} mt={ "3rem"}>
+          <Text fontSize={ "2xl"}>Transaction History</Text> {state.coinFlip ?
+          <TransactionTable allRounds={allRounds} /> : null} </Flex>
+        <Footer /> 
       </Flex>
     </Box>
   );
