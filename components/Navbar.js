@@ -11,7 +11,7 @@ export default function Navbar() {
   return (
     <>
       <Flex w="85%" pt={"2"}>
-        <SimpleGrid columns={[3, 3, 3, 3, 3]} spacing={["3rem", "4rem", "8rem", "7rem", "6rem"]}>
+        <SimpleGrid columns={[3, 3, 3, 3, 3]} spacing={["3rem", "8rem", "14rem", "9rem", "6rem"]}>
           
           {/* flex for company start */}
           <Flex alignItems="center" justifyContent="start">
@@ -69,7 +69,7 @@ export default function Navbar() {
 
           {/* flex for wallet start */}
 
-          <Flex alignItems="center" justifyContent="end">
+          <Flex alignItems="center" justifyContent="end" display={{ base: "none", md: "inline-flex" }}>
             <Text
               bgColor="#BBD3FD"
               borderRadius="1rem"
@@ -84,10 +84,34 @@ export default function Navbar() {
         </SimpleGrid>
 
         <Box display={{ base: "inline-flex", md: "none" }}>
-          <IconButton display={{ base: "flex", md: "none" }} aria-label="Open menu" fontSize="20px" color={useColorModeValue("gray.800", "inherit")} variant="ghost" icon={<AiOutlineMenu />} onClick={mobileNav.onOpen} />
+          <IconButton
+            display={{ base: "flex", md: "none" }}
+            aria-label="Open menu"
+            fontSize="20px"
+            color={"#F2F4F7"}
+            variant="ghost"
+            icon={<AiOutlineMenu />}
+            onClick={mobileNav.onOpen}
+          />
 
-          <VStack pos="absolute" top={0} left={0} right={0} display={mobileNav.isOpen ? "flex" : "none"} flexDirection="column" p={2} pb={4} m={2} bg={bg} spacing={3} rounded="sm" shadow="sm">
-            <CloseButton aria-label="Close menu" onClick={mobileNav.onClose} />
+          <VStack
+            pos="absolute"
+            top={0}
+            left={0}
+            right={0}
+            display={mobileNav.isOpen ? "flex" : "none"}
+            flexDirection="column"
+            p={2}
+            pb={4}
+            m={2}
+            bg={bg}
+            spacing={3}
+            rounded="sm"
+            shadow="sm"
+          >
+            <CloseButton color="black" aria-label="Close menu" onClick={mobileNav.onClose} />
+
+            
 
             <Link href="">
               <Button fontSize="xs" variant="link" color="gray.500">
@@ -128,6 +152,18 @@ export default function Navbar() {
                 About
               </Button>
             </Link>
+            <Flex >
+            <Text
+              bgColor="#BBD3FD"
+              borderRadius="1rem"
+              p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]}
+              fontSize="xs"
+              color="#102542"
+            >
+              Connect Your wallet
+            </Text>
+          </Flex>
+            
           </VStack>
         </Box>
       </Flex>

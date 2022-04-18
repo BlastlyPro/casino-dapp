@@ -8,16 +8,16 @@ export default function Footer() {
   return (
     /* mother flex for all start */
     <Flex w="100%" bgColor="#BBD3FD33" fill={"rgba(187, 211, 253, 0.2)"} alignItems="center" justifyContent="center">
-      <SimpleGrid width={"85%"} columns={[4, 4, 4, 4, 4]} spacing={["3rem", "4rem", "5rem", "5rem", "6rem"]} py={".8rem"}>
+      <SimpleGrid width={"85%"} columns={[1, 1, 4, 4, 4]} spacing={["2rem", "2rem", "5rem", "5rem", "6rem"]} py={".8rem"}>
         {/* flex for company start */}
 
-        <Flex alignItems="center" justifyContent="start">
+        <Flex alignItems="center" justifyContent={["center", "center", "center", "center", "start"]}>
           <Image width="80.84px" height="42px" src="/Logo.png" alt="Logo" />
         </Flex>
         {/* flex for company end */}
 
         {/* flex for buttons start */}
-        <Flex gap="1rem" alignItems="center">
+        <Flex gap="1rem"  alignItems="center" justifyContent="center">
           <Link href="">
             <Button fontSize="xs" variant="link" color="gray.400">
               Terms
@@ -38,7 +38,7 @@ export default function Footer() {
 
         {/* flex for rights start  */}
 
-        <Flex alignItems="center">
+        <Flex  alignItems="center" justifyContent="center">
           <Text fontSize="xs" color="gray.400">
             ©2022 Company. All Rights Reserved.
           </Text>
