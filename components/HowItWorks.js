@@ -7,7 +7,7 @@ import { AiFillLinkedin } from "react-icons/ai";
 
 export default function HowItWorks() {
   return (
-    /* mother flex for all start */
+    /* mother flex for all start  minWidth={"988px"} */
     <Flex w="100%" height={"40rem"} alignItems={"center"} justifyContent={"center"} backgroundImage={'url("/how.png")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
       {/* mother flex for left potion start */}
       <Flex w={"85%"}>

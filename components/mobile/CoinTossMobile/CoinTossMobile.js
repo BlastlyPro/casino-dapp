@@ -5,7 +5,7 @@ import LeftColumn from "./LeftColumn";
 import RightColumn from "./RightColumn";
 import Swal from "sweetalert2";
 
-export default function CoinToss({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
+export default function CoinTossMobile({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
   const [choice, setChoice] = useState(null);
 
   const callCoinFlip = (selectedChoice) => {
@@ -37,7 +37,7 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
         </Text>
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
-      <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
+     
       
      {/*  {isLargerThan993 ? (
         <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
@@ -86,9 +86,10 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
                 </Text>
               </Flex>
             </Flex>
-            <Flex alignSelf={"center"} direction={["column", "column", "row", "row", "row"]}>
-              <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px" marginLeft={"2.5rem"}>
-                <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
+            <Flex alignSelf={"center"} direction={["column", "column", "column", "row", "row"]}>
+              <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px 30px 0 0">
+                
+              <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                   <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
                   <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000MGT"} onChange={(e) => handleChange(e)} />
                 </Flex>
@@ -97,10 +98,10 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
                 </Flex>
               </Flex>
               <Button
-                left="-2.5rem"
+                
                 alignItems="center"
                 justifyContent={"center"}
-                borderRadius="40px"
+                borderRadius="0 0 30px 30px"
                 w="13.12rem"
                 h="3rem"
                 _hover={{ textDecor: "none" }}
@@ -128,6 +129,8 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
       {/*   {isLessThan993 ? (
           <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
         ) : null */}
+
+        <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
         <RightColumn allRounds={allRounds} />
       </Flex>
       <Flex pt="1rem" alignItems="center" gap="1" justifyContent="center">

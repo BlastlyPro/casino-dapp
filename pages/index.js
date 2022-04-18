@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Spinner, InputGroup, Input } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Spinner, InputGroup, Input,useMediaQuery } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3 from "web3";
@@ -11,6 +11,8 @@ import Footer from "../components/Footer";
 import CoinToss from "../components/CoinToss/CoinToss";
 import HowItWorks from "../components/HowItWorks";
 import History from "../components/History";
+import CoinTossMobile from "../components/mobile/CoinTossMobile/CoinTossMobile";
+import HistoryMobile from "../components/mobile/HistoryMobile";
 
 export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NETWORK_ID }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -218,10 +220,18 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
   //   );
   // }
 
+  const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
+  const [isLessThan993] = useMediaQuery("(max-width: 993px)");
+
+
   return (
-    <Box width={"100vw"} height={"100vh"} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
-      <Box width={"100vw"} height={"100vh"} className="lightning" position={"absolute"}></Box>
-      <Flex width={"100%"} height={"100%"} alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
+
+    <>
+     {/* for desktop------------------------- */}
+     {isLargerThan993 ? (
+      <Box width={"100vw"}  h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
+      <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="lightning" position={"absolute"}></Box>
+      <Flex width={"100%"}     alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
         <Navbar />
 
         {isLoading && <Spinner color="red.500" size="xl" />}
@@ -241,10 +251,65 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
           "No Balance"
         )}
 
-        <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
-          <History allRounds={allRounds} />
+        <Box  w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
+        <History allRounds={allRounds} />
           <HowItWorks />
           <Footer />
+        </Box>
+
+        {/* <Flex minWidth={"1416px"}  width={ "100%"} mt={ "5rem"}>
+          <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}>
+            <Text> Connected Account: {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
+            <>
+              <Text fontWeight={ "bold"} color="blackAlpha.400"> Total Contract Balance: {Number(state.coinFlip.contractBalance).toFixed(5)} </Text>
+              <Text fontWeight={ "bold"} color="blackAlpha.400"> Wallet Balance: {Number(state.coinFlip.walletBalance).toFixed(5)} </Text>
+              <Text fontWeight={ "bold"} color="blackAlpha.400"> Balance Inside Contract: {Number(state.coinFlip.balanceInsideContract).toFixed(2)}
+                <Button bgColor={ "yellow.400"} onClick={()=> claimBonus()}> Claim Bonus </Button>
+              </Text>
+              <Text>Total Round: {state.coinFlip.totalRound}</Text>
+              </> ) : (
+              <Text>No Contract Balance</Text> )} 
+          </Flex>
+          <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}></Flex>
+        </Flex> */}
+        {/* <Flex direction={ "column"} mt={ "3rem"}>
+          <Text fontSize={ "2xl"}>Transaction History</Text> {state.coinFlip ?
+          <TransactionTable allRounds={allRounds} /> : null}
+        </Flex> */}
+      </Flex>
+    </Box>
+    ) : null}
+
+
+
+     {/* for mobile------------------------- */}
+     {isLessThan993 ? (
+        <Box  width={"100vw"}  h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
+      <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="lightning" position={"absolute"}></Box>
+      <Flex width={"100%"}     alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
+        <Navbar />
+
+        {isLoading && <Spinner color="red.500" size="xl" />}
+
+        {state.coinFlip ? (
+          <CoinTossMobile
+            coinFlipContractData={state.coinFlipContractData}
+            handleChange={handleChange}
+            coinFlip={coinFlip}
+            allRounds={allRounds}
+            totalRound={state.coinFlip.totalRound}
+            contractBalance={state.coinFlip.contractBalance}
+            PROJECT_FEE={state.coinFlip.PROJECT_FEE}
+            _coinFlip={state.coinFlip}
+          />
+        ) : (
+          "No Balance"
+        )}
+
+        <Box w="100vw"  backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
+      <HistoryMobile  allRounds={allRounds}/>
+        <HowItWorks/>
+        <Footer />
         </Box>
 
         {/* <Flex width={ "100%"} mt={ "5rem"}>
@@ -268,6 +333,10 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
         </Flex> */}
       </Flex>
     </Box>
+    ) : null}
+    
+
+    </>
   );
 }
 

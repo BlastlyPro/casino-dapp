@@ -1,133 +1,88 @@
+
 import { Flex, Divider, Text, SimpleGrid, Link, Button, Icon, Box } from "@chakra-ui/react";
 import Image from "next/image";
 
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
 
 export default function HowItWorks({ allRounds }) {
-
   function openLink(_txnHash) {
     window.open(`https://testnet.bscscan.com/tx/` + _txnHash);
   }
 
- 
   return (
-    /* mother flex for all start  minWidth={"1416px"} */
-    <Flex  w="85%"  direction={"column"} margin={"0 auto"} >
+    /* mother flex for all start */
+    <Flex w="85%" margin={"0 auto"} direction={"column"}>
       <Text fontSize="2xl" fontWeight="bold" color={"#FFFFFF"} py="2rem">
         History
       </Text>
+
+      <Text pb="1rem" fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
+        Leaderboard
+      </Text>
+
+
+  {/* flex for leader board start */}
+
+  {/* flex for top 3 start */}
+  <Flex  w={["100%", "100%", "94%", "94%", "94%"]} h="24.25rem" direction="column" bgColor="rgba(86, 146, 250, 0.6)" borderRadius={"30px"}    justifyContent="center" >
+   
+  <Flex alignItems={"center"}  justifyContent="center" gap={["2rem", "3rem", "4rem", "1rem", "1rem"]} >
+  <Image width="54px" height="54px" src="/star1.png" alt="star1" />
+  <Image width="100px" height="100px" src="/a1.png" alt="First Rank Profile" />
+
+  <Flex direction={"column"}>
+  <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
+  Joanna Wozny
+</Text>
+<Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
+  Payout: 1 000 000 BNB
+</Text>
+<Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
+  Wins: 999
+</Text>
+  </Flex>
+</Flex>
+  
+  
+  <Flex  alignItems={"center"}  justifyContent="center" gap={["2rem", "3rem", "4rem", "1rem", "1rem"]} pt="1rem" >
+      <Image width="54px" height="54px" src="/star2.png" alt="star2" />
+      <Image width="80px" height="80px" src="/a2.png" alt="Second Rank Profile" />
       
-      {/* mother flex for combined left leader board and right all bets start */}
-      <Flex w="100%">
-        {/* mother flex for left portion start */}
-        <Flex w="40%" direction={"column"}>
-          <Text pb="1rem" fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-            Leaderboard
-          </Text>
-          {/* flex for leader board start */}
-          <Flex w="30.5rem" h="33.1875rem" direction="column" bgColor="rgba(86, 146, 250, 0.6)" borderRadius={"30px"}>
-            {/* flex for top 3 start */}
-            <Flex w="100%" alignSelf={"center"} pt="2rem" px="0.5rem">
-              <Flex w="30%" alignItems={"center"} direction="column" justifyContent="center" pt="7rem">
-                <Image width="44px" height="44px" src="/star2.png" alt="star2" />
-                <Image width="100px" height="100px" src="/a2.png" alt="Second Rank Profile" />
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  Mark Mitter
-                </Text>
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Payout: 999 000 BNB
-                </Text>
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Wins: 121
-                </Text>
-              </Flex>
+     <Flex direction={"column"}>
+     <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
+        Mark Mitter
+      </Text>
+     <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
+     Payout: 999 000 BNB
+   </Text>
+   <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
+     Wins: 121
+   </Text>
+     </Flex>
+    </Flex>
 
-              <Flex alignItems={"center"} direction="column" justifyContent="center" w="40%">
-                <Image width="72px" height="72px" src="/star1.png" alt="star1" />
-                <Image width="140px" height="140px" src="/a1.png" alt="First Rank Profile" />
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  Joanna Wozny
-                </Text>
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Payout: 1 000 000 BNB
-                </Text>
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Wins: 999
-                </Text>
-              </Flex>
+    <Flex alignItems={"center"}  justifyContent="center" gap={["2rem", "3rem", "4rem", "1rem", "1rem"]} pt="1rem" >
+      <Image width="54px" height="54px" src="/star3.png" alt="star3" />
+      <Image width="80px" height="80px" src="/a3.png" alt="Third Rank Profile" />
+      <Flex direction={"column"}>
+      <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
+        Joan Telly...
+      </Text>
+      <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
+        Payout: 998 000 BNB
+      </Text>
+      <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
+        Wins: 511
+      </Text>
+      
+      </Flex>
+    </Flex>
+  </Flex>
+  {/* flex for top 3 end */}
 
-              <Flex w="30%" alignItems={"center"} direction="column" justifyContent="center" pt="7rem">
-                <Image width="44px" height="44px" src="/star3.png" alt="star3" />
-                <Image width="100px" height="100px" src="/a3.png" alt="Third Rank Profile" />
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  Joan Telly...
-                </Text>
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Payout: 998 000 BNB
-                </Text>
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Wins: 511
-                </Text>
-              </Flex>
-            </Flex>
-            {/* flex for top 3 end */}
 
-            <Divider pt="1rem" w="82%" alignSelf={"center"} />
 
-            <Flex w="100%" px="2.5rem" pt="1rem">
-              <Flex w="40%" alignItems={"center"} justifyContent={"space-between"}>
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  4
-                </Text>
-                <Image width="40px" height="40px" src="/a4.png" alt="Fourth Rank Profile" />
-
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  Dean Hender
-                </Text>
-              </Flex>
-              <Flex w="30%" alignItems={"center"} justifyContent={"center"}>
-                <Text fontSize="sm" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  997 000 BNB
-                </Text>
-              </Flex>
-              <Flex w="30%" alignItems={"center"} justifyContent={"center"}>
-                <Text fontSize="sm" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Wins: 878
-                </Text>
-              </Flex>
-            </Flex>
-
-            <Divider pt="1rem" w="82%" alignSelf={"center"} />
-
-            <Flex w="100%" px="2.5rem" pt="1rem">
-              <Flex w="40%" alignItems={"center"} justifyContent={"space-between"}>
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  5
-                </Text>
-                <Image width="40px" height="40px" src="/a5.png" alt="Fifth Rank Profile" />
-
-                <Text fontSize="sm" fontWeight="bold" color={"#FFFFFF"}>
-                  Tommy Xavi
-                </Text>
-              </Flex>
-              <Flex w="30%" alignItems={"center"} justifyContent={"center"}>
-                <Text fontSize="sm" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  996 000 BNB
-                </Text>
-              </Flex>
-              <Flex w="30%" alignItems={"center"} justifyContent={"center"}>
-                <Text fontSize="sm" fontWeight="bold" color={"rgba(255, 255, 255, 0.6)"}>
-                  Wins: 21
-                </Text>
-              </Flex>
-            </Flex>
-          </Flex>
-          {/* flex for  leader board end */}
-        </Flex>
-        {/* mother flex for left portion end */}
-
-        {/* mother flex for right portion start */}
-        <Flex w="60%" paddingLeft={"1.5rem"} direction={"column"}>
+  <Flex direction={"column"}>
           {/* flex for all bets and my bets start */}
 
           <Flex gap="0.5rem">
@@ -260,12 +215,11 @@ export default function HowItWorks({ allRounds }) {
           </Flex>
           {/* mother flex for table end*/}
 
-         
+          
         </Flex>
-        {/* mother flex for right portion end */}
-      </Flex>
 
-      {/* mother flex for combined left leader board and right all bets end */}
+
+
     </Flex>
     /* mother flex for all end */
   );
