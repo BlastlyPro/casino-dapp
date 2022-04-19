@@ -11,7 +11,7 @@ export default function HowItWorks({ allRounds }) {
 
   return (
     /* mother flex for all start */
-    <Flex w="85%" margin={"0 auto"} direction={"column"}>
+    <Flex w="85%" margin={"0 auto"} direction={"column"} >
       <Text fontSize="2xl" fontWeight="bold" color={"#FFFFFF"} py="2rem">
         History
       </Text>
@@ -85,7 +85,7 @@ export default function HowItWorks({ allRounds }) {
   <Flex direction={"column"}>
           {/* flex for all bets and my bets start */}
 
-          <Flex gap="0.5rem">
+          <Flex gap="0.5rem" pt="2rem" >
             <Text fontSize="md" fontWeight="bold" color={"#BBD3FD"}>
               All bets
             </Text>
@@ -100,7 +100,7 @@ export default function HowItWorks({ allRounds }) {
           {/* flex for all bets and my bets end */}
 
           {/* mother flex for table start*/}
-          <Flex direction={"column"}>
+          <Flex direction={"column"} >
             {/* flex for table heading start */}
             <Flex py="1rem">
               <Flex w="13.125rem" pl="1rem">

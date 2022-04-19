@@ -127,7 +127,7 @@ export default function HowItWorks({ allRounds }) {
         {/* mother flex for left portion end */}
 
         {/* mother flex for right portion start */}
-        <Flex w="60%" paddingLeft={"1.5rem"} direction={"column"}>
+        <Flex  paddingLeft={"1.5rem"} direction={"column"}>
           {/* flex for all bets and my bets start */}
 
           <Flex gap="0.5rem">
