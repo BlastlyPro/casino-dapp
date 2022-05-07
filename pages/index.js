@@ -13,6 +13,7 @@ import HowItWorks from "../components/HowItWorks";
 import History from "../components/History";
 import CoinTossMobile from "../components/mobile/CoinTossMobile/CoinTossMobile";
 import HistoryMobile from "../components/mobile/HistoryMobile";
+import LuckyRange from "../components/LuckyRange/luckyRange";
 
 export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NETWORK_ID }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -237,6 +238,7 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
         {isLoading && <Spinner color="red.500" size="xl" />}
 
         {state.coinFlip ? (
+          <>
           <CoinToss
             coinFlipContractData={state.coinFlipContractData}
             handleChange={handleChange}
@@ -247,13 +249,15 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
             PROJECT_FEE={state.coinFlip.PROJECT_FEE}
             _coinFlip={state.coinFlip}
           />
+          <LuckyRange state={state} handleChange={handleChange} _betAmount={_betAmount}/>
+          </>
         ) : (
           "No Balance"
         )}
 
         <Box  w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
         <History allRounds={allRounds} />
-          <HowItWorks />
+          <HowItWorks />          
           <Footer />
         </Box>
 
