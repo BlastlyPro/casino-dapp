@@ -80,7 +80,7 @@ pragma abicoder v2;
 /**
  * @title CoinFlipPrediction
  */
-contract CoinFlipPrediction is Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
+contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeable, OwnableUpgradeable, ReentrancyGuardUpgradeable {
 
     using SafeERC20Upgradeable for IERC20Upgradeable;
     using SafeMath for uint256;
@@ -104,8 +104,10 @@ contract CoinFlipPrediction is Initializable, ERC20Upgradeable, UUPSUpgradeable,
     uint256 public totalRound;
     uint256 public headWins;
     uint256 public tailsWins;
-    mapping (uint256 => Round) public allRounds;
+    mapping (uint256 => Round) public allRounds;    
     mapping (address => User) public allUsers;
+    mapping (uint256 => Round) public luckyRangeRounds;
+    uint256 public totalLuckyRangeRound;
 
     struct Round {
         uint256 player2BetAmount;
@@ -114,23 +116,13 @@ contract CoinFlipPrediction is Initializable, ERC20Upgradeable, UUPSUpgradeable,
         address winnerAddress;
         address player2Address;
         string txnHash;
+        uint256 luckyRangeBet;
+        uint256 luckyNumber;
     }    
     struct User {
         uint256 bonus;
     }
 
-    function init() initializer public {
-        __Ownable_init();
-        __UUPSUpgradeable_init();
-        mgToken=0x5E0bE16D0604c8011B1950698fb09a402bc8A853;
-        GAS_FEE_WALLET_ADDRESS=0xA90b645ae458A8B4268deDFcE9219a2249856552;      
-        PERCENTS_DIVIDER = 1000;  
-        PROJECT_FEE = 15;
-        expiration = 2**256-1;
-        totalRound=0;
-        headWins=0;
-        tailsWins=0;        
-    }
 
     function _authorizeUpgrade(address) internal override onlyOwner {}    
 
@@ -173,7 +165,27 @@ contract CoinFlipPrediction is Initializable, ERC20Upgradeable, UUPSUpgradeable,
             allRounds[totalRound]=r;        
          }
 
-    function claim() external nonReentrant{
+    function luckyRange(address _player2Address, uint256 _betAmount, uint256 playerBetRange, uint256 luckyNumber, string memory _txnHash, uint256 playerPayout, bool playerFlag, uint256 payoutDivider) external{
+        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+        totalLuckyRangeRound++;
+        Round memory luckyRound=luckyRangeRounds[totalLuckyRangeRound];
+        luckyRound.player2BetAmount=_betAmount;
+        luckyRound.player2Address=_player2Address;
+        luckyRound.luckyRangeBet=playerBetRange;
+        luckyRound.luckyNumber=luckyNumber;
+        luckyRound.txnHash=_txnHash;
+        luckyRangeRounds[totalLuckyRangeRound]=luckyRound;
+        if (playerFlag == true) {
+            User memory luckyPlayer=allUsers[_player2Address];
+            playerPayout=playerPayout.div(payoutDivider);
+            luckyPlayer.bonus=luckyPlayer.bonus.add(luckyRound.player2BetAmount.mul(playerPayout));
+            emit GameMessage("You win. check your wallet");
+        } else {
+            emit GameMessage("You lost. try again");
+        }        
+    }         
+
+    function claim() external{
         uint256 fee = allUsers[msg.sender].bonus.mul(PROJECT_FEE).div(PERCENTS_DIVIDER);
         houseTotalFee= houseTotalFee + fee;
         uint256 userBonus=allUsers[msg.sender].bonus.sub(fee);
@@ -183,8 +195,6 @@ contract CoinFlipPrediction is Initializable, ERC20Upgradeable, UUPSUpgradeable,
         u2.bonus=0;
         allUsers[msg.sender]=u2;
     }
-
-
 
     function getBalance(IERC20Upgradeable tokenAddress) external view returns (uint256){
           return tokenAddress.balanceOf(address(this));
@@ -197,4 +207,6 @@ contract CoinFlipPrediction is Initializable, ERC20Upgradeable, UUPSUpgradeable,
         IERC20Upgradeable(mgToken).transfer(msg.sender,erc20balance);
         
     }     
+
+
 }

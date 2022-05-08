@@ -249,7 +249,7 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
             PROJECT_FEE={state.coinFlip.PROJECT_FEE}
             _coinFlip={state.coinFlip}
           />
-          <LuckyRange state={state} handleChange={handleChange} _betAmount={_betAmount}/>
+          {/* <LuckyRange state={state} handleChange={handleChange} _betAmount={_betAmount}/> */}
           </>
         ) : (
           "No Balance"
