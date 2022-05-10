@@ -17,8 +17,6 @@ import { FiShoppingCart } from "react-icons/fi";
 
 const LeftColumn = ({coinFlipContractData, totalRound, contractBalance, PROJECT_FEE, _coinFlip}) => {
 
-  console.log(contractBalance);
-
   return (
     <Flex pt="1rem"  w={["100%", "100%", "100%", "50%", "50%"]}  direction={ "column"}> {/* mother flex for total bet and symbol start */}
       <Flex direction="column" w="100%">

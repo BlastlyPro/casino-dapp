@@ -179,6 +179,7 @@ contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeabl
             User memory luckyPlayer=allUsers[_player2Address];
             playerPayout=playerPayout.div(payoutDivider);
             luckyPlayer.bonus=luckyPlayer.bonus.add(luckyRound.player2BetAmount.mul(playerPayout));
+            allUsers[_player2Address]=luckyPlayer;
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");

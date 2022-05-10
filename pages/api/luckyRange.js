@@ -44,8 +44,10 @@ export default function handler(req, res) {
    
       console.log("req.body.normalBetAmount --------------------");
       let normalBetAmount=req.body.normalBetAmount * 1;
+      let payoutRange=req.body.betRange.maxRange - req.body.betRange.minRange;
+
       for(var i=0;i<payouts.length;i++){
-        if(req.body.betRange <= payouts[i].max && req.body.betRange >= payouts[i].min){
+        if(payoutRange <= payouts[i].max && payoutRange >= payouts[i].min){
           normalBetAmount=req.body.normalBetAmount * payouts[i].payout;
           playerPayout=payouts[i].payout;
           payoutDivider=10;
@@ -59,25 +61,27 @@ export default function handler(req, res) {
       if( contractBalance < 1000 || contractBalance < normalBetAmount)
       {
         console.log("entering chorai mode");
-        luckyNumber=req.body.betRange + 1;
+        luckyNumber=req.body.betRange.maxRange + 1;
         console.log('------------chorai Mode luckyNumber--------------')        
         console.log(luckyNumber)
 
       }
       else{
         console.log("entering Shadhu mode");
-        randomNumber = crypto.randomInt(0, 1000000);
+        randomNumber = crypto.randomInt(0, 100);
         console.log(randomNumber);
-        luckyNumber=randomNumber%req.body.betRange;
+        luckyNumber=randomNumber;
 
         console.log('------------req.body.betRange--------------')        
-        console.log(req.body.betRange)
-
+        console.log(req.body.betRange.maxRange)
+        console.log(req.body.betRange.minRange)
+        console.log('------------payoutRange-----------')
+        console.log(payoutRange);
         console.log('------------luckyNumber--------------')        
         console.log(luckyNumber)
       }
 
-      playerFlag= luckyNumber < req.body.betRange ? true :false;
+      playerFlag= (luckyNumber > req.body.betRange.minRange && luckyNumber < req.body.betRange.maxRange) ? true : false;
       playerPayout= (playerPayout == 90) ? 90 : (playerPayout * 10);
       payoutDivider= (playerPayout == 90) ? 1 : 10;
       console.log('------------playerFlag--------------')         
@@ -86,7 +90,7 @@ export default function handler(req, res) {
       console.log(playerPayout)
       console.log('------------Payout Divider--------------')               
       console.log(payoutDivider)      
-        coinFlipContractData.methods.luckyRange(req.body.player2Address, req.body._betAmount, req.body.betRange, luckyNumber, req.body.txnHash, playerPayout, playerFlag, payoutDivider).send({from: _account.address}).then((reponse)=>{                
+        coinFlipContractData.methods.luckyRange(req.body.player2Address, req.body._betAmount, req.body.betRange.maxRange, luckyNumber, req.body.txnHash, playerPayout, playerFlag, payoutDivider).send({from: _account.address}).then((reponse)=>{                
             res.status(200).json(reponse);
           }).catch((err)=>{
             console.log(err.message);

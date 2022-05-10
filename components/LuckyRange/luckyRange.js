@@ -17,7 +17,8 @@ import {
 
 export default function LuckyRange({state,handleChange,_betAmount}){
 
-    const[range,setRange]=useState(null);
+    const[minRange,setMinRange]=useState(null);
+    const[maxRange,setMaxRange]=useState(null);
     const[totalRound,setTotalRound]=useState(null);
     const [allRounds, setAllRounds] = useState(null);
 
@@ -43,12 +44,20 @@ export default function LuckyRange({state,handleChange,_betAmount}){
 
       function openLink(_txnHash){
         window.open(`https://testnet.bscscan.com/tx/`+_txnHash);
-      }      
-    function inputLuckyRange(e) {
-        setRange(e.target.value);
+      }
+
+    function inputLuckyRange(e,rangeString) {
+     var obj={};
+      if(rangeString=='min'){
+        setMinRange(e.target.value);
+      }
+      if(rangeString=='max'){
+        setMaxRange(e.target.value);
+      }
+        
       }
     async function submitLuckyRange(){
-
+      var range={'minRange':minRange, 'maxRange':maxRange}
         var bta = state.web3.utils.toWei(String(_betAmount), "ether");
             // ////////////////////////////////////////////
             // axios.post("/api/luckyRange", {betRange: range,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: "0xxxxxx",}).then((response) => {
@@ -78,7 +87,8 @@ export default function LuckyRange({state,handleChange,_betAmount}){
         <>
             <h1>Welcome to Lucky Range Game</h1>
             <h1>TOTAL Lucky Range Game:{totalRound}</h1>
-            <Input width="10%" color="black" placeholder="Input Lucky Range" onChange={(e) => inputLuckyRange(e)} />
+            <Input width="10%" color="black" placeholder="Input Min Range" onChange={(e) => inputLuckyRange(e,'min')} />
+            <Input width="10%" color="black" placeholder="Input Max Range" onChange={(e) => inputLuckyRange(e,'max')} />
             <Input width="10%" color="black" placeholder="Input Money" onChange={(e) => handleChange(e)} />            
             <Button color="black" onClick={()=>submitLuckyRange()}>Try Your Luck</Button>
 
