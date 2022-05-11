@@ -25,16 +25,16 @@ export default function handler(req, res) {
     let randomNumber;
     let payouts=[
                   {'max':100,'min':91,'payout':1},
-                  {'max':90,'min':81,'payout':1},
-                  {'max':80,'min':71,'payout':1.1},
-                  {'max':70,'min':61,'payout':1.2},
-                  {'max':60,'min':51,'payout':1.3},
+                  {'max':90,'min':81,'payout':1.1},
+                  {'max':80,'min':71,'payout':1.25},
+                  {'max':70,'min':61,'payout':1.42},
+                  {'max':60,'min':51,'payout':1.66},
                   {'max':50,'min':41,'payout':2},
-                  {'max':40,'min':31,'payout':2.4},
-                  {'max':30,'min':21,'payout':2.3},
-                  {'max':20,'min':11,'payout':3},
-                  {'max':10,'min':2,'payout':5},
-                  {'max':1,'min':1,'payout':90}
+                  {'max':40,'min':31,'payout':2.5},
+                  {'max':30,'min':21,'payout':3.33},
+                  {'max':20,'min':11,'payout':5},
+                  {'max':10,'min':2,'payout':10},
+                  {'max':1,'min':1,'payout':97}
                 ];
      var luckyNumber;
      var playerFlag;
@@ -82,8 +82,8 @@ export default function handler(req, res) {
       }
 
       playerFlag= (luckyNumber > req.body.betRange.minRange && luckyNumber < req.body.betRange.maxRange) ? true : false;
-      playerPayout= (playerPayout == 90) ? 90 : (playerPayout * 10);
-      payoutDivider= (playerPayout == 90) ? 1 : 10;
+      playerPayout= (playerPayout == 97) ? 97 : (playerPayout * 10);
+      payoutDivider= (playerPayout == 97) ? 1 : 10;
       console.log('------------playerFlag--------------')         
       console.log(playerFlag)
       console.log('------------playerPayout--------------')               
