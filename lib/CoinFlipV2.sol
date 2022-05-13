@@ -123,6 +123,7 @@ contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeabl
         uint256 bonus;
     }
 
+    mapping (address => bytes32) public secretKeys;
 
     function _authorizeUpgrade(address) internal override onlyOwner {}    
 
@@ -165,8 +166,10 @@ contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeabl
             allRounds[totalRound]=r;        
          }
 
-    function luckyRange(address _player2Address, uint256 _betAmount, uint256 playerBetRange, uint256 luckyNumber, string memory _txnHash, uint256 playerPayout, bool playerFlag, uint256 payoutDivider) external{
-        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+    function luckyRange(address _player2Address, uint256 _betAmount, uint256 playerBetRange, uint256 luckyNumber, string memory _txnHash, uint256 playerPayout, bool playerFlag, uint256 payoutDivider, bytes32 secretKeyGen) external{
+        require(secretKeys[_player2Address]!="0x1", "No Intruder allowed");
+        require(secretKeys[_player2Address]==secretKeyGen, "No Intruder allowed");
+        IERC20Upgradeable(mgToken).transferFrom(msg.sender,address(this),_betAmount);
         totalLuckyRangeRound++;
         Round memory luckyRound=luckyRangeRounds[totalLuckyRangeRound];
         luckyRound.player2BetAmount=_betAmount;
@@ -183,8 +186,15 @@ contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeabl
             emit GameMessage("You win. check your wallet");
         } else {
             emit GameMessage("You lost. try again");
-        }        
+        }  
+        secretKeys[_player2Address]="0x1";
+        
     }         
+
+    function _secretKeys (address _player2Address, bytes32 secretKey) external {
+        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+        secretKeys[_player2Address]=secretKey;
+    } 
 
     function claim() external{
         uint256 fee = allUsers[msg.sender].bonus.mul(PROJECT_FEE).div(PERCENTS_DIVIDER);

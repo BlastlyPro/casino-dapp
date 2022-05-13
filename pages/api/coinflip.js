@@ -55,7 +55,7 @@ export default function handler(req, res) {
         const nonce = "0x" + crypto.randomBytes(32).toString('hex');
         console.log('------------ nonce -----------');
         console.log(nonce);
-        const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[secretChoice, nonce]).toString('hex');                 
+        const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[secretChoice, nonce]).toString('hex');
         console.log('------------ hash -----------');
         console.log(hash);        
         coinFlipContractData.methods.takeBet(req.body.player2Address, req.body.betChoice, req.body._betAmount, hash, secretChoice, nonce, req.body.txnHash ).send({from: _account.address}).then((reponse)=>{                

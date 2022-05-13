@@ -25,7 +25,9 @@ export default function LuckyRange({state,handleChange,_betAmount}){
     useEffect(() => {
         const init = async () => {
             if(state.coinFlipContractData.methods){
-                console.log(state.coinFlipContractData);
+              let s = await state.coinFlipContractData.methods.secretKeys(state.account.accounts[0]).call();
+              console.log("ssssssssssssssssssss");
+              console.log(s);
                 let totalRound = await state.coinFlipContractData.methods.totalLuckyRangeRound().call();
                 setTotalRound(totalRound);
                 let _allRounds = [];
@@ -58,29 +60,71 @@ export default function LuckyRange({state,handleChange,_betAmount}){
       }
     async function submitLuckyRange(){
       var range={'minRange':minRange, 'maxRange':maxRange}
-        var bta = state.web3.utils.toWei(String(_betAmount), "ether");
+      var bta = state.web3.utils.toWei(String(_betAmount), "ether");
+      var secretKeyGen;
+////////////////////////////////////////
+            let allowance= await state.tokenContractData.methods.allowance(state.account.accounts[0],state.coinFlipContractData._address).call();
+            console.log(allowance); 
+            axios.post("/api/secretKeyGenerate", {player2Address: state.account.accounts[0]}).then((response) => {
+              console.log("------------Secret Key ------------");
+                console.log(response.data);
+                secretKeyGen=response.data;
+                axios.post("/api/luckyRange", {betRange: range,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: "0xxxxxx",}).then((response) => {
+                     console.log(response);
+                    console.log('=------------- allowance -----------------')
+    
+                    if(allowance<bta){
+                      state.tokenContractData.methods.approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9*1e18), "ether")).send({ from: state.account.accounts[0]}).then(res =>{
+             
+                       state.coinFlipContractData.methods.luckyRange(state.account.accounts[0], bta, maxRange, response.data.luckyNumber," ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider).send({from: state.account.accounts[0]}).then((reponse)=>{
+                         console.log(response)
+                       }).catch((err)=>{
+                         console.log(err.message);
+                       });          
+             
+                     });
+                    }
+             
+                   else{
+                     console.log("Direct calling lucky range sol")
+                     state.coinFlipContractData.methods.luckyRange(state.account.accounts[0], bta, maxRange, response.data.luckyNumber," ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider,secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
+//                      console.log(reponse007.transactionHash)
+                      Swal.fire({
+                          title: "Result",
+                          text: reponse007.events.GameMessage.returnValues.mesg,
+                          icon: "success",
+                        });                        
+                     }).catch((err)=>{
+                       console.log(err.message);
+                     }); 
+                   }                        
+                });                 
+            });
+///////////////////////////////////////        
             // ////////////////////////////////////////////
             // axios.post("/api/luckyRange", {betRange: range,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: "0xxxxxx",}).then((response) => {
             //     console.log(response);         
             // });
             // //////////////////////////////////////////   
 
-        await state.tokenContractData.methods.transfer(state.coinFlipContractData._address, bta).send({ from: state.account.accounts[0] })
-          .then((reponse) => {
-            console.log(reponse);
-            ////////////////////////////////////////////
-            axios.post("/api/luckyRange", {betRange: range,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: reponse.transactionHash,}).then((response) => {
-                Swal.fire({
-                    title: "Result",
-                    text: response.data.events.GameMessage.returnValues.mesg,
-                    icon: "success",
-                  });         
-            });
-            //////////////////////////////////////////
-          })
-          .catch((err) => {
-            console.log(err.message);
-          });
+        // await state.tokenContractData.methods.transfer(state.coinFlipContractData._address, bta).send({ from: state.account.accounts[0] })
+        //   .then((reponse) => {
+        //     console.log(reponse);
+        //     ////////////////////////////////////////////
+        //     axios.post("/api/luckyRange", {betRange: range,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: reponse.transactionHash,}).then((response) => {
+        //         Swal.fire({
+        //             title: "Result",
+        //             text: response.data.events.GameMessage.returnValues.mesg,
+        //             icon: "success",
+        //           });         
+        //     });
+        //     //////////////////////////////////////////
+        //   })
+        //   .catch((err) => {
+        //     console.log(err.message);
+        //   });
+
+     
     } 
 
     return (

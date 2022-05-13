@@ -26,12 +26,12 @@ export default function handler(req, res) {
     let payouts=[
                   {'max':100,'min':91,'payout':1},
                   {'max':90,'min':81,'payout':1.1},
-                  {'max':80,'min':71,'payout':1.25},
-                  {'max':70,'min':61,'payout':1.42},
-                  {'max':60,'min':51,'payout':1.66},
+                  {'max':80,'min':71,'payout':1.3},
+                  {'max':70,'min':61,'payout':1.4},
+                  {'max':60,'min':51,'payout':1.7},
                   {'max':50,'min':41,'payout':2},
                   {'max':40,'min':31,'payout':2.5},
-                  {'max':30,'min':21,'payout':3.33},
+                  {'max':30,'min':21,'payout':3.3},
                   {'max':20,'min':11,'payout':5},
                   {'max':10,'min':2,'payout':10},
                   {'max':1,'min':1,'payout':97}
@@ -89,12 +89,14 @@ export default function handler(req, res) {
       console.log('------------playerPayout--------------')               
       console.log(playerPayout)
       console.log('------------Payout Divider--------------')               
-      console.log(payoutDivider)      
-        coinFlipContractData.methods.luckyRange(req.body.player2Address, req.body._betAmount, req.body.betRange.maxRange, luckyNumber, req.body.txnHash, playerPayout, playerFlag, payoutDivider).send({from: _account.address}).then((reponse)=>{                
-            res.status(200).json(reponse);
-          }).catch((err)=>{
-            console.log(err.message);
-          });
+      console.log(payoutDivider)
+      var obj={'luckyNumber':luckyNumber, 'playerPayout':playerPayout, 'playerFlag':playerFlag, 'payoutDivider':payoutDivider}
+      res.status(200).json(obj);
+        // coinFlipContractData.methods.luckyRange(req.body.player2Address, req.body._betAmount, req.body.betRange.maxRange, luckyNumber, req.body.txnHash, playerPayout, playerFlag, payoutDivider).send({from: _account.address}).then((reponse)=>{
+        //     res.status(200).json(reponse);
+        //   }).catch((err)=>{
+        //     console.log(err.message);
+        //   });
     }) 
 
   }
