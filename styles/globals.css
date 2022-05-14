@@ -89,4 +89,83 @@ a {
     opacity: 0%;
   }
 }
+
+
+
+
+.luckylight {
+  -webkit-animation-name: thunder1;
+  animation-name: thunder1;
+  -webkit-animation-duration: 5s;
+  animation-duration: 5s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+
+@-webkit-keyframes thunder1 {
+  0% {
+    opacity: 0%;
+  }
+  3% {
+    opacity: 100%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/luckylight.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  6% {
+    opacity: 40%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/luckylight.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  9% {
+    opacity: 80%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/luckylight.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  11% {
+    opacity: 0%;
+  }
+  20% {
+    opacity: 0%;
+  }
+}
+
+@keyframes thunder1 {
+  0% {
+    opacity: 0%;
+  }
+  3% {
+    opacity: 100%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/luckylight.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  6% {
+    opacity: 40%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/luckylight.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  9% {
+    opacity: 80%;
+    mix-blend-mode: lighten;
+    background-image: url("/images/luckylight.jpg");
+    background-repeat: no-repeat;
+    background-size: cover;
+  }
+  11% {
+    opacity: 0%;
+  }
+  20% {
+    opacity: 0%;
+  }
+}
 /*# sourceMappingURL=styles.css.map */

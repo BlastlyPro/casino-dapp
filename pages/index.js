@@ -310,7 +310,7 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
         )}
 
         <Box w="100vw"  backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
-      <HistoryMobile  allRounds={allRounds}/>
+      <History  allRounds={allRounds}/>
         <HowItWorks/>
         <Footer />
         </Box>
