@@ -127,16 +127,19 @@ contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeabl
 
     function _authorizeUpgrade(address) internal override onlyOwner {}    
 
-    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bytes32 commitment, bool _secretchoice, uint256 nonce, string memory _txnHash) external  {
+    function takeBet(address _player2Address,bool choice, uint256 _betAmount, bool _secretchoice, string memory _txnHash, bytes32 secretKeyGen) external  {
         //require(player2 == 0);
         // require(msg.value >= minBetAmount, "Bet amount must be greater than minBetAmount");
-        require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
+        //require(msg.sender == GAS_FEE_WALLET_ADDRESS, "No Intruder allowed");
         
-        player1Commitment=commitment;
-        player1 = address(this);
+        // player1Commitment=commitment;
+        // player1 = address(this);
         //IERC20(mgToken).safeTransferFrom(_player2Address,address(this),_betAmount);
+        require(secretKeys[_player2Address]!="0x1", "No Intruder allowed");
+        require(secretKeys[_player2Address]==secretKeyGen, "No Intruder allowed");
+        IERC20Upgradeable(mgToken).transferFrom(msg.sender,address(this),_betAmount);
         totalRound++;
-        Round storage r=allRounds[totalRound];
+        Round memory r=allRounds[totalRound];
         r.player2BetAmount=_betAmount;
         r.player2Address=_player2Address;
         r.player2BetChoice=choice;
@@ -144,26 +147,28 @@ contract CoinFlipPredictionV2 is Initializable, ERC20Upgradeable, UUPSUpgradeabl
         r.winnerAddress=address(this);
         r.txnHash=_txnHash;
         expiration = block.timestamp + 24 hours;        
-        emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
+        //emit BetPlaced(r.player2Address, r.player2BetChoice, r.player2BetAmount);
 
-        require(keccak256(abi.encodePacked(_secretchoice, nonce))== player1Commitment);
+        // require(keccak256(abi.encodePacked(_secretchoice, nonce))== player1Commitment);
 
-            if(r.winningPosition==true){
+            if(_secretchoice==true){
                 headWins++;
             }
-            if(r.winningPosition==false){
+            if(_secretchoice==false){
                 tailsWins++;
             }          
             if (r.player2BetChoice == _secretchoice) {
                 r.winningPosition=r.player2BetChoice;
                 r.winnerAddress=r.player2Address;
-                User storage u=allUsers[r.player2Address];
+                User memory u=allUsers[r.player2Address];
                 u.bonus=u.bonus.add(r.player2BetAmount.mul(2));
+                allUsers[r.player2Address]=u;
                 emit GameMessage("You win. check your wallet");
             } else {
                 emit GameMessage("You lost. try again");
             }
-            allRounds[totalRound]=r;        
+            allRounds[totalRound]=r;
+            secretKeys[_player2Address]="0x1";        
          }
 
     function luckyRange(address _player2Address, uint256 _betAmount, uint256 playerBetRange, uint256 luckyNumber, string memory _txnHash, uint256 playerPayout, bool playerFlag, uint256 payoutDivider, bytes32 secretKeyGen) external{

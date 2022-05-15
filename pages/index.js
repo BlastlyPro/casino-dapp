@@ -137,52 +137,95 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
     });
 
     setIsLoading(false);
+
   };
 
   async function coinFlip(betChoice) {
     var bta = state.web3.utils.toWei(String(_betAmount), "ether");
-    setIsLoading(true);
-    await state.tokenContractData.methods
-      .transfer(state.coinFlipContractData._address, bta)
-      .send({ from: state.account.accounts[0] })
-      .then((reponse) => {
-        console.log(reponse.transactionHash);
-        ////////////////////////////////////////////
-        axios
-          .post("/api/coinflip", {
-            betChoice: betChoice,
-            _betAmount: bta,
-            normalBetAmount: _betAmount,
-            player2Address: state.account.accounts[0],
-            txnHash: reponse.transactionHash,
-          })
-          .then((response) => {
-            setIsLoading(false);
-            Swal.fire({
-              title: "Result",
-              text: response.data.events.GameMessage.returnValues.mesg,
-              icon: "success",
-            });
-            //   state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
-            //     .send({ from: state.account.accounts[0] }).then((reponse) => {
-            //       console.log(reponse);
-            //       console.log(reponse.transactionHash);
-            //       reveal(commitment.data, reponse.transactionHash);
-            //     })
-            //     .catch((err) => {
-            //       setIsLoading(false);
-            //       console.log(err.message);
-            //     });
-            // })
-            // .catch((err) => {
-            //   setIsLoading(false);
-            //   console.log(err.message);
-          });
+    //setIsLoading(true);
+    var secretKeyGen;
+    ////////////////////////////////////////
+                let allowance= await state.tokenContractData.methods.allowance(state.account.accounts[0],state.coinFlipContractData._address).call();
+                console.log(allowance); 
+                axios.post("/api/secretKeyGenerate", {player2Address: state.account.accounts[0]}).then((response) => {
+
+                    secretKeyGen=response.data;
+                    axios.post("/api/coinflip", {betChoice: betChoice,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: "0xxxxxx",}).then((response) => {
+                         console.log(response);
+                        console.log('=------------- allowance -----------------')
+        
+                        if(allowance<bta){
+                          state.tokenContractData.methods.approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9*1e18), "ether")).send({ from: state.account.accounts[0]}).then(res =>{
+                 
+                           state.coinFlipContractData.methods.takeBet(state.account.accounts[0],betChoice, bta, response.data.secretChoice," ",secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
+                             Swal.fire({
+                              title: "Result",
+                              text: reponse007.events.GameMessage.returnValues.mesg,
+                              icon: "success",
+                            });                              
+                           }).catch((err)=>{
+                             console.log(err.message);
+                           });          
+                 
+                         });
+                        }
+                 
+                       else{
+                         console.log("Direct calling Coinflip sol")
+                         state.coinFlipContractData.methods.takeBet(state.account.accounts[0],betChoice, bta, response.data.secretChoice," ",secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
+                          Swal.fire({
+                            title: "Result",
+                            text: reponse007.events.GameMessage.returnValues.mesg,
+                            icon: "success",
+                          });                           
+                        }).catch((err)=>{
+                          console.log(err.message);
+                        }); 
+                       }                        
+                    });                 
+                });
+    ///////////////////////////////////////     
+    // await state.tokenContractData.methods
+    //   .transfer(state.coinFlipContractData._address, bta)
+    //   .send({ from: state.account.accounts[0] })
+    //   .then((reponse) => {
+    //     console.log(reponse.transactionHash);
+    //     ////////////////////////////////////////////
+    //     axios
+    //       .post("/api/coinflip", {
+    //         betChoice: betChoice,
+    //         _betAmount: bta,
+    //         normalBetAmount: _betAmount,
+    //         player2Address: state.account.accounts[0],
+    //         txnHash: reponse.transactionHash,
+    //       })
+    //       .then((response) => {
+    //         setIsLoading(false);
+    //         Swal.fire({
+    //           title: "Result",
+    //           text: response.data.events.GameMessage.returnValues.mesg,
+    //           icon: "success",
+    //         });
+    //         //   state.coinFlipContractData.methods.takeBet(state.tokenContractData._address,betChoice,bta,commitment.data.secretChoice)
+    //         //     .send({ from: state.account.accounts[0] }).then((reponse) => {
+    //         //       console.log(reponse);
+    //         //       console.log(reponse.transactionHash);
+    //         //       reveal(commitment.data, reponse.transactionHash);
+    //         //     })
+    //         //     .catch((err) => {
+    //         //       setIsLoading(false);
+    //         //       console.log(err.message);
+    //         //     });
+    //         // })
+    //         // .catch((err) => {
+    //         //   setIsLoading(false);
+    //         //   console.log(err.message);
+    //       });
         //////////////////////////////////////////
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
+      // })
+      // .catch((err) => {
+      //   console.log(err.message);
+      // });
   }
   async function claimBonus() {
     setIsLoading(true);

@@ -25,9 +25,9 @@ export default function LuckyRange({state,handleChange,_betAmount}){
     useEffect(() => {
         const init = async () => {
             if(state.coinFlipContractData.methods){
-              let s = await state.coinFlipContractData.methods.secretKeys(state.account.accounts[0]).call();
-              console.log("ssssssssssssssssssss");
-              console.log(s);
+              // let s = await state.coinFlipContractData.methods.secretKeys(state.account.accounts[0]).call();
+              // console.log("ssssssssssssssssssss");
+              // console.log(s);
                 let totalRound = await state.coinFlipContractData.methods.totalLuckyRangeRound().call();
                 setTotalRound(totalRound);
                 let _allRounds = [];
@@ -66,8 +66,8 @@ export default function LuckyRange({state,handleChange,_betAmount}){
             let allowance= await state.tokenContractData.methods.allowance(state.account.accounts[0],state.coinFlipContractData._address).call();
             console.log(allowance); 
             axios.post("/api/secretKeyGenerate", {player2Address: state.account.accounts[0]}).then((response) => {
-              console.log("------------Secret Key ------------");
-                console.log(response.data);
+              // console.log("------------Secret Key ------------");
+              //   console.log(response.data);
                 secretKeyGen=response.data;
                 axios.post("/api/luckyRange", {betRange: range,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: "0xxxxxx",}).then((response) => {
                      console.log(response);
@@ -75,28 +75,13 @@ export default function LuckyRange({state,handleChange,_betAmount}){
     
                     if(allowance<bta){
                       state.tokenContractData.methods.approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9*1e18), "ether")).send({ from: state.account.accounts[0]}).then(res =>{
-             
-                       state.coinFlipContractData.methods.luckyRange(state.account.accounts[0], bta, maxRange, response.data.luckyNumber," ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider).send({from: state.account.accounts[0]}).then((reponse)=>{
-                         console.log(response)
-                       }).catch((err)=>{
-                         console.log(err.message);
-                       });          
-             
+                        callLuckyRange(bta,response,secretKeyGen);             
                      });
                     }
              
                    else{
                      console.log("Direct calling lucky range sol")
-                     state.coinFlipContractData.methods.luckyRange(state.account.accounts[0], bta, maxRange, response.data.luckyNumber," ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider,secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
-//                      console.log(reponse007.transactionHash)
-                      Swal.fire({
-                          title: "Result",
-                          text: reponse007.events.GameMessage.returnValues.mesg,
-                          icon: "success",
-                        });                        
-                     }).catch((err)=>{
-                       console.log(err.message);
-                     }); 
+                     callLuckyRange(bta,response,secretKeyGen);
                    }                        
                 });                 
             });
@@ -126,7 +111,18 @@ export default function LuckyRange({state,handleChange,_betAmount}){
 
      
     } 
-
+  function callLuckyRange(bta,response,secretKeyGen){
+    state.coinFlipContractData.methods.luckyRange(state.account.accounts[0], bta, maxRange, response.data.luckyNumber," ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider,secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
+      //                      console.log(reponse007.transactionHash)
+                            Swal.fire({
+                                title: "Result",
+                                text: reponse007.events.GameMessage.returnValues.mesg,
+                                icon: "success",
+                              });                        
+                           }).catch((err)=>{
+                             console.log(err.message);
+                           });     
+  }
     return (
         <>
             <h1>Welcome to Lucky Range Game</h1>
