@@ -205,31 +205,18 @@ export default function luckyRangeUi({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT
  
   return (
     <>
-    <Box background="rgba(0, 0, 0, 0.5)">
+    <Box background="rgba(0, 0, 0, 0.2)">
     <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/luckyhero.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"} mixBlendMode="darken">
     <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="luckylight" position={"absolute"}></Box>
     <Flex width={"100%"}  alignItems={"center"}  justifyContent="center" direction={"column"} >
     <LuckyNavbar/>
   
 
-    {isLoading && <Spinner color="red.500" size="xl" />}
-
-     {state.coinFlip ? (
-      <Lucky
-        coinFlipContractData={state.coinFlipContractData}
-        handleChange={handleChange}
-        coinFlip={coinFlip}
-        allRounds={allRounds}
-        totalRound={state.coinFlip.totalRound}
-        contractBalance={state.coinFlip.contractBalance}
-        PROJECT_FEE={state.coinFlip.PROJECT_FEE}
-        _coinFlip={state.coinFlip}
-      />
-    ) : (
-      "No Balance"
-    )}  
-
-     {/* <LuckyMobile/>   */}
+   
+      <Lucky/> 
+   
+ 
+ {/*    <LuckyMobile/>   */}
     <Box  w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
     <LuckyHistory allRounds={allRounds} />
     <LuckyHowItWorks/>
