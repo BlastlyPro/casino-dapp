@@ -1,4 +1,4 @@
-import { Box, Flex, Text, Button, Spinner, InputGroup, Input,useMediaQuery } from "@chakra-ui/react";
+import { Box, Flex, Text, Button, Spinner, InputGroup, Input, useMediaQuery } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import Web3 from "web3";
@@ -14,6 +14,20 @@ import History from "../components/History";
 import CoinTossMobile from "../components/mobile/CoinTossMobile/CoinTossMobile";
 import HistoryMobile from "../components/mobile/HistoryMobile";
 import LuckyRange from "../components/LuckyRange/luckyRange";
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
+const providerOptions = {
+  walletconnect: {
+    package: WalletConnectProvider,
+    options: {
+      rpc: {
+        56: "https://speedy-nodes-nyc.moralis.io/d4f3b65d25674eff831dfea2/bsc/testnet",
+        97: "https://speedy-nodes-nyc.moralis.io/d4f3b65d25674eff831dfea2/bsc/testnet",
+      },
+    },
+  },
+};
 
 export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NETWORK_ID }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -63,13 +77,25 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
   //   checkConnection();
   // }, []);
 
-  useEffect(() => {
-    const init = async () => {
-      await loadWeb3Data();
-      await loadBlockchainData();
-    };
-    init();
-  }, []);
+  // useEffect(() => {
+  //   const init = async () => {
+  //     await loadWeb3Data();
+  //     await loadBlockchainData();
+  //   };
+  //   init();
+  // }, []);
+
+  const connectWallet = async () => {
+    console.log("connectWallet");
+    const web3Modal = new Web3Modal({
+      cacheProvider: true, // optional
+      providerOptions, // required
+    });
+
+    const provider = await web3Modal.connect();
+    console.log(provider);
+    const web3 = new Web3(provider);
+  };
 
   const loadWeb3Data = async () => {
     if (window.ethereum) {
@@ -137,7 +163,6 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
     });
 
     setIsLoading(false);
-
   };
 
   async function coinFlip(betChoice) {
@@ -145,46 +170,52 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
     //setIsLoading(true);
     var secretKeyGen;
     ////////////////////////////////////////
-                let allowance= await state.tokenContractData.methods.allowance(state.account.accounts[0],state.coinFlipContractData._address).call();
-                console.log(allowance); 
-                axios.post("/api/secretKeyGenerate", {player2Address: state.account.accounts[0]}).then((response) => {
+    let allowance = await state.tokenContractData.methods.allowance(state.account.accounts[0], state.coinFlipContractData._address).call();
+    console.log(allowance);
+    axios.post("/api/secretKeyGenerate", { player2Address: state.account.accounts[0] }).then((response) => {
+      secretKeyGen = response.data;
+      axios.post("/api/coinflip", { betChoice: betChoice, _betAmount: bta, normalBetAmount: _betAmount, player2Address: state.account.accounts[0], txnHash: "0xxxxxx" }).then((response) => {
+        console.log(response);
+        console.log("=------------- allowance -----------------");
 
-                    secretKeyGen=response.data;
-                    axios.post("/api/coinflip", {betChoice: betChoice,_betAmount: bta,normalBetAmount: _betAmount,player2Address: state.account.accounts[0],txnHash: "0xxxxxx",}).then((response) => {
-                         console.log(response);
-                        console.log('=------------- allowance -----------------')
-        
-                        if(allowance<bta){
-                          state.tokenContractData.methods.approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9*1e18), "ether")).send({ from: state.account.accounts[0]}).then(res =>{
-                 
-                           state.coinFlipContractData.methods.takeBet(state.account.accounts[0],betChoice, bta, response.data.secretChoice," ",secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
-                             Swal.fire({
-                              title: "Result",
-                              text: reponse007.events.GameMessage.returnValues.mesg,
-                              icon: "success",
-                            });                              
-                           }).catch((err)=>{
-                             console.log(err.message);
-                           });          
-                 
-                         });
-                        }
-                 
-                       else{
-                         console.log("Direct calling Coinflip sol")
-                         state.coinFlipContractData.methods.takeBet(state.account.accounts[0],betChoice, bta, response.data.secretChoice," ",secretKeyGen).send({from: state.account.accounts[0]}).then((reponse007)=>{
-                          Swal.fire({
-                            title: "Result",
-                            text: reponse007.events.GameMessage.returnValues.mesg,
-                            icon: "success",
-                          });                           
-                        }).catch((err)=>{
-                          console.log(err.message);
-                        }); 
-                       }                        
-                    });                 
+        if (allowance < bta) {
+          state.tokenContractData.methods
+            .approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9 * 1e18), "ether"))
+            .send({ from: state.account.accounts[0] })
+            .then((res) => {
+              state.coinFlipContractData.methods
+                .takeBet(state.account.accounts[0], betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
+                .send({ from: state.account.accounts[0] })
+                .then((reponse007) => {
+                  Swal.fire({
+                    title: "Result",
+                    text: reponse007.events.GameMessage.returnValues.mesg,
+                    icon: "success",
+                  });
+                })
+                .catch((err) => {
+                  console.log(err.message);
                 });
-    ///////////////////////////////////////     
+            });
+        } else {
+          console.log("Direct calling Coinflip sol");
+          state.coinFlipContractData.methods
+            .takeBet(state.account.accounts[0], betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
+            .send({ from: state.account.accounts[0] })
+            .then((reponse007) => {
+              Swal.fire({
+                title: "Result",
+                text: reponse007.events.GameMessage.returnValues.mesg,
+                icon: "success",
+              });
+            })
+            .catch((err) => {
+              console.log(err.message);
+            });
+        }
+      });
+    });
+    ///////////////////////////////////////
     // await state.tokenContractData.methods
     //   .transfer(state.coinFlipContractData._address, bta)
     //   .send({ from: state.account.accounts[0] })
@@ -221,11 +252,11 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
     //         //   setIsLoading(false);
     //         //   console.log(err.message);
     //       });
-        //////////////////////////////////////////
-      // })
-      // .catch((err) => {
-      //   console.log(err.message);
-      // });
+    //////////////////////////////////////////
+    // })
+    // .catch((err) => {
+    //   console.log(err.message);
+    // });
   }
   async function claimBonus() {
     setIsLoading(true);
@@ -266,44 +297,42 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
   const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
   const [isLessThan993] = useMediaQuery("(max-width: 993px)");
 
-
   return (
-
     <>
-     {/* for desktop------------------------- */}
-     {isLargerThan993 ? (
-      <Box width={"100vw"}  h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
-      <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="lightning" position={"absolute"}></Box>
-      <Flex width={"100%"}     alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
-        <Navbar />
+      {/* for desktop------------------------- */}
+      {isLargerThan993 ? (
+        <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
+          <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="lightning" position={"absolute"}></Box>
+          <Flex width={"100%"} alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
+            <Navbar connectWallet={connectWallet} />
 
-        {isLoading && <Spinner color="red.500" size="xl" />}
+            {isLoading && <Spinner color="red.500" size="xl" />}
 
-        {state.coinFlip ? (
-          <>
-          <CoinToss
-            coinFlipContractData={state.coinFlipContractData}
-            handleChange={handleChange}
-            coinFlip={coinFlip}
-            allRounds={allRounds}
-            totalRound={state.coinFlip.totalRound}
-            contractBalance={state.coinFlip.contractBalance}
-            PROJECT_FEE={state.coinFlip.PROJECT_FEE}
-            _coinFlip={state.coinFlip}
-          />
-          <LuckyRange state={state} handleChange={handleChange} _betAmount={_betAmount}/>
-          </>
-        ) : (
-          "No Balance"
-        )}
+            {state.coinFlip ? (
+              <>
+                <CoinToss
+                  coinFlipContractData={state.coinFlipContractData}
+                  handleChange={handleChange}
+                  coinFlip={coinFlip}
+                  allRounds={allRounds}
+                  totalRound={state.coinFlip.totalRound}
+                  contractBalance={state.coinFlip.contractBalance}
+                  PROJECT_FEE={state.coinFlip.PROJECT_FEE}
+                  _coinFlip={state.coinFlip}
+                />
+                <LuckyRange state={state} handleChange={handleChange} _betAmount={_betAmount} />
+              </>
+            ) : (
+              "No Balance"
+            )}
 
-        <Box  w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
-        <History allRounds={allRounds} />
-          <HowItWorks />          
-          <Footer />
-        </Box>
+            <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
+              <History allRounds={allRounds} />
+              <HowItWorks />
+              <Footer />
+            </Box>
 
-        {/* <Flex minWidth={"1416px"}  width={ "100%"} mt={ "5rem"}>
+            {/* <Flex minWidth={"1416px"}  width={ "100%"} mt={ "5rem"}>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}>
             <Text> Connected Account: {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
             <>
@@ -318,47 +347,45 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
           </Flex>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}></Flex>
         </Flex> */}
-        {/* <Flex direction={ "column"} mt={ "3rem"}>
+            {/* <Flex direction={ "column"} mt={ "3rem"}>
           <Text fontSize={ "2xl"}>Transaction History</Text> {state.coinFlip ?
           <TransactionTable allRounds={allRounds} /> : null}
         </Flex> */}
-      </Flex>
-    </Box>
-    ) : null}
-
-
-
-     {/* for mobile------------------------- */}
-     {isLessThan993 ? (
-        <Box  width={"100vw"}  h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
-      <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="lightning" position={"absolute"}></Box>
-      <Flex width={"100%"}     alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
-        <Navbar />
-
-        {isLoading && <Spinner color="red.500" size="xl" />}
-
-        {state.coinFlip ? (
-          <CoinTossMobile
-            coinFlipContractData={state.coinFlipContractData}
-            handleChange={handleChange}
-            coinFlip={coinFlip}
-            allRounds={allRounds}
-            totalRound={state.coinFlip.totalRound}
-            contractBalance={state.coinFlip.contractBalance}
-            PROJECT_FEE={state.coinFlip.PROJECT_FEE}
-            _coinFlip={state.coinFlip}
-          />
-        ) : (
-          "No Balance"
-        )}
-
-        <Box w="100vw"  backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}> 
-      <HistoryMobile  allRounds={allRounds}/>
-        <HowItWorks/>
-        <Footer />
+          </Flex>
         </Box>
+      ) : null}
 
-        {/* <Flex width={ "100%"} mt={ "5rem"}>
+      {/* for mobile------------------------- */}
+      {isLessThan993 ? (
+        <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} backgroundImage={'url("/images/main-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"} position={"relative"}>
+          <Box width={"100vw"} h={["120rem", "105rem", "99rem", "50rem", "50rem"]} className="lightning" position={"absolute"}></Box>
+          <Flex width={"100%"} alignItems={"center"} gap={"5"} direction={"column"} color={"white"}>
+            <Navbar />
+
+            {isLoading && <Spinner color="red.500" size="xl" />}
+
+            {state.coinFlip ? (
+              <CoinTossMobile
+                coinFlipContractData={state.coinFlipContractData}
+                handleChange={handleChange}
+                coinFlip={coinFlip}
+                allRounds={allRounds}
+                totalRound={state.coinFlip.totalRound}
+                contractBalance={state.coinFlip.contractBalance}
+                PROJECT_FEE={state.coinFlip.PROJECT_FEE}
+                _coinFlip={state.coinFlip}
+              />
+            ) : (
+              "No Balance"
+            )}
+
+            <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
+              <HistoryMobile allRounds={allRounds} />
+              <HowItWorks />
+              <Footer />
+            </Box>
+
+            {/* <Flex width={ "100%"} mt={ "5rem"}>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}>
             <Text> Connected Account: {state.account.accounts && String(state.account.accounts).substring(0, 5) + " ... " + String(state.account.accounts).slice(-4)} </Text> {state.coinFlip ? (
             <>
@@ -373,15 +400,13 @@ export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS
           </Flex>
           <Flex width={ "50%"} direction={ "column"} justifyContent="center" alignItems={ "center"} gap={ "5"}></Flex>
         </Flex> */}
-        {/* <Flex direction={ "column"} mt={ "3rem"}>
+            {/* <Flex direction={ "column"} mt={ "3rem"}>
           <Text fontSize={ "2xl"}>Transaction History</Text> {state.coinFlip ?
           <TransactionTable allRounds={allRounds} /> : null}
         </Flex> */}
-      </Flex>
-    </Box>
-    ) : null}
-    
-
+          </Flex>
+        </Box>
+      ) : null}
     </>
   );
 }
