@@ -73,13 +73,13 @@ export default function LuckyHistory({ allRounds }) {
                   .reverse()
                   .map((round, i) => (
                     <>
-                      <Flex cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
+                      <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={ i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
                         <Flex w="13.125rem" pl="1rem" gap="0.5rem" alignItems="center">
-                          {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
+                        {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
                           <Flex direction={"column"}>
                             {/* <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                            Joanna Wozny
-                          </Text> */}
+                              Joanna Wozny
+                            </Text> */}
                             <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                               {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}
                             </Text>
@@ -94,7 +94,7 @@ export default function LuckyHistory({ allRounds }) {
 
                         <Flex w="5.5rem">
                           <Flex gap="0.5rem" alignItems="center">
-                            <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
+                          
                             <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                               {round.player2BetChoice}
                             </Text>
@@ -103,6 +103,7 @@ export default function LuckyHistory({ allRounds }) {
 
                         <Flex w="10rem">
                           <Flex gap="0.3rem" alignItems="center">
+                          <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
                             <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
                             <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                               {round.player2BetChoice !== round.winningPosition ? "Loss" : "Win"}

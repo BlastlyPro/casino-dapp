@@ -5,7 +5,7 @@ import LeftColumn from "./LeftColumn";
 import RightColumn from "./RightColumn";
 import Swal from "sweetalert2";
 
-export default function CoinToss({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
+export default function CoinTossMobile({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
   const [choice, setChoice] = useState(null);
   const [value, setValue] = useState(1);
 
@@ -17,9 +17,7 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
       });
       return;
     }
-    
     coinFlip(selectedChoice);
-
     setValue(2);
   };
 
@@ -41,13 +39,14 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
         </Text>
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
-      <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
+     
       
      {/*  {isLargerThan993 ? (
         <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
       ) : null} */}
 
-    
+
+
       {value == 1 && (
         <Flex w={["100%", "100%", "100%", "50%", "50%"]}  alignItems="center" justifyContent="center" direction="column">
         <Flex bgColor={"rgba(86, 146, 250, 0.6)"}  w={["100%", "100%", "100%", "94%", "94%"]} h={["30.125rem", "30.125rem", "25.437rem", "25.437rem", "25.437rem"]} opacity={".9"} backdrop-filter="blur(20px)" borderRadius="1rem" direction={"Column"}>
@@ -93,9 +92,10 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
               </Text>
             </Flex>
           </Flex>
-          <Flex alignSelf={"center"} direction={["column", "column", "row", "row", "row"]}>
-            <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px" marginLeft={"2.5rem"}>
-              <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
+          <Flex alignSelf={"center"} direction={["column", "column", "column", "row", "row"]}>
+            <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px 30px 0 0">
+              
+            <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                 <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
                 <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000MGT"} onChange={(e) => handleChange(e)} />
               </Flex>
@@ -104,10 +104,10 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
               </Flex>
             </Flex>
             <Button
-              left="-2.5rem"
+              
               alignItems="center"
               justifyContent={"center"}
-              borderRadius="40px"
+              borderRadius="0 0 30px 30px"
               w="13.12rem"
               h="3rem"
               _hover={{ textDecor: "none" }}
@@ -132,66 +132,70 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
           </Text>
         </Flex>
         </Flex>
+       
       )}
-
 
 
       {value == 2 && (
+     
         <Flex w={["100%", "100%", "100%", "50%", "50%"]}  alignItems="center" justifyContent="center" direction="column">
-        <Flex bgColor={"rgba(86, 146, 250, 0.6)"}  w={["100%", "100%", "100%", "94%", "94%"]} h={["30.125rem", "30.125rem", "25.437rem", "25.437rem", "25.437rem"]} opacity={".9"} backdrop-filter="blur(20px)" borderRadius="1rem" direction={"Column"} gap="1.5rem">
-          <Flex direction={"Column"} pt="1.5rem">
-            <Text textAlign="center" fontSize="2xl" fontWeight="bold" color={"#FFFFFF"}>
-              
-            You Win!
-            </Text>
-            <Text textAlign="center" fontSize="xl" color={"rgba(255, 255, 255, 0.6)"}>
-              
-            Tails brings you a victory. Good job!
-            </Text>
+          <Flex bgColor={"rgba(86, 146, 250, 0.6)"}  w={["100%", "100%", "100%", "94%", "94%"]} h={["30.125rem", "30.125rem", "27.437rem", "26.437rem", "26.437rem"]} opacity={".9"} backdrop-filter="blur(20px)" borderRadius="1rem" direction={"Column"} gap="0.5rem">
+            <Flex direction={"Column"} pt="1.5rem">
+              <Text textAlign="center" fontSize="2xl" fontWeight="bold" color={"#FFFFFF"}>
+                
+              You Win!
+              </Text>
+              <Text textAlign="center" fontSize="xl" color={"rgba(255, 255, 255, 0.6)"}>
+                
+              Tails brings you a victory. Good job!
+              </Text>
+            </Flex>
+
+            <Flex  justifyContent="center">
+            <Image width="160px" height="160px" src="/Tails.png" alt="Tails" />
           </Flex>
-      
-          <Flex alignItems={"center"} justifyContent="center" gap="1rem">
-          <Flex direction="column">
-            <Text textAlign="end" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-              Bet:
-            </Text>
-            <Text textAlign="center" fontSize="md" fontWeight={"bold"} color={"white"}>
-              1000 BNB
-            </Text>
+         
+            <Flex alignItems={"center"} justifyContent="center" gap="2rem">
+            <Flex direction="column">
+              <Text textAlign="end" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
+                Bet:
+              </Text>
+              <Text textAlign="center" fontSize="md" fontWeight={"bold"} color={"white"}>
+                1000 BNB
+              </Text>
+            </Flex>
+    
+            <Flex direction="column">
+              <Text textAlign="start" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
+                Payout:
+              </Text>
+              <Text textAlign="center" fontSize="md" fontWeight={"bold"} color={"white"}>
+                1980 BNB
+              </Text>
+            </Flex>
           </Flex>
-  
-          <Flex>
-                  <Image width="160px" height="160px" src="/Tails.png" alt="Tails" />
-                </Flex>
-          <Flex direction="column">
-            <Text textAlign="start" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-              Payout:
-            </Text>
-            <Text textAlign="center" fontSize="md" fontWeight={"bold"} color={"white"}>
-              1980 BNB
-            </Text>
+
+
+          <Button alignSelf={"center"} background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
+          {" "}
+          Claim your win!
+        </Button>
+
+        <Button alignSelf={"center"} background="rgba(187, 211, 253, 0.2)" w="8.8175rem" h="3rem" color="white" borderRadius="30px" onClick={() => setValue(1)}>
+          {" "}
+          Play agin!
+        </Button>
           </Flex>
         </Flex>
-          
-        <Flex justifyContent={"center"} gap="1rem">
-        <Button background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
-        {" "}
-        Claim your win!
-      </Button>
-  
-      <Button background="rgba(187, 211, 253, 0.2)"  w="8.1875rem" h="3rem" color="white" borderRadius="30px"     onClick={() => setValue(1)}>
-        {" "}
-        Play agin!
-      </Button>
-        </Flex>
-        
-        </Flex>
-      </Flex>
       )}
-  
+
+
+
       {/*   {isLessThan993 ? (
           <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
         ) : null */}
+
+        <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
         <RightColumn allRounds={allRounds} />
       </Flex>
       <Flex pt="1rem" alignItems="center" gap="1" justifyContent="center">

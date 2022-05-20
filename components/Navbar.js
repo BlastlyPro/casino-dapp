@@ -11,7 +11,7 @@ export default function Navbar() {
   return (
     <>
       <Flex w="85%" pt={"2"}>
-        <SimpleGrid columns={[3, 3, 3, 3, 3]} spacing={["3rem", "8rem", "14rem", "9rem", "6rem"]}>
+        <SimpleGrid  width={"100%"} columns={[3, 3, 3, 3, 3]} spacing={["3rem", "8rem", "14rem", "9rem", "6rem"]}>
           
           {/* flex for company start */}
           <Flex alignItems="center" justifyContent="start">
@@ -34,7 +34,12 @@ export default function Navbar() {
             </Link>
 
             <Flex bgColor="gray.400" borderRadius="2rem" px="1rem" py="0.5rem" gap="0.5rem">
-              <Link href="">
+              
+            <Button fontSize="xs" variant="link">
+            {" "}
+            <Image width="16.67px" height="16.67px" src="/icon.png" alt="icon.png" />
+          </Button>
+            <Link href="">
                 <Button fontSize="xs" variant="link" color="#FFFFFF">
                   Coin Toss
                 </Button>
@@ -83,7 +88,7 @@ export default function Navbar() {
           {/* flex for wallet end */}
         </SimpleGrid>
 
-        <Box display={{ base: "inline-flex", md: "none" }}>
+        <Box display={{ base: "inline-flex", md: "none" }} zIndex="999">
           <IconButton
             display={{ base: "flex", md: "none" }}
             aria-label="Open menu"
@@ -108,11 +113,11 @@ export default function Navbar() {
             spacing={3}
             rounded="sm"
             shadow="sm"
+            bgColor={"gray.400"}
           >
             <CloseButton color="black" aria-label="Close menu" onClick={mobileNav.onClose} />
 
-            
-
+         
             <Link href="">
               <Button fontSize="xs" variant="link" color="gray.500">
                 Terms
@@ -124,8 +129,11 @@ export default function Navbar() {
                 <Icon as={RiArrowDropDownLine} fontSize="md" color="gray.500" />
               </Button>
             </Link>
+           
+
             <Link href="">
-              <Button fontSize="xs" variant="link" color="gray.500">
+            <Image width="16.67px" height="16.67px" src="/icon.png" alt="icon.png" />  
+            <Button pl="0.2rem" fontSize="xs" variant="link" color="gray.500">
                 Coin Toss
               </Button>
             </Link>

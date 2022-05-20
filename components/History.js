@@ -42,19 +42,19 @@ export default function History({ allRounds }) {
                 </Text>
               </Flex>
 
-              <Flex w="7.4375rem">
+              <Flex w="7.375rem">
                 <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                   Payout
                 </Text>
               </Flex>
 
-              <Flex w="8.875rem">
+              <Flex w="5.5rem">
                 <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                   Picked side
                 </Text>
               </Flex>
 
-              <Flex w="6.5rem">
+              <Flex w="10rem">
                 <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                   Result
                 </Text>
@@ -78,7 +78,7 @@ export default function History({ allRounds }) {
                     <>
                       <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={ i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
                         <Flex w="13.125rem" pl="1rem" gap="0.5rem" alignItems="center">
-                          <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" />
+                        {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
                           <Flex direction={"column"}>
                             {/* <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                               Joanna Wozny
@@ -89,23 +89,24 @@ export default function History({ allRounds }) {
                           </Flex>
                         </Flex>
 
-                        <Flex w="7.4375rem" alignItems="center">
+                        <Flex w="7.375rem" alignItems="center">
                           <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                             {round.player2BetAmount} MGT
                           </Text>
                         </Flex>
 
-                        <Flex w="8.875rem">
+                        <Flex w="5.5rem">
                           <Flex gap="0.5rem" alignItems="center">
-                            <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
+                          
                             <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                               {round.player2BetChoice}
                             </Text>
                           </Flex>
                         </Flex>
 
-                        <Flex w="6.5rem">
+                        <Flex w="10rem">
                           <Flex gap="0.3rem" alignItems="center">
+                          <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
                             <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
                             <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                               {round.player2BetChoice !== round.winningPosition ? "Loss" : "Win"}
@@ -207,7 +208,7 @@ export default function History({ allRounds }) {
                 .map((round, i) => (
                   <>
 
-          <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txnHash)}  bgColor={ i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"}  borderRadius="60px">
+          <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txnHash)}  bgColor={ i % 2 !== 0 ? "" : "rgba(86, 146, 250, 0.6)"}  borderRadius="60px">
             <Flex w="7.375rem" alignItems="center" pl="1rem">
               <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
              {round.player2BetAmount} BNB

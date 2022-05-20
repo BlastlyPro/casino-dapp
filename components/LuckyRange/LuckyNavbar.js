@@ -10,8 +10,8 @@ export default function LuckyNavbar() {
   const mobileNav = useDisclosure();
   return (
     <>
-      <Flex w="85%" pt={"2"}>
-        <SimpleGrid columns={[3, 3, 3, 3, 3]} spacing={["3rem", "8rem", "18rem", "9rem", "6rem"]}>
+      <Flex  w="85%" pt={"2"}>
+        <SimpleGrid width={"100%"} columns={[3, 3, 3, 3, 3]} spacing={["3rem", "8rem", "18rem", "9rem", "6rem"]} >
           {/* flex for company start */}
           <Flex alignItems="center" justifyContent="start">
             <Image width="80.84px" height="42px" src="/Logo.png" alt="Logo" />

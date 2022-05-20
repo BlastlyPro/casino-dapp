@@ -11,9 +11,9 @@ import Footer from "../components/Footer";
 import CoinToss from "../components/CoinToss/CoinToss";
 import HowItWorks from "../components/HowItWorks";
 import History from "../components/History";
-import CoinTossMobile from "../components/mobile/CoinTossMobile/CoinTossMobile";
 import HistoryMobile from "../components/mobile/HistoryMobile";
 import LuckyRange from "../components/LuckyRange/luckyRange";
+import CoinTossMobile from "../components/CoinToss/CoinTossMobile";
 
 export default function Home({ COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NETWORK_ID }) {
   const [isLoading, setIsLoading] = useState(false);
