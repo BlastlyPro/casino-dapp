@@ -92,7 +92,7 @@ export default function handler(req, res) {
       console.log(payoutDivider)
       var obj={'luckyNumber':luckyNumber, 'playerPayout':playerPayout, 'playerFlag':playerFlag, 'payoutDivider':payoutDivider}
       res.status(200).json(obj);
-        // coinFlipContractData.methods.luckyRange(req.body.player2Address, req.body._betAmount, req.body.betRange.maxRange, luckyNumber, req.body.txnHash, playerPayout, playerFlag, payoutDivider).send({from: _account.address}).then((reponse)=>{
+        // coinFlipContractData.methods.luckyRange(req.body.player2Address, req.body.betAmount, req.body.betRange.maxRange, luckyNumber, req.body.txnHash, playerPayout, playerFlag, payoutDivider).send({from: _account.address}).then((reponse)=>{
         //     res.status(200).json(reponse);
         //   }).catch((err)=>{
         //     console.log(err.message);

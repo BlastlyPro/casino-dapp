@@ -1,31 +1,94 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Flex, Text, Button, Divider, Input, chakra, Box, useMediaQuery, RangeSlider, RangeSliderTrack, RangeSliderFilledTrack, RangeSliderThumb } from "@chakra-ui/react";
 import Image from "next/image";
-
 import Swal from "sweetalert2";
 import RightColumnLucky from "./RightColumnLucky";
 import LeftColumnLucky from "./LeftColumnLucky";
+import axios from "axios";
+import { MainContext } from "../providers/MainProvider";
 
-export default function Lucky({}) {
+export default function Lucky() {
+  const { stateData, betAmountData, allRoundsData, handleChange } = useContext(MainContext);
+  const [state] = stateData;
+  const [betAmount] = betAmountData;
+  const [allRounds] = allRoundsData;
+  const [minRange, setMinRange] = useState(null);
+  const [maxRange, setMaxRange] = useState(null);
+  const [totalRound, setTotalRound] = useState(null);
+
+  useEffect(() => {
+    const init = async () => {
+      if (state.coinFlipContractData.methods) {
+        let totalRound = await state.coinFlipContractData.methods.totalLuckyRangeRound().call();
+        setTotalRound(totalRound);
+        let _allRounds = [];
+
+        for (var i = 1; i <= totalRound; i++) {
+          var roundObj = await state.coinFlipContractData.methods.luckyRangeRounds(i).call();
+          roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+          _allRounds.push(roundObj);
+        }
+        setAllRounds(_allRounds);
+      }
+    };
+    init();
+  }, [state]);
   const [value, setValue] = useState(1);
-  /*  const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
-  const [isLessThan993] = useMediaQuery("(max-width: 993px)"); */
-  const place =  () => {
- 
-    setValue(2);
-
-  };
-
-
-{/*   const func1 =  () => {
- 
+  const place = () => {
     setValue(2);
   };
-  
-  const  func2 =  () => {
- 
-    setValue(3);
-  }; */}
+
+  function setRanges(values) {
+      setMinRange(values[0]);
+      setMaxRange(values[1]);
+  }
+
+  async function submitLuckyRange() {
+    var range = { minRange: minRange, maxRange: maxRange };
+    var bta = state.web3.utils.toWei(String(betAmount), "ether");
+    var secretKeyGen;
+    ////////////////////////////////////////
+    let allowance = await state.tokenContractData.methods.allowance(state.account, state.coinFlipContractData._address).call();
+    console.log(allowance);
+    axios.post("/api/secretKeyGenerate", { player2Address: state.account }).then((response) => {
+      // console.log("------------Secret Key ------------");
+      //   console.log(response.data);
+      secretKeyGen = response.data;
+      axios.post("/api/luckyRange", { betRange: range, betAmount: bta, normalBetAmount: betAmount, player2Address: state.account, txnHash: "0xxxxxx" }).then((response) => {
+        console.log(response);
+        console.log("=------------- allowance -----------------");
+        if (allowance < bta) {
+          state.tokenContractData.methods
+            .approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9 * 1e18), "ether"))
+            .send({ from: state.account })
+            .then((res) => {
+              callLuckyRange(bta, response, secretKeyGen);
+            });
+        } else {
+          console.log("Direct calling lucky range sol");
+          callLuckyRange(bta, response, secretKeyGen);
+        }
+      });
+    });
+  }
+
+  function callLuckyRange(bta, response, secretKeyGen) {
+    state.coinFlipContractData.methods
+      .luckyRange(state.account, bta, maxRange, response.data.luckyNumber, " ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen)
+      .send({ from: state.account })
+      .then((reponse007) => {
+        //console.log(reponse007.transactionHash)
+        Swal.fire({
+          title: "Result",
+          text: reponse007.events.GameMessage.returnValues.mesg,
+          icon: "success",
+        });
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+
   return (
     /* mother flex for all start */
     <Flex w="85%" direction={"column"}>
@@ -39,11 +102,6 @@ export default function Lucky({}) {
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
         <LeftColumnLucky />
-
-        {/*  {isLargerThan993 ? (
-        <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
-      ) : null} */}
-
         {value == 1 && (
           <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column">
             <Flex
@@ -65,17 +123,17 @@ export default function Lucky({}) {
                 </Text>
               </Flex>
               <Flex w="94%" direction={"column"} alignSelf="center">
-                <Flex alignSelf="center" gap="3rem">
+                {/* <Flex alignSelf="center" gap="3rem">
                   <Image width="90px" height="116.99px" src="/ten.svg" alt="ten" />
                   <Image width="90px" height="116.99px" src="/sixtyfive.svg" alt="sixtyfive" />
-                </Flex>
+                </Flex> */}
 
                 <Flex w="80%" alignSelf="center" alignItems={"center"} justifyContent="center" borderRadius={"20px"}>
-                  <RangeSlider aria-label={["min", "max"]} colorScheme="pink" defaultValue={[20, 65]}>
+                  <RangeSlider aria-label={["min", "max"]} onChangeEnd={(val) => setRanges(val)} colorScheme="pink" defaultValue={[10, 65]}>
                     <RangeSliderTrack>
                       <RangeSliderFilledTrack />
                     </RangeSliderTrack>
-                    <RangeSliderThumb    index={0} />
+                    <RangeSliderThumb index={0} />
                     <RangeSliderThumb index={1} />
                   </RangeSlider>
                 </Flex>
@@ -85,7 +143,7 @@ export default function Lucky({}) {
                 <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px" marginLeft={"2.5rem"}>
                   <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                     <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
-                    <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000 BNB"} onChange={(e) => handleChange(e)} />
+                    <Input onChange={(e) => handleChange(e)} border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"10 BLAST"} />
                   </Flex>
                   <Flex alignItems={"center"} justifyContent={"center"}>
                     <Image width="16px" height="16px" src="/InputArrow.png" alt="InputArrow" />
@@ -106,10 +164,7 @@ export default function Lucky({}) {
                   bgColor={"#102542"}
                   fontSize="xs"
                   color={"white"}
-                  onClick={() => place()}
-               /*    onClick={() => { func1(); func2();}} */
-                  
-                
+                  onClick={() => submitLuckyRange()}
                 >
                   <Text _hover={{ transform: "scale(1.2)" }} transition={"all .5s"}>
                     Place Your Bet!
@@ -130,7 +185,7 @@ export default function Lucky({}) {
         )}
 
         {value == 2 && (
-          <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column" >
+          <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column">
             <Flex
               background="rgba(255, 255, 255, 0.6)"
               w={["100%", "100%", "100%", "94%", "94%"]}
@@ -200,10 +255,10 @@ export default function Lucky({}) {
                 <Flex gap="1rem" w="70%" alignSelf={"center"} direction={"column"}>
                   <Flex alignSelf="center" gap="1rem">
                     <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-                      Your range:{" "}
+                      Your range:
                       <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
                         10-65
-                      </chakra.span>{" "}
+                      </chakra.span>
                     </Text>
                     <Image width="14.4px" height="9.9px" src={"/ri.png"} alt="right" />
                   </Flex>
@@ -211,29 +266,27 @@ export default function Lucky({}) {
                   <Flex direction={"column"} alignSelf={"center"} gap="1rem">
                     <Flex>
                       <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-                        Payout:{" "}
+                        Payout:
                         <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
                           1980 BNB
-                        </chakra.span>{" "}
+                        </chakra.span>
                       </Text>
                     </Flex>
                     <Flex>
                       <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-                        Bet:{" "}
+                        Bet:
                         <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
                           1000 BNB
-                        </chakra.span>{" "}
+                        </chakra.span>
                       </Text>
                     </Flex>
                   </Flex>
 
                   <Button background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
-                    {" "}
                     Claim your win!
                   </Button>
 
                   <Button background="rgba(187, 211, 253, 0.2)" w="8.1875rem" h="3rem" color="white" borderRadius="30px" onClick={() => setValue(1)}>
-                    {" "}
                     Play agin!
                   </Button>
                 </Flex>
@@ -241,10 +294,6 @@ export default function Lucky({}) {
             </Flex>
           </Flex>
         )}
-
-        {/*   {isLessThan993 ? (
-          <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
-        ) : null */}
         <RightColumnLucky />
       </Flex>
       <Flex pt="1rem" alignItems="center" gap="1" justifyContent="center">

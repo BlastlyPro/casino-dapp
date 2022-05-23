@@ -88,7 +88,7 @@ export default function LuckyHistory({ allRounds }) {
 
                         <Flex w="7.375rem" alignItems="center">
                           <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                            {round.player2BetAmount} MGT
+                            {round.player2BetAmount} BLAST
                           </Text>
                         </Flex>
 
@@ -113,7 +113,7 @@ export default function LuckyHistory({ allRounds }) {
 
                         <Flex w="7.5rem" alignItems="center">
                           <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                            {round.player2BetAmount} MGT
+                            {round.player2BetAmount} BLAST
                           </Text>
                         </Flex>
                       </Flex>

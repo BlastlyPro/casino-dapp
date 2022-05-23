@@ -60,7 +60,7 @@ export default function LuckyMobile({ coinFlipContractData, handleChange, coinFl
             <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px 30px 0 0">
               <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                 <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
-                <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000MGT"} onChange={(e) => handleChange(e)} />
+                <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000BLAST"} onChange={(e) => handleChange(e)} />
               </Flex>
               <Flex alignItems={"center"} justifyContent={"center"}>
                 <Image width="16px" height="16px" src="/InputArrow.png" alt="InputArrow" />
@@ -174,10 +174,10 @@ export default function LuckyMobile({ coinFlipContractData, handleChange, coinFl
           <Flex gap="1rem" w="80%" alignSelf={"center"} direction={"column"}>
             <Flex alignSelf={"center"} gap="1rem">
               <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-                Your range:{" "}
+                Your range:
                 <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
                   10-65
-                </chakra.span>{" "}
+                </chakra.span>
               </Text>
               <Image width="12.8px" height="8.8px" src={"/ri.png"} alt="right" />
             </Flex>
@@ -202,12 +202,12 @@ export default function LuckyMobile({ coinFlipContractData, handleChange, coinFl
             </Flex>
   
             <Button alignSelf={"center"} background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
-              {" "}
+              
               Claim your win!
             </Button>
   
             <Button alignSelf={"center"} background="rgba(187, 211, 253, 0.2)" w="8.8175rem" h="3rem" color="white" borderRadius="30px" onClick={() => setValue(1)}>
-              {" "}
+              
               Play agin!
             </Button>
           </Flex>

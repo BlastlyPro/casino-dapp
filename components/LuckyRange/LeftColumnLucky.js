@@ -40,14 +40,14 @@ import {
               <Image width="27.5px" height="15px" src="/upArrow.png" alt="upArrow" /> </Flex>
             <Flex direction={ "column"}>
               <Text fontSize="xs" color={ "rgba(255, 255, 255, 0.6)"}> All time volume </Text>
-              <Text fontSize="sm" color={ "FFFFFF"}> {contractBalance} MGT </Text>
+              <Text fontSize="sm" color={ "FFFFFF"}> {contractBalance} BLAST </Text>
             </Flex>
           </Flex>
           <Divider w="100%" /> </Flex> {/* mother flex for volume and symbol end */} 
         <Flex w="100%" pt="1rem"  alignItems={["center", "center", "center", "start", "start"]} justifyContent={["center", "center", "center", "start", "start"]}>
           <Flex alignItems={ "center"} justifyContent="center" w="10.56rem" h="3rem" bgColor=" #BBD3FD" borderRadius={ "30px"} gap="2">
             <Icon as={FiShoppingCart} fontSize="xl" color="#102542" />
-            <Text fontSize="sm" color={ "#102542"}> BuyMGToken </Text>
+            <Text fontSize="sm" color={ "#102542"}> Buy BLAST Token </Text>
           </Flex>
         </Flex>
       </Flex>   

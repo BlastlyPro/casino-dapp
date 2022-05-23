@@ -97,7 +97,7 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
             <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px" marginLeft={"2.5rem"}>
               <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                 <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
-                <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000MGT"} onChange={(e) => handleChange(e)} />
+                <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000BLAST"} onChange={(e) => handleChange(e)} />
               </Flex>
               <Flex alignItems={"center"} justifyContent={"center"}>
                 <Image width="16px" height="16px" src="/InputArrow.png" alt="InputArrow" />
@@ -175,12 +175,12 @@ export default function CoinToss({ coinFlipContractData, handleChange, coinFlip,
           
         <Flex justifyContent={"center"} gap="1rem">
         <Button background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
-        {" "}
+        
         Claim your win!
       </Button>
   
       <Button background="rgba(187, 211, 253, 0.2)"  w="8.1875rem" h="3rem" color="white" borderRadius="30px"     onClick={() => setValue(1)}>
-        {" "}
+        
         Play agin!
       </Button>
         </Flex>

@@ -33,7 +33,7 @@ export default function handler(req, res) {
       console.log("contractBalance--------------------");
       console.log(contractBalance);    
       //////////////////Daddu Please Check/////////
-      //if((req.body._betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
+      //if((req.body.betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
       if( contractBalance < 1000 || contractBalance < normalBetAmount)
       {
         console.log("entering chorai mode");
@@ -54,7 +54,7 @@ export default function handler(req, res) {
       }
       var obj={'secretChoice':secretChoice};
       res.status(200).json(obj);       
-        // coinFlipContractData.methods.takeBet(req.body.player2Address, req.body.betChoice, req.body._betAmount, hash, secretChoice, nonce, req.body.txnHash ).send({from: _account.address}).then((reponse)=>{                
+        // coinFlipContractData.methods.takeBet(req.body.player2Address, req.body.betChoice, req.body.betAmount, hash, secretChoice, nonce, req.body.txnHash ).send({from: _account.address}).then((reponse)=>{                
         //     res.status(200).json(reponse);
         //   }).catch((err)=>{
         //     console.log(err.message);

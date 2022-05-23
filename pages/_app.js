@@ -1,5 +1,7 @@
 import { ChakraProvider, extendTheme } from "@chakra-ui/react";
 import "../styles/globals.css";
+import { MainProvider } from "../components/providers/MainProvider";
+import NextNprogress from "nextjs-progressbar";
 
 const theme = extendTheme({
   colors: {
@@ -18,7 +20,10 @@ const theme = extendTheme({
 function MyApp({ Component, pageProps }) {
   return (
     <ChakraProvider theme={theme}>
-      <Component {...pageProps} />
+      <NextNprogress color="#1e76db" startPosition={0.1} stopDelayMs={200} height={3} showOnShallow={false} />
+      <MainProvider>
+        <Component {...pageProps} />
+      </MainProvider>
     </ChakraProvider>
   );
 }

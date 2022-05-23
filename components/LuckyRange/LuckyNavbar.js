@@ -34,7 +34,7 @@ export default function LuckyNavbar() {
 
             <Flex bgColor={"rgba(187, 211, 253, 0.2)"} borderRadius="2rem" px="1rem" py="0.5rem" gap="0.5rem">
               <Button fontSize="xs" variant="link">
-                {" "}
+                
                 <Image width="15px" height="15px" src="/luckyarrow.png" alt="luckyarrow.png" />
               </Button>
 

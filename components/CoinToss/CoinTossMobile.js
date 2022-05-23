@@ -97,7 +97,7 @@ export default function CoinTossMobile({ coinFlipContractData, handleChange, coi
               
             <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                 <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
-                <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000MGT"} onChange={(e) => handleChange(e)} />
+                <Input border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"1000BLAST"} onChange={(e) => handleChange(e)} />
               </Flex>
               <Flex alignItems={"center"} justifyContent={"center"}>
                 <Image width="16px" height="16px" src="/InputArrow.png" alt="InputArrow" />
@@ -177,12 +177,12 @@ export default function CoinTossMobile({ coinFlipContractData, handleChange, coi
 
 
           <Button alignSelf={"center"} background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
-          {" "}
+          
           Claim your win!
         </Button>
 
         <Button alignSelf={"center"} background="rgba(187, 211, 253, 0.2)" w="8.8175rem" h="3rem" color="white" borderRadius="30px" onClick={() => setValue(1)}>
-          {" "}
+          
           Play agin!
         </Button>
           </Flex>

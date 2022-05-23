@@ -24,10 +24,10 @@ export default function HowItWorks() {
 
             <Flex w="90%" direction={"column"}>
               <Text fontSize="md" fontWeight="bold" color={"#BBD3FD"}>
-                Buy MGToken
+                Buy BLASToken
               </Text>
               <Text fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
-                You need to exchange your tokens to MGToken so you will be able to place your bet
+                You need to exchange your tokens to BLASToken so you will be able to place your bet
               </Text>
             </Flex>
           </Flex>
