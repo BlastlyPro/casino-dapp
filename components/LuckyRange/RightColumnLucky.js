@@ -33,8 +33,14 @@ const RightColumnLucky = ({ allRounds }) => {
                       <Text fontSize="xs" color={"rgba(255, 255, 255, 0.6)"}>
                         {round.player2BetAmount} BLAST
                       </Text>
-                      <Image width="34px" height="34px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt="Tails" />
-                      <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
+                      {/* <Image width="34px" height="34px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt="Tails" />
+                      <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" /> */}
+                      <Text fontSize="xs" color={"rgba(255, 255, 255, 0.6)"}>
+                        Max: {round.luckyRangeBet} 
+                      </Text> 
+                      <Text fontSize="xs" color={"rgba(255, 255, 255, 0.6)"}>
+                        Lucky Num: {round.luckyNumber} 
+                      </Text>                      
                     </Flex>
                   </Flex>
                   <Divider w="100%" />

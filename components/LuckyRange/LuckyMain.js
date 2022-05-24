@@ -67,7 +67,7 @@ export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}
         </Text>
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
-        <LeftColumnLucky />
+        <LeftColumnLucky allRounds={allRounds}/>
         {value == 1 && (
           <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column">
             <Flex
@@ -260,7 +260,7 @@ export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}
             </Flex>
           </Flex>
         )}
-        <RightColumnLucky />
+        <RightColumnLucky allRounds={allRounds}/>
       </Flex>
       <Flex pt="1rem" alignItems="center" gap="1" justifyContent="center">
         <Text fontSize="lg" color={"#FFFFFF"}>

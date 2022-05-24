@@ -15,10 +15,7 @@ import {
   import Image from "next/image";
   import { FiShoppingCart } from "react-icons/fi";
   
-  const LeftColumnLucky = ({coinFlipContractData, totalRound, contractBalance, PROJECT_FEE, _coinFlip}) => {
-  
-    console.log(contractBalance);
-  
+  const LeftColumnLucky = ({allRounds,coinFlipContractData, totalRound, contractBalance, PROJECT_FEE, _coinFlip}) => {
     return (
       <Flex pt="1rem"  w={["100%", "100%", "100%", "50%", "50%"]}  direction={ "column"}> {/* mother flex for total bet and symbol start */}
         <Flex direction="column" w="100%">
@@ -30,7 +27,7 @@ import {
             <Image width="23.75px" height="25px" src="/coinIcon.png" alt="coinIcon" /> </Flex>
             <Flex direction={ "column"}>
               <Text fontSize="xs" color={ "rgba(255, 255, 255, 0.6)"}> Total bets </Text>
-              <Text fontSize="sm" color={ "FFFFFF"}> {totalRound} </Text>
+              {allRounds ?(<Text fontSize="sm" color={ "FFFFFF"}> {allRounds.length} </Text>) : "0"}
             </Flex>
           </Flex>
           <Divider w="100%" /> </Flex> {/* mother flex for total bet and symbol end */} {/* mother flex for volume and symbol start */}

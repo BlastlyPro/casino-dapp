@@ -64,7 +64,7 @@ export default function LuckyRangeGame() {
             });
         } else {
           console.log("Direct calling lucky range sol");
-          callLuckyRange(bta, response, secretKeyGen);
+          callLuckyRange(bta, response, secretKeyGen,maxRange);
         }
       });
     });
@@ -72,9 +72,7 @@ export default function LuckyRangeGame() {
 
   async function callLuckyRange(bta, response, secretKeyGen, maxRange) {
     const { blastlyContract } = getContractsData();
-    await blastlyContract.methods
-      .luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen)
-      .send({ from: state.account })
+    await blastlyContract.methods.luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen).send({ from: state.account })
       .then((reponse007) => {
         //console.log(reponse007.transactionHash)
         Swal.fire({
