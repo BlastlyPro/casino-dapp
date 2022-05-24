@@ -7,7 +7,7 @@ const RightColumn = ({ allRounds }) => {
   }
 
   return (
-    <Flex w="25%" direction={"column"} gap="0.5rem">
+    <Flex  w={["100%", "100%", "100%", "50%", "50%"]} direction={"column"} gap="0.5rem">
       <Flex pb="1.5rem">
         <Text fontSize="md" fontWeight={"bold"} color={"#FFFFFF"}>
           Latest results
@@ -31,7 +31,7 @@ const RightColumn = ({ allRounds }) => {
 
                     <Flex alignItems={"center"} gap="1rem">
                       <Text fontSize="xs" color={"rgba(255, 255, 255, 0.6)"}>
-                        {round.player2BetAmount} MGT
+                        {round.player2BetAmount} BLAST
                       </Text>
                       <Image width="34px" height="34px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt="Tails" />
                       <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />

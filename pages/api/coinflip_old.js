@@ -1,3 +1,4 @@
+var fs = require('fs');
 const HDWalletProvider = require('@truffle/hdwallet-provider');
 const Web3=require('web3');
 const crypto = require('crypto');
@@ -24,12 +25,16 @@ export default function handler(req, res) {
     let secretChoice = false;
     let randomNumber;
     coinFlipContractData.methods.getBalance(tokenContract._address).call().then(response=>{
-      console.log(response);
-      var contractBalance=_web3.utils.fromWei(response,'ether');
 
+      console.log("req.body.normalBetAmount --------------------");
+      let normalBetAmount=req.body.normalBetAmount * 2;
+      console.log(normalBetAmount);
+      var contractBalance=_web3.utils.fromWei(response,'ether');
+      console.log("contractBalance--------------------");
+      console.log(contractBalance);    
       //////////////////Daddu Please Check/////////
-      //if((req.body._betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
-      if( contractBalance < _web3.utils.fromWei('1000','ether') && contractBalance < (req.body._betAmount) * 2)
+      //if((req.body.betAmount) * 2 > _web3.utils.fromWei(response,'ether'))
+      if( contractBalance < 1000 || contractBalance < normalBetAmount)
       {
         console.log("entering chorai mode");
         if(req.body.betChoice==true){
@@ -48,11 +53,13 @@ export default function handler(req, res) {
         }            
       }
         const nonce = "0x" + crypto.randomBytes(32).toString('hex');
-        const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[secretChoice, nonce]).toString('hex');                 
-        coinFlipContractData.methods.CoinFlip(hash).send({from: _account.address}).then((reponse)=>{                
-          const hashObject={'hash':hash,'nonce':nonce,'secretChoice':secretChoice,'randomNumber':randomNumber};        
-          // res.send(hashObject);
-          res.status(200).json(hashObject);
+        console.log('------------ nonce -----------');
+        console.log(nonce);
+        const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[secretChoice, nonce]).toString('hex');
+        console.log('------------ hash -----------');
+        console.log(hash);        
+        coinFlipContractData.methods.takeBet(req.body.player2Address, req.body.betChoice, req.body.betAmount, hash, secretChoice, nonce, req.body.txnHash ).send({from: _account.address}).then((reponse)=>{                
+            res.status(200).json(reponse);
           }).catch((err)=>{
             console.log(err.message);
           });                
