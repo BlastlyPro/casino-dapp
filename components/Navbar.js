@@ -8,7 +8,8 @@ import Link from "next/link";
 import { MainContext } from "./providers/MainProvider";
 
 export default function Navbar() {
-  const {connect} = useContext(MainContext);
+  const { stateData, connect } = useContext(MainContext);
+  const [state] = stateData;
   const bg = useColorModeValue("white", "gray.800");
   const mobileNav = useDisclosure();
 
@@ -33,9 +34,13 @@ export default function Navbar() {
                 Games
               </MenuButton>
               <MenuList backgroundColor={"gray.700"} border="none">
-                <MenuItem _hover={{bgColor:"gray.500"}}><Link href={"/"}>Coin Toss</Link></MenuItem>
-                <MenuItem _hover={{bgColor:"gray.500"}}><Link href={"/lucky-range"}>Lucky Range</Link></MenuItem>
-                <MenuItem _hover={{bgColor:"gray.500"}}>Roulette</MenuItem>
+                <MenuItem _hover={{ bgColor: "gray.500" }}>
+                  <Link href={"/coin-toss"}>Coin Toss</Link>
+                </MenuItem>
+                <MenuItem _hover={{ bgColor: "gray.500" }}>
+                  <Link href={"/lucky-range"}>Lucky Range</Link>
+                </MenuItem>
+                <MenuItem _hover={{ bgColor: "gray.500" }}>Roulette</MenuItem>
               </MenuList>
             </Menu>
             <ChevronDownIcon color={"white"} zIndex="999" ml={"-2rem"} mt={"0.2rem"} />
@@ -70,9 +75,15 @@ export default function Navbar() {
           {/* flex for wallet start */}
 
           <Flex alignItems="center" justifyContent="end" display={{ base: "none", md: "inline-flex" }}>
-            <Button onClick={connect} bgColor="#BBD3FD" borderRadius="1rem" p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]} fontSize="xs" color="#102542">
-              Connect Your wallet
-            </Button>
+            {state.account ? (
+              <Button size={"sm"} bgColor="#BBD3FD" borderRadius="1rem" p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]} fontSize="xs" color="#102542">
+                {state.account.substring(0, 5) + " ... " + state.account.slice(-4)}
+              </Button>
+            ) : (
+              <Button size={"sm"} onClick={connect} bgColor="#BBD3FD" borderRadius="1rem" p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]} fontSize="xs" color="#102542">
+                Connect Your wallet
+              </Button>
+            )}
           </Flex>
           {/* flex for wallet end */}
         </SimpleGrid>

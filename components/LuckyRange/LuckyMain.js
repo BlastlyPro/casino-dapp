@@ -4,89 +4,55 @@ import Image from "next/image";
 import Swal from "sweetalert2";
 import RightColumnLucky from "./RightColumnLucky";
 import LeftColumnLucky from "./LeftColumnLucky";
-import axios from "axios";
 import { MainContext } from "../providers/MainProvider";
 
-export default function Lucky() {
-  const { stateData, betAmountData, allRoundsData, handleChange } = useContext(MainContext);
+
+export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}) {
+  const { stateData } = useContext(MainContext);
   const [state] = stateData;
-  const [betAmount] = betAmountData;
-  const [allRounds] = allRoundsData;
+  const [value, setValue] = useState(1);
   const [minRange, setMinRange] = useState(null);
   const [maxRange, setMaxRange] = useState(null);
-  const [totalRound, setTotalRound] = useState(null);
+  const [betAmount, setBetAmount] = useState(0);
 
-  useEffect(() => {
-    const init = async () => {
-      if (state.coinFlipContractData.methods) {
-        let totalRound = await state.coinFlipContractData.methods.totalLuckyRangeRound().call();
-        setTotalRound(totalRound);
-        let _allRounds = [];
-
-        for (var i = 1; i <= totalRound; i++) {
-          var roundObj = await state.coinFlipContractData.methods.luckyRangeRounds(i).call();
-          roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
-          _allRounds.push(roundObj);
-        }
-        setAllRounds(_allRounds);
-      }
-    };
-    init();
-  }, [state]);
-  const [value, setValue] = useState(1);
-  const place = () => {
-    setValue(2);
-  };
+  function handleBetAmount(e) {
+    setBetAmount(e.target.value);
+  }
 
   function setRanges(values) {
-      setMinRange(values[0]);
-      setMaxRange(values[1]);
+    setMinRange(values[0]);
+    setMaxRange(values[1]);
   }
 
-  async function submitLuckyRange() {
-    var range = { minRange: minRange, maxRange: maxRange };
-    var bta = state.web3.utils.toWei(String(betAmount), "ether");
-    var secretKeyGen;
-    ////////////////////////////////////////
-    let allowance = await state.tokenContractData.methods.allowance(state.account, state.coinFlipContractData._address).call();
-    console.log(allowance);
-    axios.post("/api/secretKeyGenerate", { player2Address: state.account }).then((response) => {
-      // console.log("------------Secret Key ------------");
-      //   console.log(response.data);
-      secretKeyGen = response.data;
-      axios.post("/api/luckyRange", { betRange: range, betAmount: bta, normalBetAmount: betAmount, player2Address: state.account, txnHash: "0xxxxxx" }).then((response) => {
-        console.log(response);
-        console.log("=------------- allowance -----------------");
-        if (allowance < bta) {
-          state.tokenContractData.methods
-            .approve(state.coinFlipContractData._address, state.web3.utils.toWei(String(9 * 1e18), "ether"))
-            .send({ from: state.account })
-            .then((res) => {
-              callLuckyRange(bta, response, secretKeyGen);
-            });
-        } else {
-          console.log("Direct calling lucky range sol");
-          callLuckyRange(bta, response, secretKeyGen);
-        }
+  const handleSubmit = () => {
+    // check if the user is connected
+    if(!state.account){
+      Swal.fire({
+        title: "Please connect your wallet to play",
+        icon: "warning",
       });
-    });
-  }
+      return;
+    }
 
-  function callLuckyRange(bta, response, secretKeyGen) {
-    state.coinFlipContractData.methods
-      .luckyRange(state.account, bta, maxRange, response.data.luckyNumber, " ", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen)
-      .send({ from: state.account })
-      .then((reponse007) => {
-        //console.log(reponse007.transactionHash)
-        Swal.fire({
-          title: "Result",
-          text: reponse007.events.GameMessage.returnValues.mesg,
-          icon: "success",
-        });
-      })
-      .catch((err) => {
-        console.log(err.message);
+    if (minRange == null || maxRange == null) {
+      Swal.fire({
+        title: "Please select a range!",
+        icon: "error",
       });
+      return;
+    }
+
+    if (betAmount < 10) {
+      Swal.fire({
+        title: "Please enter a bet amount atleast 10!",
+        icon: "error",
+      });
+      return;
+    }
+
+    executeLuckyRange(minRange, maxRange, betAmount);
+
+    setValue(2);
   }
 
   return (
@@ -143,7 +109,7 @@ export default function Lucky() {
                 <Flex h="3rem" border="none" w="13.125rem" bgColor="white" fontSize="xs" color={"black"} borderRadius="30px" marginLeft={"2.5rem"}>
                   <Flex pl="0.3rem" alignItems={"center"} justifyContent={"center"}>
                     <Image width="20px" height="20px" src="/inputFrame.png" alt="inputFrame" />
-                    <Input onChange={(e) => handleChange(e)} border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"10 BLAST"} />
+                    <Input onChange={(e) => handleBetAmount(e)} border="none" bgColor="white" fontSize="xs" w="8rem" color={"#102542CC"} borderRadius="30px" placeholder={"10 BLAST"} />
                   </Flex>
                   <Flex alignItems={"center"} justifyContent={"center"}>
                     <Image width="16px" height="16px" src="/InputArrow.png" alt="InputArrow" />
@@ -164,7 +130,7 @@ export default function Lucky() {
                   bgColor={"#102542"}
                   fontSize="xs"
                   color={"white"}
-                  onClick={() => submitLuckyRange()}
+                  onClick={() => handleSubmit()}
                 >
                   <Text _hover={{ transform: "scale(1.2)" }} transition={"all .5s"}>
                     Place Your Bet!

@@ -5,7 +5,7 @@ import LeftColumn from "./LeftColumn";
 import RightColumn from "./RightColumn";
 import Swal from "sweetalert2";
 
-export default function CoinTossMobile({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
+export default function CoinTossMobile({ coinFlipContractData, handleChange, coinFlip, allRounds, allRoundsCount, contractBalance, PROJECT_FEE, _coinFlip }) {
   const [choice, setChoice] = useState(null);
   const [value, setValue] = useState(1);
 
@@ -42,7 +42,7 @@ export default function CoinTossMobile({ coinFlipContractData, handleChange, coi
      
       
      {/*  {isLargerThan993 ? (
-        <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
+        <LeftColumn coinFlipContractData={coinFlipContractData} allRoundsCount={allRoundsCount} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
       ) : null} */}
 
 
@@ -192,10 +192,10 @@ export default function CoinTossMobile({ coinFlipContractData, handleChange, coi
 
 
       {/*   {isLessThan993 ? (
-          <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
+          <LeftColumn coinFlipContractData={coinFlipContractData} allRoundsCount={allRoundsCount} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
         ) : null */}
 
-        <LeftColumn coinFlipContractData={coinFlipContractData} totalRound={totalRound} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
+        <LeftColumn coinFlipContractData={coinFlipContractData} allRoundsCount={allRoundsCount} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
         <RightColumn allRounds={allRounds} />
       </Flex>
       <Flex pt="1rem" alignItems="center" gap="1" justifyContent="center">

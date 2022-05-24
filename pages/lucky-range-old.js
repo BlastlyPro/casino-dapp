@@ -1,11 +1,15 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Flex, Text, Button, Divider, Input, Box, useMediaQuery } from "@chakra-ui/react";
 import Image from "next/image";
 import Swal from "sweetalert2";
 import axios from "axios";
 import { Table, Thead, Tbody, Tfoot, Tr, Th, Td, TableCaption, TableContainer } from "@chakra-ui/react";
+import { MainContext } from "../components/providers/MainProvider";
 
-export default function LuckyRange({ state, handleChange, betAmount }) {
+export default function LuckyRange() {
+  const { stateData, betAmountData, handleChange } = useContext(MainContext);
+  const [state, setState] = stateData;
+  const [betAmount, setBetAmount] = betAmountData;
   const [minRange, setMinRange] = useState(null);
   const [maxRange, setMaxRange] = useState(null);
   const [totalRound, setTotalRound] = useState(null);
@@ -14,9 +18,6 @@ export default function LuckyRange({ state, handleChange, betAmount }) {
   useEffect(() => {
     const init = async () => {
       if (blastlyContractData.methods) {
-        // let s = await blastlyContractData.methods.secretKeys(state.account).call();
-        // console.log("ssssssssssssssssssss");
-        // console.log(s);
         let totalRound = await blastlyContractData.methods.totalLuckyRangeRound().call();
         setTotalRound(totalRound);
         let _allRounds = [];
@@ -92,10 +93,10 @@ export default function LuckyRange({ state, handleChange, betAmount }) {
   }
   return (
     <>
-      <h1>Welcome to Lucky Range Game</h1>
+      {/* <h1>Welcome to Lucky Range Game</h1>
       <h1>TOTAL Lucky Range Game:{totalRound}</h1>
       <Input width="10%" color="black" placeholder="Input Min Range" onChange={(e) => inputLuckyRange(e, "min")} />
-      <Input width="10%" color="black" placeholder="Input Max Range" onChange={(e) => inputLuckyRange(e, "max")} />
+      <Input width="10%" color="black" placeholder="Input Max Range" onChange={(e) => inputLuckyRange(e, "max")} /> */}
       <Input width="10%" color="black" placeholder="Input Money" onChange={(e) => handleChange(e)} />
       <Button color="black" onClick={() => submitLuckyRange()}>
         Try Your Luck
