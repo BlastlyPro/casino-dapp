@@ -18,24 +18,14 @@ export default function History({ allRounds }) {
       {/* mother flex for combined left leader board and right all bets start */}
       <Flex w="100%" gap="2rem" direction={["column", "column", "column", "row", "row"]}>
         {/* mother flex for left portion start */}
-        <Flex w={["100%", "100%", "100%", "60%", "60%"]} direction={"column"}>
+        <Flex gap={5}>
           {/* flex for all bets and my bets start */}
-
-          <Flex>
+          <Flex direction={"column"}>
             <Text fontSize="md" fontWeight="bold" color={"#BBD3FD"}>
               All bets
             </Text>
-          </Flex>
 
-          {/* mother flex for right portion start */}
-          <Flex paddingLeft={"1.5rem"} direction={"column"}>
-            {/* flex for all bets and my bets start */}
-
-            {/* flex for all bets and my bets end */}
-
-            {/* mother flex for table start*/}
             <Flex direction={"column"}>
-              {/* flex for table heading start */}
               <Flex py="1rem" gap="1rem">
                 <Flex w="13.125rem" pl="1rem">
                   <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
@@ -67,71 +57,65 @@ export default function History({ allRounds }) {
                   </Text>
                 </Flex>
               </Flex>
-              {/* flex for table heading end */}
-              <Flex>
-                <Flex>
-                  {/* flex for first table row start */}
-                  {allRounds && allRounds.length > 0 ? (
-                    <>
-                      {allRounds
-                        .slice(-5)
-                        .reverse()
-                        .map((round, i) => (
-                          <>
-                            <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
-                              <Flex w="13.125rem" pl="1rem" gap="0.5rem" alignItems="center">
-                                {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
-                                <Flex direction={"column"}>
-                                  <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                                    {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}
-                                  </Text>
-                                </Flex>
-                              </Flex>
-
-                              <Flex w="7.375rem" alignItems="center">
-                                <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                                  {round.player2BetAmount} BLAST
-                                </Text>
-                              </Flex>
-
-                              <Flex w="5.5rem">
-                                <Flex gap="0.5rem" alignItems="center">
-                                  <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                                    {round.player2BetChoice}
-                                  </Text>
-                                </Flex>
-                              </Flex>
-
-                              <Flex w="10rem">
-                                <Flex gap="0.3rem" alignItems="center">
-                                  <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
-                                  <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
-                                  <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                                    {round.player2BetChoice !== round.winningPosition ? "Loss" : "Win"}
-                                  </Text>
-                                </Flex>
-                              </Flex>
-
-                              <Flex w="7.5rem" alignItems="center">
-                                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                                  {round.player2BetAmount} BLAST
-                                </Text>
-                              </Flex>
+              {allRounds && allRounds.length > 0 ? (
+                <>
+                  {allRounds
+                    .slice(-5)
+                    .reverse()
+                    .map((round, i) => (
+                      <>
+                        <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
+                          <Flex w="13.125rem" pl="1rem" gap="0.5rem" alignItems="center">
+                            {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
+                            <Flex direction={"column"}>
+                              <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                                {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}
+                              </Text>
                             </Flex>
-                          </>
-                        ))}
-                    </>
-                  ) : (
-                    <Text>No results yet</Text>
-                  )}
-                </Flex>
-              </Flex>
-              {/* mother flex for table end*/}
-            </Flex>
-            {/* mother flex for left portion end */}
+                          </Flex>
 
+                          <Flex w="7.375rem" alignItems="center">
+                            <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                              {round.player2BetAmount} BLAST
+                            </Text>
+                          </Flex>
+
+                          <Flex w="5.5rem">
+                            <Flex gap="0.5rem" alignItems="center">
+                              <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                                {round.player2BetChoice}
+                              </Text>
+                            </Flex>
+                          </Flex>
+
+                          <Flex w="10rem">
+                            <Flex gap="0.3rem" alignItems="center">
+                              <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
+                              <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
+                              <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                                {round.player2BetChoice !== round.winningPosition ? "Loss" : "Win"}
+                              </Text>
+                            </Flex>
+                          </Flex>
+
+                          <Flex w="7.5rem" alignItems="center">
+                            <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                              {round.player2BetAmount} BLAST
+                            </Text>
+                          </Flex>
+                        </Flex>
+                      </>
+                    ))}
+                </>
+              ) : (
+                <Text>No results yet</Text>
+              )}
+            </Flex>
+          </Flex>
+
+          <Flex>
             {/* mother flex for right portion start */}
-            <Flex direction={"column"} w={["100%", "100%", "100%", "40%", "40%"]}>
+            <Flex direction={"column"}>
               {/* flex for all bets and my bets start */}
 
               <Flex gap="0.5rem" pl="1rem">
@@ -146,26 +130,26 @@ export default function History({ allRounds }) {
 
               <Flex direction={"column"}>
                 {/* flex for table heading start */}
-                <Flex py="1rem">
-                  <Flex w="7.375rem" pl="1rem">
+                <Flex py="1rem" pl="7" gap={10}>
+                  <Flex>
                     <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                       Payout
                     </Text>
                   </Flex>
 
-                  <Flex w="5.5rem">
+                  <Flex>
                     <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                       Picked Side
                     </Text>
                   </Flex>
 
-                  <Flex w="10rem">
+                  <Flex>
                     <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                       Result
                     </Text>
                   </Flex>
 
-                  <Flex w="7.5rem">
+                  <Flex>
                     <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                       Bet
                     </Text>
@@ -182,14 +166,14 @@ export default function History({ allRounds }) {
                       .reverse()
                       .map((round, i) => (
                         <>
-                          <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txnHash)} bgColor={i % 2 !== 0 ? "" : "rgba(86, 146, 250, 0.6)"} borderRadius="60px">
-                            <Flex w="7.375rem" alignItems="center" pl="1rem">
+                          <Flex gap={10} pr={"4"} cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txnHash)} bgColor={i % 2 !== 0 ? "" : "rgba(86, 146, 250, 0.6)"} borderRadius="60px">
+                            <Flex alignItems="center" pl="1rem">
                               <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                                 {round.player2BetAmount} BNB
                               </Text>
                             </Flex>
 
-                            <Flex w="5.5rem">
+                            <Flex>
                               <Flex gap="0.5rem" alignItems="center">
                                 <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                                   {round.player2BetChoice}
@@ -197,7 +181,7 @@ export default function History({ allRounds }) {
                               </Flex>
                             </Flex>
 
-                            <Flex w="10rem">
+                            <Flex>
                               <Flex gap="0.3rem" alignItems="center">
                                 <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
                                 <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
@@ -207,7 +191,7 @@ export default function History({ allRounds }) {
                               </Flex>
                             </Flex>
 
-                            <Flex w="7.5rem" alignItems="center">
+                            <Flex alignItems="center">
                               <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
                                 {round.player2BetAmount} BNB
                               </Text>
@@ -225,9 +209,9 @@ export default function History({ allRounds }) {
             </Flex>
             {/* mother flex for right portion end */}
           </Flex>
-
-          {/* mother flex for combined left leader board and right all bets end */}
         </Flex>
+
+        {/* mother flex for combined left leader board and right all bets end */}
       </Flex>
     </Flex>
     /* mother flex for all end */

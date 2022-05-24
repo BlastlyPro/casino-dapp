@@ -141,6 +141,7 @@ export default function CoinToss() {
   }
 
   async function claimBonus() {
+    setShowResult(false);
     setIsLoading(true);
     coinTossState.blastlyContractData.methods
       .claim()
