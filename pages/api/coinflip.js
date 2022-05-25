@@ -23,7 +23,7 @@ export default function handler(req, res) {
     
     let secretChoice = false;
     let randomNumber;
-    coinFlipContractData.methods.getBalance(tokenContract._address).call().then(response=>{
+    coinFlipContractData.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call().then(response=>{
 
       console.log("req.body.normalBetAmount --------------------");
       let normalBetAmount=req.body.normalBetAmount * 2;
