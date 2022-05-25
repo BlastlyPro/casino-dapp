@@ -18,7 +18,6 @@ export default function handler(req, res) {
   } else {
     const provider = new HDWalletProvider(PRIVATE_KEY, NODE_PROVIDER); 
     const _web3 = new Web3(provider);
-    const _account = _web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
     const coinFlipContractData = new _web3.eth.Contract(CoinFlipPrediction.abi, COINFLIP_CONTRACT_ADDRESS);
     const tokenContract = new _web3.eth.Contract(Mgtoken.abi, TOKEN_CONTRACT_ADDRESS);
     
