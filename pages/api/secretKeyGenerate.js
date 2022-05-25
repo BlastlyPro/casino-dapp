@@ -8,7 +8,6 @@ import CoinFlipPrediction from "../../lib/abi.json";
 const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
 const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
-const TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS;
 
 export default function handler(req, res) {
 
@@ -18,6 +17,7 @@ export default function handler(req, res) {
 
     const provider = new HDWalletProvider(PRIVATE_KEY, NODE_PROVIDER); 
     const _web3 = new Web3(provider);
+    console.log(PRIVATE_KEY);
     const _account = _web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
     const coinFlipContractData = new _web3.eth.Contract(CoinFlipPrediction.abi, COINFLIP_CONTRACT_ADDRESS);
 
