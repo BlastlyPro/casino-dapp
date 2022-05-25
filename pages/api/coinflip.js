@@ -8,8 +8,8 @@ import Mgtoken from "../../lib/tokenContractAbi.json";
 
 const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
-const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
-const TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS;
+const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS.toUpperCase();
+const TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS.toUpperCase();
 
 export default function handler(req, res) {
 
