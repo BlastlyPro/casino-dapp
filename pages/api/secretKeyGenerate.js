@@ -5,10 +5,10 @@ const crypto = require('crypto');
 const abi = require('ethereumjs-abi');
 import CoinFlipPrediction from "../../lib/abi.json";
 
-const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
+const PRIVATE_KEY = "0xe81aa8963391545691e99bd7237d550ba9263a91f8450a87e2036055823baacf";
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
 const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
-const GAS_FEE_WALLET_ADDRESS = process.env.GAS_FEE_WALLET_ADDRESS;
+const GAS_FEE_WALLET_ADDRESS = "0x1e88c52496c55b5bcfb542191bce71c761940c84";
 
 export default function handler(req, res) {
 
@@ -18,12 +18,14 @@ export default function handler(req, res) {
 
     const provider = new HDWalletProvider(PRIVATE_KEY, NODE_PROVIDER); 
     const _web3 = new Web3(provider);
-    console.log(PRIVATE_KEY);
+    const _account = _web3.eth.accounts.privateKeyToAccount(PRIVATE_KEY);
+    console.log("secret key generate account")
+    console.log(_account);
     const coinFlipContractData = new _web3.eth.Contract(CoinFlipPrediction.abi, COINFLIP_CONTRACT_ADDRESS);
 
     const nonce = "0x" + crypto.randomBytes(32).toString('hex');
     const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[true, nonce]).toString('hex');
-    coinFlipContractData.methods._secretKeys(req.body.player2Address,hash).send({from: GAS_FEE_WALLET_ADDRESS}).then((reponse)=>{                
+    coinFlipContractData.methods._secretKeys(req.body.player2Address,hash).send({from: _account.address}).then((reponse)=>{                
         res.status(200).json(hash);
       }).catch((err)=>{
         console.log(err.message);
