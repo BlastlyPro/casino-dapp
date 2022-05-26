@@ -3,12 +3,13 @@ const Web3 = require("web3");
 const crypto = require("crypto");
 import CoinFlipPrediction from "../../lib/abi.json";
 
+const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
+const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
+
 export default function handler(req, res) {
   const provider = new HDWalletProvider(PRIVATE_KEY, NODE_PROVIDER);
   const _web3 = new Web3(provider);
 
-  const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
-  const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
   const COINFLIP_CONTRACT_ADDRESS = _web3.utils.toChecksumAddress(process.env.COINFLIP_CONTRACT_ADDRESS);
   const TOKEN_CONTRACT_ADDRESS = _web3.utils.toChecksumAddress(process.env.TOKEN_CONTRACT_ADDRESS);
 

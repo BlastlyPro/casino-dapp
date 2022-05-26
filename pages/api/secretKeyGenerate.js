@@ -8,7 +8,6 @@ import CoinFlipPrediction from "../../lib/abi.json";
 const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
 const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
-// const GAS_FEE_WALLET_ADDRESS = process.env.GAS_FEE_WALLET_ADDRESS;
 
 export default function handler(req, res) {
 
