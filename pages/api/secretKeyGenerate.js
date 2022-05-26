@@ -5,10 +5,10 @@ const crypto = require('crypto');
 const abi = require('ethereumjs-abi');
 import CoinFlipPrediction from "../../lib/abi.json";
 
-const PRIVATE_KEY = "0xe81aa8963391545691e99bd7237d550ba9263a91f8450a87e2036055823baacf";
+const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
 const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
-const GAS_FEE_WALLET_ADDRESS = "0x1e88c52496c55b5bcfb542191bce71c761940c84";
+// const GAS_FEE_WALLET_ADDRESS = process.env.GAS_FEE_WALLET_ADDRESS;
 
 export default function handler(req, res) {
 

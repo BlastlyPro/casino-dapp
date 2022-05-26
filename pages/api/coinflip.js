@@ -6,7 +6,7 @@ const abi = require('ethereumjs-abi');
 import CoinFlipPrediction from "../../lib/abi.json";
 import Mgtoken from "../../lib/tokenContractAbi.json";
 
-const PRIVATE_KEY = "0xe81aa8963391545691e99bd7237d550ba9263a91f8450a87e2036055823baacf";
+const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
 const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
 const TOKEN_CONTRACT_ADDRESS = process.env.TOKEN_CONTRACT_ADDRESS;
