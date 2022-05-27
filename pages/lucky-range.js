@@ -16,7 +16,7 @@ export default function LuckyRangeGame() {
   const [web3] = web3Data;
   const [allRounds, setAllRounds] = useState(null);
   const [allRoundsCount, setAllRoundsCount] = useState(null);
-
+  
   // chakta-ui
   const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
   const [isLessThan993] = useMediaQuery("(max-width: 993px)");
@@ -40,51 +40,7 @@ export default function LuckyRangeGame() {
     }
   }, [web3, state.account, getContractsData]);
 
-  async function executeLuckyRange(minRange, maxRange, betAmount) {
-    const { blastlyContract, tokenContract } = getContractsData();
-    var range = { minRange: minRange, maxRange: maxRange };
-    var bta = web3.utils.toWei(String(betAmount), "ether");
-    var secretKeyGen;
-    ////////////////////////////////////////
-    let allowance = await tokenContract.methods.allowance(state.account, blastlyContract._address).call();
-    console.log(allowance);
-    axios.post("/api/secretKeyGenerate", { player2Address: state.account }).then((response) => {
-      // console.log("------------Secret Key ------------");
-      //   console.log(response.data);
-      secretKeyGen = response.data;
-      axios.post("/api/luckyRange", { betRange: range, betAmount: bta, normalBetAmount: betAmount, player2Address: state.account, txnHash: "0xxxxxx" }).then(async (response) => {
-        console.log(response);
-        console.log("=------------- allowance -----------------");
-        if (allowance < bta) {
-          await tokenContract.methods
-            .approve(blastlyContract._address, web3.utils.toWei(String(9 * 1e18), "ether"))
-            .send({ from: state.account })
-            .then(async (res) => {
-              await callLuckyRange(bta, response, secretKeyGen, maxRange);
-            });
-        } else {
-          console.log("Direct calling lucky range sol");
-          callLuckyRange(bta, response, secretKeyGen,maxRange);
-        }
-      });
-    });
-  }
 
-  async function callLuckyRange(bta, response, secretKeyGen, maxRange) {
-    const { blastlyContract } = getContractsData();
-    await blastlyContract.methods.luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen).send({ from: state.account })
-      .then((reponse007) => {
-        //console.log(reponse007.transactionHash)
-        Swal.fire({
-          title: "Result",
-          text: reponse007.events.GameMessage.returnValues.mesg,
-          icon: "success",
-        });
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
 
   return (
     <>
@@ -96,9 +52,10 @@ export default function LuckyRangeGame() {
 
             <Flex width={"100%"} alignItems={"center"} justifyContent="center" direction={"column"}>
               <Navbar />
-              <LuckyMain allRounds={allRounds} allRoundsCount={allRoundsCount} executeLuckyRange={executeLuckyRange} />
+
+              <LuckyMain allRounds={allRounds} allRoundsCount={allRoundsCount}/>
               <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
-                <LuckyHistory />
+                <LuckyHistory allRounds={allRounds} />
                 <LuckyHowItWorks />
 
                 <Footer />

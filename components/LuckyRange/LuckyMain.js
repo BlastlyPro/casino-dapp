@@ -5,10 +5,11 @@ import Swal from "sweetalert2";
 import RightColumnLucky from "./RightColumnLucky";
 import LeftColumnLucky from "./LeftColumnLucky";
 import { MainContext } from "../providers/MainProvider";
+import axios from "axios";
 
-
-export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}) {
-  const { stateData } = useContext(MainContext);
+export default function LuckyMain({allRounds, allRoundsCount}) {
+  const { stateData, web3Data, getContractsData } = useContext(MainContext);
+    const [web3] = web3Data;
   const [state] = stateData;
   const [value, setValue] = useState(1);
   const [minRange, setMinRange] = useState(null);
@@ -24,7 +25,7 @@ export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}
     setMaxRange(values[1]);
   }
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     // check if the user is connected
     if(!state.account){
       Swal.fire({
@@ -49,11 +50,61 @@ export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}
       });
       return;
     }
-
-    executeLuckyRange(minRange, maxRange, betAmount);
-
+   
     setValue(2);
+    await executeLuckyRange(minRange, maxRange, betAmount);
+   }
+
+  async function executeLuckyRange(minRange, maxRange, betAmount) {
+    // return "hola"
+    const { blastlyContract, tokenContract } = getContractsData();
+    var range = { minRange: minRange, maxRange: maxRange };
+    var bta = web3.utils.toWei(String(betAmount), "ether");
+    var secretKeyGen;
+    ////////////////////////////////////////
+    let allowance = await tokenContract.methods.allowance(state.account, blastlyContract._address).call();
+    console.log(allowance);
+    axios.post("/api/secretKeyGenerate", { player2Address: state.account }).then((response) => {
+      // console.log("------------Secret Key ------------");
+      //   console.log(response.data);
+      secretKeyGen = response.data;
+      axios.post("/api/luckyRange", { betRange: range, betAmount: bta, normalBetAmount: betAmount, player2Address: state.account, txnHash: "0xxxxxx" }).then(async (response) => {
+        console.log(response);
+        console.log("=------------- allowance -----------------");
+        if (allowance < bta) {
+          await tokenContract.methods
+            .approve(blastlyContract._address, web3.utils.toWei(String(9 * 1e18), "ether"))
+            .send({ from: state.account })
+            .then(async (res) => {
+             await callLuckyRange(bta, response, secretKeyGen, maxRange);
+            });
+        } else {
+          console.log("Direct calling lucky range sol");
+          await callLuckyRange(bta, response, secretKeyGen,maxRange);
+        }
+      });
+    });
   }
+
+  async function callLuckyRange(bta, response, secretKeyGen, maxRange) {
+    const { blastlyContract } = getContractsData();
+    await blastlyContract.methods.luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen).send({ from: state.account })
+      .then((reponse007) => {
+        setValue(3);
+        //console.log(reponse007.transactionHash)
+        // Swal.fire({
+        //   title: "Result",
+        //   text: reponse007.events.GameMessage.returnValues.mesg,
+        //   icon: "success",
+        // });
+        // console.log(reponse007.events.GameMessage.returnValues.mesg);
+        // _setShowResult(reponse007.events.GameMessage.returnValues.mesg);
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  }
+
 
   return (
     /* mother flex for all start */
@@ -223,7 +274,7 @@ export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}
                     <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
                       Your range:
                       <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
-                        10-65
+                        {minRange}-{maxRange}
                       </chakra.span>
                     </Text>
                     <Image width="14.4px" height="9.9px" src={"/ri.png"} alt="right" />
@@ -242,7 +293,7 @@ export default function LuckyMain({allRounds, allRoundsCount, executeLuckyRange}
                       <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
                         Bet:
                         <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
-                          1000 BNB
+                        {betAmount} blastly
                         </chakra.span>
                       </Text>
                     </Flex>

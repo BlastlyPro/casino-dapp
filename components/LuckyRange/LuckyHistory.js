@@ -96,19 +96,13 @@ export default function LuckyHistory({ allRounds }) {
                           <Flex gap="0.5rem" alignItems="center">
                           
                             <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                              {round.player2BetChoice}
+                              {round.luckyRangeBet}
                             </Text>
                           </Flex>
                         </Flex>
 
                         <Flex w="10rem">
-                          <Flex gap="0.3rem" alignItems="center">
-                          <Image width="34.28px" height="34.3px" src={round.player2BetChoice === "Heads" ? "/Heads.png" : "/Tails.png"} alt={round.player2BetChoice === "Heads" ? "Heads" : "Tails"} />
-                            <Image width="16px" height="16px" src={round.player2BetChoice !== round.winningPosition ? "/cross.png" : "/right.png"} alt="right" />
-                            <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                              {round.player2BetChoice !== round.winningPosition ? "Loss" : "Win"}
-                            </Text>
-                          </Flex>
+                            {round.luckyNumber}
                         </Flex>
 
                         <Flex w="7.5rem" alignItems="center">
@@ -191,44 +185,57 @@ export default function LuckyHistory({ allRounds }) {
             {/* flex for table heading end */}
 
             {/* flex for first table row start */}
+            {allRounds && allRounds.length > 0 ? (
+              <>
+                {allRounds
+                  .slice(-5)
+                  .reverse()
+                  .map((round, i) => (
+                    <>
+                  <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" background={"rgba(86, 146, 250, 0.6)"} borderRadius="60px">
+                    <Flex w="7.375rem" alignItems="center" pl="1rem">
+                      <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                      {/* Hoga mara */}
+                      {round.player2BetAmount} BLAST
+                      </Text>
+                    </Flex>
 
-            <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" background={"rgba(86, 146, 250, 0.6)"} borderRadius="60px">
-              <Flex w="7.375rem" alignItems="center" pl="1rem">
-                <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                  30 BNB
-                </Text>
-              </Flex>
+                    <Flex w="5.5rem">
+                      <Flex gap="0.5rem" alignItems="center">
+                        <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                        {round.luckyRangeBet}
+                        </Text>
+                      </Flex>
+                    </Flex>
 
-              <Flex w="5.5rem">
-                <Flex gap="0.5rem" alignItems="center">
-                  <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                    10-65
-                  </Text>
-                </Flex>
-              </Flex>
+                    <Flex w="10rem">
+                      <Flex gap="0.3rem" alignItems="center">
+                        <Image width="40px" height="40" src="/11.png" alt="11" />
+                        <Image width="16px" height="16px" src={"/right.png"} alt="right" />
+                        <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                        {round.luckyNumber} 
+                        </Text>
+                      </Flex>
+                    </Flex>
 
-              <Flex w="10rem">
-                <Flex gap="0.3rem" alignItems="center">
-                  <Image width="40px" height="40" src="/11.png" alt="11" />
-                  <Image width="16px" height="16px" src={"/right.png"} alt="right" />
-                  <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                    win
-                  </Text>
-                </Flex>
-              </Flex>
-
-              <Flex w="7.5rem" alignItems="center">
-                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                  15 BNB
-                </Text>
-              </Flex>
-            </Flex>  
+                    <Flex w="7.5rem" alignItems="center">
+                      <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                      {round.player2BetAmount} BLAST
+                      </Text>
+                    </Flex>
+                  </Flex>  
+                  </>
+                  ))}
+              </>
+            ) : (
+              <Text>No results yet</Text>
+            )}                  
             {/* flex for first table row end */}
 
 
             
             {/* flex for second table row start */}
-            <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem"  borderRadius="60px">
+            {/* <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem"  borderRadius="60px">
               <Flex w="7.375rem" alignItems="center" pl="1rem">
                 <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                   0 BNB
@@ -258,7 +265,7 @@ export default function LuckyHistory({ allRounds }) {
                   100 BNB
                 </Text>
               </Flex>
-            </Flex>
+            </Flex> */}
             {/* flex for second table row end */}
 
 
