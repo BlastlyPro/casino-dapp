@@ -14,7 +14,7 @@ export default function handler(req, res) {
   const TOKEN_CONTRACT_ADDRESS = _web3.utils.toChecksumAddress(process.env.TOKEN_CONTRACT_ADDRESS);
 
   const coinFlipContractData = new _web3.eth.Contract(CoinFlipPrediction.abi, COINFLIP_CONTRACT_ADDRESS);
-
+  // amra sobai sona mia
   let secretChoice = false;
   let randomNumber;
   coinFlipContractData.methods
