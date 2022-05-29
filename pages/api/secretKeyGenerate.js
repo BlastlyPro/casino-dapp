@@ -5,7 +5,8 @@ const crypto = require('crypto');
 const abi = require('ethereumjs-abi');
 import CoinFlipPrediction from "../../lib/abi.json";
 
-const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
+// const PRIVATE_KEY = process.env.GAS_FEE_WALLET_PRIVATE_KEY;
+const PRIVATE_KEY = '0xde946e372541d6146f44459847bc85f405973bd072ac4a32a0df1d6950f6ee02';
 const NODE_PROVIDER = process.env.NODE_PRODIVER_URL;
 const COINFLIP_CONTRACT_ADDRESS = process.env.COINFLIP_CONTRACT_ADDRESS;
 
