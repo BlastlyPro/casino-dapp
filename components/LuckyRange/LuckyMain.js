@@ -7,13 +7,13 @@ import LeftColumnLucky from "./LeftColumnLucky";
 import { MainContext } from "../providers/MainProvider";
 import axios from "axios";
 
-export default function LuckyMain({allRounds, allRoundsCount}) {
+export default function LuckyMain({ allRounds, allRoundsCount }) {
   const { stateData, web3Data, getContractsData } = useContext(MainContext);
-    const [web3] = web3Data;
+  const [web3] = web3Data;
   const [state] = stateData;
   const [value, setValue] = useState(1);
-  const [minRange, setMinRange] = useState(null);
-  const [maxRange, setMaxRange] = useState(null);
+  const [minRange, setMinRange] = useState(10);
+  const [maxRange, setMaxRange] = useState(65);
   const [betAmount, setBetAmount] = useState(0);
 
   function handleBetAmount(e) {
@@ -27,7 +27,7 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
 
   const handleSubmit = async () => {
     // check if the user is connected
-    if(!state.account){
+    if (!state.account) {
       Swal.fire({
         title: "Please connect your wallet to play",
         icon: "warning",
@@ -50,10 +50,10 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
       });
       return;
     }
-   
+
     setValue(2);
     await executeLuckyRange(minRange, maxRange, betAmount);
-   }
+  };
 
   async function executeLuckyRange(minRange, maxRange, betAmount) {
     // return "hola"
@@ -76,11 +76,11 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
             .approve(blastlyContract._address, web3.utils.toWei(String(9 * 1e18), "ether"))
             .send({ from: state.account })
             .then(async (res) => {
-             await callLuckyRange(bta, response, secretKeyGen, maxRange);
+              await callLuckyRange(bta, response, secretKeyGen, maxRange);
             });
         } else {
           console.log("Direct calling lucky range sol");
-          await callLuckyRange(bta, response, secretKeyGen,maxRange);
+          await callLuckyRange(bta, response, secretKeyGen, maxRange);
         }
       });
     });
@@ -88,7 +88,9 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
 
   async function callLuckyRange(bta, response, secretKeyGen, maxRange) {
     const { blastlyContract } = getContractsData();
-    await blastlyContract.methods.luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen).send({ from: state.account })
+    await blastlyContract.methods
+      .luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen)
+      .send({ from: state.account })
       .then((reponse007) => {
         setValue(3);
         //console.log(reponse007.transactionHash)
@@ -105,6 +107,19 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
       });
   }
 
+  async function claimBonus() {
+    const { blastlyContract } = getContractsData();
+    blastlyContract.methods
+      .claim()
+      .send({ from: state.account })
+      .then((response) => {
+        Swal.fire({
+          title: "Success!",
+          text: "Please Check your Wallet",
+          icon: "success",
+        });
+      });
+  }
 
   return (
     /* mother flex for all start */
@@ -118,7 +133,7 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
         </Text>
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
-        <LeftColumnLucky allRounds={allRounds}/>
+        <LeftColumnLucky allRounds={allRounds} />
         {value == 1 && (
           <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column">
             <Flex
@@ -140,18 +155,25 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
                 </Text>
               </Flex>
               <Flex w="94%" direction={"column"} alignSelf="center">
-                {/* <Flex alignSelf="center" gap="3rem">
-                  <Image width="90px" height="116.99px" src="/ten.svg" alt="ten" />
-                  <Image width="90px" height="116.99px" src="/sixtyfive.svg" alt="sixtyfive" />
-                </Flex> */}
+                <Flex alignSelf="center" gap="3rem"></Flex>
 
-                <Flex w="80%" alignSelf="center" alignItems={"center"} justifyContent="center" borderRadius={"20px"}>
-                  <RangeSlider aria-label={["min", "max"]} onChangeEnd={(val) => setRanges(val)} colorScheme="pink" defaultValue={[10, 65]}>
-                    <RangeSliderTrack>
-                      <RangeSliderFilledTrack />
+                <Flex w="80%" mt="7rem" alignSelf="center" alignItems={"center"} justifyContent="center" borderRadius={"20px"}>
+                  <RangeSlider aria-label={"['min', max']"} onChange={(val) => setRanges(val)} colorScheme="pink" defaultValue={[10, 65]} _hover={{ boxShadow: "none", bgColor: "transparent" }}>
+                    <RangeSliderTrack _hover={{ boxShadow: "none", bgColor: "transparent" }}>
+                      <RangeSliderFilledTrack _hover={{ boxShadow: "none", bgColor: "transparent" }} />
                     </RangeSliderTrack>
-                    <RangeSliderThumb index={0} />
-                    <RangeSliderThumb index={1} />
+                    <RangeSliderThumb mt={"-3.5rem"} boxSize={"7rem"} index={0} bgColor="transparent" boxShadow={"none"} _hover={{ boxShadow: "none", bgColor: "transparent" }}>
+                      <Image mb={"100rem"} width="90px" height="116.99px" src="/min-range.png" alt="Minimum range" />
+                      <Text pos={"absolute"} mb="1.3rem" fontWeight={"bold"} fontSize="2xl" color={"#DD9B1A"}>
+                        {minRange}
+                      </Text>
+                    </RangeSliderThumb>
+                    <RangeSliderThumb mt={"-3.5rem"} boxSize={"7rem"} index={1} bgColor="transparent" boxShadow={"none"} _hover={{ boxShadow: "none", bgColor: "transparent" }}>
+                      <Image width="90px" height="116.99px" src="/max-range.png" alt="Maximum range" />
+                      <Text pos={"absolute"} mb={"1.3rem"} fontWeight={"bold"} fontSize={"2xl"} color={"#DD9B1A"}>
+                        {maxRange}
+                      </Text>
+                    </RangeSliderThumb>
                   </RangeSlider>
                 </Flex>
               </Flex>
@@ -293,13 +315,22 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
                       <Text textAlign="center" fontSize="sm" color={"rgba(255, 255, 255, 0.6)"}>
                         Bet:
                         <chakra.span fontSize="md" color="white" fontWeight={"bold"}>
-                        {betAmount} blastly
+                          {betAmount} blastly
                         </chakra.span>
                       </Text>
                     </Flex>
                   </Flex>
 
-                  <Button background="#102542" w="10.125rem" h="3rem" color="white" borderRadius="30px">
+                  <Button
+                    background="#102542"
+                    w="10.125rem"
+                    h="3rem"
+                    color="white"
+                    borderRadius="30px"
+                    onClick={() => {
+                      claimBonus();
+                    }}
+                  >
                     Claim your win!
                   </Button>
 
@@ -311,7 +342,7 @@ export default function LuckyMain({allRounds, allRoundsCount}) {
             </Flex>
           </Flex>
         )}
-        <RightColumnLucky allRounds={allRounds}/>
+        <RightColumnLucky allRounds={allRounds} />
       </Flex>
       <Flex pt="1rem" alignItems="center" gap="1" justifyContent="center">
         <Text fontSize="lg" color={"#FFFFFF"}>
