@@ -1,9 +1,28 @@
 import { Flex, Divider, Text, SimpleGrid, Link, Button, Icon, Box } from "@chakra-ui/react";
 import Image from "next/image";
-
+import { useEffect, useState, useContext } from "react";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
+import { MainContext } from "../providers/MainProvider";
 
-export default function LuckyHistory({ allRounds }) {
+export default function LuckyHistory() {
+
+  const { stateData, web3Data, getContractsData } = useContext(MainContext);
+  const [state] = stateData;
+  const [allRounds, setAllRounds]= useState(null);
+  const [myBets, setMyBets]= useState(null);
+
+  useEffect(()=>{
+
+    const init = async()=>{      
+      const {supabase}=getContractsData();
+      let { data, error } = await supabase.from('luckyRange').select();
+      setAllRounds(data);
+      data=await supabase.from('luckyRange').select().eq("player2Address",state.account);
+       setMyBets(data.data);
+    }
+    init();
+  },[]);
+  
   function openLink(_txnHash) {
     window.open(`https://testnet.bscscan.com/tx/` + _txnHash);
   }
@@ -62,6 +81,12 @@ export default function LuckyHistory({ allRounds }) {
                   Bet
                 </Text>
               </Flex>
+
+              <Flex w="7.5rem">
+                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                  Txn Hash
+                </Text>
+              </Flex>              
             </Flex>
             {/* flex for table heading end */}
 
@@ -73,14 +98,14 @@ export default function LuckyHistory({ allRounds }) {
                   .reverse()
                   .map((round, i) => (
                     <>
-                      <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={ i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
+                      <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txn)} h="4.5rem" bgColor={ i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
                         <Flex w="13.125rem" pl="1rem" gap="0.5rem" alignItems="center">
                         {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
                           <Flex direction={"column"}>
                             {/* <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                               Joanna Wozny
                             </Text> */}
-                            <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                            <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                               {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}
                             </Text>
                           </Flex>
@@ -88,28 +113,36 @@ export default function LuckyHistory({ allRounds }) {
 
                         <Flex w="7.375rem" alignItems="center">
                           <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                            {round.player2BetAmount} BLAST
+                            {round.playerPayout} x
                           </Text>
                         </Flex>
 
                         <Flex w="5.5rem">
                           <Flex gap="0.5rem" alignItems="center">
                           
-                            <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                              {round.luckyRangeBet}
+                            <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                              {round.maxRange} - {round.minRange}
                             </Text>
                           </Flex>
                         </Flex>
 
-                        <Flex w="10rem">
-                            {round.luckyNumber}
+                        <Flex w="10rem" alignItems="center">
+                        <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                              {round.luckyNumber}
+                            </Text>                                                      
                         </Flex>
 
-                        <Flex w="7.5rem" alignItems="center">
-                          <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                        <Flex w="10rem" alignItems="center">
+                          <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                             {round.player2BetAmount} BLAST
                           </Text>
                         </Flex>
+
+                        <Flex w="7.5rem" alignItems="center">
+                          <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                          {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)}
+                          </Text>
+                        </Flex>                        
                       </Flex>
                     </>
                   ))}
@@ -181,29 +214,34 @@ export default function LuckyHistory({ allRounds }) {
                   Bet
                 </Text>
               </Flex>
+              <Flex w="7.5rem">
+                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                  txnHash
+                </Text>
+              </Flex>              
             </Flex>
             {/* flex for table heading end */}
 
             {/* flex for first table row start */}
-            {allRounds && allRounds.length > 0 ? (
+            {myBets && myBets.length > 0 ? (
               <>
-                {allRounds
+                {myBets
                   .slice(-5)
                   .reverse()
                   .map((round, i) => (
                     <>
-                  <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" background={"rgba(86, 146, 250, 0.6)"} borderRadius="60px">
+                  <Flex cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txn)} background={"rgba(86, 146, 250, 0.6)"} borderRadius="60px">
                     <Flex w="7.375rem" alignItems="center" pl="1rem">
                       <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                       {/* Hoga mara */}
-                      {round.player2BetAmount} BLAST
+                      {round.playerPayout} x
                       </Text>
                     </Flex>
 
                     <Flex w="5.5rem">
                       <Flex gap="0.5rem" alignItems="center">
-                        <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                        {round.luckyRangeBet}
+                        <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                        {round.minRange} - {round.maxRange}
                         </Text>
                       </Flex>
                     </Flex>
@@ -219,10 +257,16 @@ export default function LuckyHistory({ allRounds }) {
                     </Flex>
 
                     <Flex w="7.5rem" alignItems="center">
-                      <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                      <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                       {round.player2BetAmount} BLAST
                       </Text>
                     </Flex>
+
+                    <Flex w="7.5rem" alignItems="center">
+                      <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                      {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)} 
+                      </Text>
+                    </Flex>                    
                   </Flex>  
                   </>
                   ))}

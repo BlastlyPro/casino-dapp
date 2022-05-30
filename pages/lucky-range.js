@@ -16,11 +16,9 @@ export default function LuckyRangeGame() {
   const [web3] = web3Data;
   const [allRounds, setAllRounds] = useState(null);
   const [allRoundsCount, setAllRoundsCount] = useState(null);
-  
   // chakta-ui
   const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
   const [isLessThan993] = useMediaQuery("(max-width: 993px)");
-
   useEffect(() => {
     const init = async () => {
       const { blastlyContract } = getContractsData();
@@ -28,12 +26,14 @@ export default function LuckyRangeGame() {
       setAllRoundsCount(allRoundsCount);
       let _allRounds = [];
 
-      for (var i = 1; i <= allRoundsCount; i++) {
-        var roundObj = await blastlyContract.methods.luckyRangeRounds(i).call();
-        roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
-        _allRounds.push(roundObj);
-      }
-      setAllRounds(_allRounds);
+      // for (var i = 1; i <= allRoundsCount; i++) {
+      //   var roundObj = await blastlyContract.methods.luckyRangeRounds(i).call();
+      //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+      //   _allRounds.push(roundObj);
+      // }
+      const {supabase}=getContractsData();
+      let { data, error } = await supabase.from('luckyRange').select();
+      setAllRounds(data);      
     };
     if (web3 && web3.utils) {
       init();
