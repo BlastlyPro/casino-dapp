@@ -1,9 +1,30 @@
 import { Flex, Divider, Text, SimpleGrid, Link, Button, Icon, Box } from "@chakra-ui/react";
 import Image from "next/image";
-
+import { useEffect, useState, useContext } from "react";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
+import { MainContext } from "./providers/MainProvider";
 
-export default function History({ allRounds }) {
+export default function History() {
+
+  const { stateData, web3Data, getContractsData } = useContext(MainContext);
+  const [state] = stateData;
+  const [allRounds, setAllRounds]= useState(null);
+  const [myBets, setMyBets]= useState(null);
+  
+
+  useEffect(()=>{
+
+    const init = async()=>{      
+      const {supabase}=getContractsData();
+      let { data, error } = await supabase.from('coinFlip').select();
+      console.log(data)
+      setAllRounds(data);
+      data=await supabase.from('coinFlip').select().eq("player2Address",state.account);
+       setMyBets(data.data);
+    }
+    init();
+  },[]);
+
   function openLink(_txnHash) {
     window.open(`https://testnet.bscscan.com/tx/` + _txnHash);
   }
@@ -56,6 +77,13 @@ export default function History({ allRounds }) {
                     Bet
                   </Text>
                 </Flex>
+
+                <Flex w="7.5rem">
+                <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                  Txn Hash
+                </Text>
+              </Flex>  
+
               </Flex>
               {allRounds && allRounds.length > 0 ? (
                 <>
@@ -76,14 +104,15 @@ export default function History({ allRounds }) {
 
                           <Flex w="7.375rem" alignItems="center">
                             <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                              {round.player2BetAmount} BLAST
+                              {round.player2BetChoice == round.winningPosition ? "2x"  : "0"}
+                              
                             </Text>
                           </Flex>
 
                           <Flex w="5.5rem">
                             <Flex gap="0.5rem" alignItems="center">
                               <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                                {round.player2BetChoice}
+                                {round.player2BetChoice == true ? "Heads" : "Tails"}
                               </Text>
                             </Flex>
                           </Flex>
@@ -103,6 +132,13 @@ export default function History({ allRounds }) {
                               {round.player2BetAmount} BLAST
                             </Text>
                           </Flex>
+
+                          <Flex w="7.5rem" alignItems="center">
+                          <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                          {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)}
+                          </Text>
+                        </Flex>   
+
                         </Flex>
                       </>
                     ))}
@@ -154,14 +190,20 @@ export default function History({ allRounds }) {
                       Bet
                     </Text>
                   </Flex>
+
+                <Flex w="7.5rem">
+                  <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
+                    txnHash
+                  </Text>
+                </Flex>                    
                 </Flex>
                 {/* flex for table heading end */}
 
                 {/* flex for first table row start */}
 
-                {allRounds && allRounds.length > 0 ? (
+                {myBets && myBets.length > 0 ? (
                   <>
-                    {allRounds
+                    {myBets
                       .slice(-5)
                       .reverse()
                       .map((round, i) => (
@@ -169,14 +211,14 @@ export default function History({ allRounds }) {
                           <Flex gap={10} pr={"4"} cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txnHash)} bgColor={i % 2 !== 0 ? "" : "rgba(86, 146, 250, 0.6)"} borderRadius="60px">
                             <Flex alignItems="center" pl="1rem">
                               <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                                {round.player2BetAmount} BNB
+                                {round.player2BetAmount} Blast
                               </Text>
                             </Flex>
 
                             <Flex>
                               <Flex gap="0.5rem" alignItems="center">
                                 <Text fontSize="xs" fontWeight="bold" color={"rgba(255, 255, 255, 0.2)"}>
-                                  {round.player2BetChoice}
+                                {round.player2BetChoice == true ? "Heads" : "Tails"}
                                 </Text>
                               </Flex>
                             </Flex>
@@ -196,6 +238,12 @@ export default function History({ allRounds }) {
                                 {round.player2BetAmount} BNB
                               </Text>
                             </Flex>
+
+                            <Flex w="7.5rem" alignItems="center">
+                              <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                              {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)} 
+                              </Text>
+                            </Flex>                             
                           </Flex>
                           {/* flex for first table row end */}
                         </>

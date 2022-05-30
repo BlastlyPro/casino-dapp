@@ -21,9 +21,9 @@ export default function LuckyRangeGame() {
   const [isLessThan993] = useMediaQuery("(max-width: 993px)");
   useEffect(() => {
     const init = async () => {
-      const { blastlyContract } = getContractsData();
-      let allRoundsCount = await blastlyContract.methods.totalLuckyRangeRound().call();
-      setAllRoundsCount(allRoundsCount);
+      // const { blastlyContract } = getContractsData();
+      // let allRoundsCount = await blastlyContract.methods.totalLuckyRangeRound().call();
+      // setAllRoundsCount(allRoundsCount);
       let _allRounds = [];
 
       // for (var i = 1; i <= allRoundsCount; i++) {

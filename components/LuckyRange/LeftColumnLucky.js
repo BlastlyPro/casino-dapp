@@ -13,9 +13,29 @@ import {
     InputRightElement,
   } from "@chakra-ui/react";
   import Image from "next/image";
+  import { useState,useContext,useEffect } from "react";
   import { FiShoppingCart } from "react-icons/fi";
-  
-  const LeftColumnLucky = ({allRounds,coinFlipContractData, totalRound, contractBalance, PROJECT_FEE, _coinFlip}) => {
+  import { MainContext } from "../providers/MainProvider";
+  import { TOKEN_CONTRACT_ADDRESS } from "../../env";
+
+  const LeftColumnLucky = ({allRounds}) => {
+    
+    const { stateData, web3Data, getContractsData } = useContext(MainContext);
+    const [totalLuckyRangeRound,setTotalLuckyRangeRound]= useState(null);
+    const [contractBalance, setContractBalance]= useState(null);
+
+    useEffect(()=>{
+      const init = async() => {
+        const { blastlyContract } = getContractsData();
+        const [web3] = web3Data;
+        let allRoundsCount = await blastlyContract.methods.totalLuckyRangeRound().call();       
+        setTotalLuckyRangeRound(allRoundsCount);
+        let contractBalance = await blastlyContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
+        contractBalance = web3.utils.fromWei(contractBalance, "ether");
+        setContractBalance(contractBalance);     
+      }
+      init();
+    },[]);
     return (
       <Flex pt="1rem"  w={["100%", "100%", "100%", "50%", "50%"]}  direction={ "column"}> {/* mother flex for total bet and symbol start */}
         <Flex direction="column" w="100%">
@@ -27,7 +47,7 @@ import {
             <Image width="23.75px" height="25px" src="/coinIcon.png" alt="coinIcon" /> </Flex>
             <Flex direction={ "column"}>
               <Text fontSize="xs" color={ "rgba(255, 255, 255, 0.6)"}> Total bets </Text>
-              {allRounds ?(<Text fontSize="sm" color={ "FFFFFF"}> {allRounds.length} </Text>) : "0"}
+              {totalLuckyRangeRound ?(<Text fontSize="sm" color={ "white"}> {totalLuckyRangeRound} </Text>) : "0"}
             </Flex>
           </Flex>
           <Divider w="100%" /> </Flex> {/* mother flex for total bet and symbol end */} {/* mother flex for volume and symbol start */}
@@ -37,7 +57,7 @@ import {
               <Image width="27.5px" height="15px" src="/upArrow.png" alt="upArrow" /> </Flex>
             <Flex direction={ "column"}>
               <Text fontSize="xs" color={ "rgba(255, 255, 255, 0.6)"}> All time volume </Text>
-              <Text fontSize="sm" color={ "FFFFFF"}> {contractBalance} BLAST </Text>
+              {contractBalance ? (<Text fontSize="sm" color={ "white"}> {contractBalance} BLAST </Text>) : "0"}
             </Flex>
           </Flex>
           <Divider w="100%" /> </Flex> {/* mother flex for volume and symbol end */} 

@@ -10,7 +10,7 @@ import axios from "axios";
 
 export default function LuckyMain({allRounds, allRoundsCount, supabase}) {
   const { stateData, web3Data, getContractsData } = useContext(MainContext);
-    const [web3] = web3Data;
+  const [web3] = web3Data;
   const [state] = stateData;
   const [value, setValue] = useState(1);
   const [minRange, setMinRange] = useState(null);
@@ -106,7 +106,7 @@ export default function LuckyMain({allRounds, allRoundsCount, supabase}) {
         .catch((err) => {
           console.log(err.message);
         });
-        const { supabase } = getContractsData();        
+        const { supabase } = getContractsData();     
         let {data, err, stat}=await supabase.from('luckyRange').insert([
           { player2Address: state.account, player2BetAmount:normalBetAmount, minRange:minRange,  maxRange:maxRange,  luckyNumber: response.data.luckyNumber, txn:_txnHash, playerPayout:response.data.playerPayout / response.data.payoutDivider}
         ]);
