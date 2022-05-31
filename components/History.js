@@ -17,7 +17,6 @@ export default function History() {
     const init = async()=>{      
       const {supabase}=getContractsData();
       let { data, error } = await supabase.from('coinFlip').select();
-      console.log(data)
       setAllRounds(data);
       data=await supabase.from('coinFlip').select().eq("player2Address",state.account);
        setMyBets(data.data);
@@ -92,7 +91,7 @@ export default function History() {
                     .reverse()
                     .map((round, i) => (
                       <>
-                        <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txnHash)} h="4.5rem" bgColor={i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
+                        <Flex gap="1rem" cursor={"pointer"} marginY={".6rem"} onClick={() => openLink(round.txn)} h="4.5rem" bgColor={i % 2 !== 0 ? "" : "rgba(187, 211, 253, 0.2)"} borderRadius="60px">
                           <Flex w="13.125rem" pl="1rem" gap="0.5rem" alignItems="center">
                             {/*   <Image width="40px" height="40px" src="/r1.png" alt="Row One Rank Profile" /> */}
                             <Flex direction={"column"}>
@@ -208,7 +207,7 @@ export default function History() {
                       .reverse()
                       .map((round, i) => (
                         <>
-                          <Flex gap={10} pr={"4"} cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txnHash)} bgColor={i % 2 !== 0 ? "" : "rgba(86, 146, 250, 0.6)"} borderRadius="60px">
+                          <Flex gap={10} pr={"4"} cursor={"pointer"} marginY={".6rem"} h="4.5rem" onClick={() => openLink(round.txn)} bgColor={i % 2 !== 0 ? "" : "rgba(86, 146, 250, 0.6)"} borderRadius="60px">
                             <Flex alignItems="center" pl="1rem">
                               <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                                 {round.player2BetAmount} Blast

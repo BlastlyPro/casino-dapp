@@ -32,21 +32,20 @@ export default function CoinToss() {
       let allRoundsCount = await blastlyContract.methods.totalRound().call();
       let _allRounds = [];
 
-      for (var i = 1; i <= allRoundsCount; i++) {
-        var roundObj = await blastlyContract.methods.allRounds(i).call();
-        roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
-        roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
-        roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
-        _allRounds.push(roundObj);
-      }
+      // for (var i = 1; i <= allRoundsCount; i++) {
+      //   var roundObj = await blastlyContract.methods.allRounds(i).call();
+      //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+      //   roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      //   roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
+      //   _allRounds.push(roundObj);
+      // }
       setAllRounds(_allRounds);
 
-      let contractBalance = await blastlyContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
-      contractBalance = web3.utils.fromWei(contractBalance, "ether");
-      let PROJECT_FEE = await blastlyContract.methods.PROJECT_FEE().call();
-      PROJECT_FEE = (PROJECT_FEE / 1000) * 100;
-      let houseTotalFee = await blastlyContract.methods.houseTotalFee().call();
-      houseTotalFee = web3.utils.fromWei(houseTotalFee, "ether");
+      let contractBalance = 0;
+      let PROJECT_FEE = 0;
+      // PROJECT_FEE = (PROJECT_FEE / 1000) * 100;
+      let houseTotalFee = 0;
+      // houseTotalFee = web3.utils.fromWei(houseTotalFee, "ether");
 
       // if connected with an account
       if (state.account) {
