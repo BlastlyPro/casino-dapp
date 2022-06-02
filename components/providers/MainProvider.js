@@ -3,6 +3,7 @@ import Web3 from "web3";
 import { COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NODE_PRODIVER_URL } from "../../env";
 import CoinFlipPrediction from "../../lib/abi.json";
 import Mgtoken from "../../lib/tokenContractAbi.json";
+import { createClient } from '@supabase/supabase-js'
 
 export const MainContext = createContext();
 
@@ -85,15 +86,19 @@ export function MainProvider({ children }) {
   };
 
   function getContractsData() {
+   
     const blastlyAddress = COINFLIP_CONTRACT_ADDRESS;
     const tokenContractAddres = TOKEN_CONTRACT_ADDRESS;
     const abi = CoinFlipPrediction.abi;
     const tokenContractAbi = Mgtoken.abi;
     const blastlyContract = new web3.eth.Contract(abi, blastlyAddress);
     const tokenContract = new web3.eth.Contract(tokenContractAbi, tokenContractAddres);
-    return { blastlyContract, tokenContract };
+    const supabaseUrl="https://zqpbcyxunayfuhmumztp.supabase.co";
+    const supabaseAnonKey="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpxcGJjeXh1bmF5ZnVobXVtenRwIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NTM1MDI2ODUsImV4cCI6MTk2OTA3ODY4NX0.GfWPApbl3Y1fNaGbNUfr8maMbFvxlcAb_B88xTSp3M0";
+    const supabase = createClient(supabaseUrl, supabaseAnonKey);
+    return { blastlyContract, tokenContract, supabase };
   }
-
+ if(web3){
   return (
     <MainContext.Provider
       value={{
@@ -106,4 +111,11 @@ export function MainProvider({ children }) {
       {children}
     </MainContext.Provider>
   );
+ }
+ else{
+   return(
+     <>Loading</>
+   )
+ }
+
 }

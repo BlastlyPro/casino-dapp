@@ -32,21 +32,20 @@ export default function CoinToss() {
       let allRoundsCount = await blastlyContract.methods.totalRound().call();
       let _allRounds = [];
 
-      for (var i = 1; i <= allRoundsCount; i++) {
-        var roundObj = await blastlyContract.methods.allRounds(i).call();
-        roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
-        roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
-        roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
-        _allRounds.push(roundObj);
-      }
+      // for (var i = 1; i <= allRoundsCount; i++) {
+      //   var roundObj = await blastlyContract.methods.allRounds(i).call();
+      //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+      //   roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      //   roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
+      //   _allRounds.push(roundObj);
+      // }
       setAllRounds(_allRounds);
 
-      let contractBalance = await blastlyContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
-      contractBalance = web3.utils.fromWei(contractBalance, "ether");
-      let PROJECT_FEE = await blastlyContract.methods.PROJECT_FEE().call();
-      PROJECT_FEE = (PROJECT_FEE / 1000) * 100;
-      let houseTotalFee = await blastlyContract.methods.houseTotalFee().call();
-      houseTotalFee = web3.utils.fromWei(houseTotalFee, "ether");
+      let contractBalance = 0;
+      let PROJECT_FEE = 0;
+      // PROJECT_FEE = (PROJECT_FEE / 1000) * 100;
+      let houseTotalFee = 0;
+      // houseTotalFee = web3.utils.fromWei(houseTotalFee, "ether");
 
       // if connected with an account
       if (state.account) {
@@ -105,39 +104,64 @@ export default function CoinToss() {
             .approve(coinTossState.blastlyContractData._address, web3.utils.toWei(String(9 * 1e18), "ether"))
             .send({ from: state.account })
             .then((res) => {
-              coinTossState.blastlyContractData.methods
-                .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
-                .send({ from: state.account })
-                .then((reponse007) => {
-                  Swal.fire({
-                    title: "Result",
-                    text: reponse007.events.GameMessage.returnValues.mesg,
-                    icon: "success",
-                  });
-                  setIsLoading(false);
-                  setShowResult(true);
-                })
-                .catch((err) => {
-                  console.log(err.message);
-                  setIsLoading(false);
-                });
+               _callCoinFlip(betChoice, bta, response, secretKeyGen, betAmount)
+              // coinTossState.blastlyContractData.methods
+              //   .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
+              //   .send({ from: state.account })
+              //   .then((reponse007) => {
+              //     Swal.fire({
+              //       title: "Result",
+              //       text: reponse007.events.GameMessage.returnValues.mesg,
+              //       icon: "success",
+              //     });
+              //     setIsLoading(false);
+              //     setShowResult(true);
+              //   })
+              //   .catch((err) => {
+              //     console.log(err.message);
+              //     setIsLoading(false);
+              //   });
             });
         } else {
           console.log("Direct calling Coinflip sol");
-          coinTossState.blastlyContractData.methods
-            .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
-            .send({ from: state.account })
-            .then((reponse007) => {
-              setShowResult(true);
-              setIsLoading(false);
-            })
-            .catch((err) => {
-              console.log(err.message);
-              setIsLoading(false);
-            });
+           _callCoinFlip(betChoice, bta, response, secretKeyGen, betAmount)
+          // coinTossState.blastlyContractData.methods
+          //   .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
+          //   .send({ from: state.account })
+          //   .then((reponse007) => {
+          //     setShowResult(true);
+          //     setIsLoading(false);
+          //   })
+          //   .catch((err) => {
+          //     console.log(err.message);
+          //     setIsLoading(false);
+          //   });
         }
       });
     });
+  }
+
+  async function _callCoinFlip(betChoice, bta, response, secretKeyGen, normalBetAmount) {
+
+    const { blastlyContract } = getContractsData();
+    var _txnHash;
+    await blastlyContract.methods
+    .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
+    .send({ from: state.account })
+    .then((reponse007) => {
+      _txnHash= reponse007.transactionHash;
+      setShowResult(true);
+      setIsLoading(false);
+    })
+    .catch((err) => {
+      console.log(err.message);
+      setIsLoading(false);
+    });
+      const { supabase } = getContractsData();     
+      let {data, err, stat}=await supabase.from('coinFlip').insert([
+        { player2Address: state.account, player2BetAmount:normalBetAmount, player2BetChoice:betChoice , winningPosition:response.data.secretChoice, txn:_txnHash}
+      ]);
+      console.log(data);
   }
 
   async function claimBonus() {

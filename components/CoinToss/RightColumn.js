@@ -1,7 +1,29 @@
 import { Flex, Text, Button, Divider, Input } from "@chakra-ui/react";
 import Image from "next/image";
+import { useState,useContext,useEffect } from "react";
+import { TOKEN_CONTRACT_ADDRESS } from "../../env";
+import { MainContext } from "../providers/MainProvider";
 
-const RightColumn = ({ allRounds }) => {
+const RightColumn = () => {
+
+  const { stateData, web3Data, getContractsData } = useContext(MainContext);
+  const [state] = stateData;
+  const [allRounds, setAllRounds]= useState(null);
+  const [myBets, setMyBets]= useState(null);
+
+  useEffect(()=>{
+
+    const init = async()=>{      
+      const {supabase}=getContractsData();
+      let { data, error } = await supabase.from('coinFlip').select();
+      console.log(data)
+      setAllRounds(data);
+      data=await supabase.from('coinFlip').select().eq("player2Address",state.account);
+       setMyBets(data.data);
+    }
+    init();
+  },[]);
+
   function openLink(_txnHash) {
     window.open(`https://testnet.bscscan.com/tx/` + _txnHash);
   }
@@ -22,7 +44,7 @@ const RightColumn = ({ allRounds }) => {
               .reverse()
               .map((round, i) => (
                 <>
-                  <Flex _hover={{ transform: "scale(1.1)", cursor: "pointer" }} transition={"all .3s"} onClick={() => openLink(round.txnHash)} justifyContent={"space-between"} alignItems={"center"} py={"1rem"} key={i}>
+                  <Flex _hover={{ transform: "scale(1.1)", cursor: "pointer" }} transition={"all .3s"} onClick={() => openLink(round.txn)} justifyContent={"space-between"} alignItems={"center"} py={"1rem"} key={i}>
                     <Flex alignItems={"center"} justifyContent={"center"}>
                       <Text fontSize="xs" color={"#FFFFFF"} fontWeight="bold" textDecoration={"underline"}>
                         {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}

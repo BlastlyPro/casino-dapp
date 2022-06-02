@@ -7,7 +7,8 @@ import LeftColumnLucky from "./LeftColumnLucky";
 import { MainContext } from "../providers/MainProvider";
 import axios from "axios";
 
-export default function LuckyMain({ allRounds, allRoundsCount }) {
+
+export default function LuckyMain({allRounds, allRoundsCount, supabase}) {
   const { stateData, web3Data, getContractsData } = useContext(MainContext);
   const [web3] = web3Data;
   const [state] = stateData;
@@ -76,36 +77,41 @@ export default function LuckyMain({ allRounds, allRoundsCount }) {
             .approve(blastlyContract._address, web3.utils.toWei(String(9 * 1e18), "ether"))
             .send({ from: state.account })
             .then(async (res) => {
-              await callLuckyRange(bta, response, secretKeyGen, maxRange);
+             await callLuckyRange(bta, response, secretKeyGen, betAmount);
             });
         } else {
           console.log("Direct calling lucky range sol");
-          await callLuckyRange(bta, response, secretKeyGen, maxRange);
+          await callLuckyRange(bta, response, secretKeyGen, betAmount);
         }
       });
     });
   }
 
-  async function callLuckyRange(bta, response, secretKeyGen, maxRange) {
-    const { blastlyContract } = getContractsData();
-    await blastlyContract.methods
-      .luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen)
-      .send({ from: state.account })
-      .then((reponse007) => {
-        setValue(3);
-        //console.log(reponse007.transactionHash)
-        // Swal.fire({
-        //   title: "Result",
-        //   text: reponse007.events.GameMessage.returnValues.mesg,
-        //   icon: "success",
-        // });
-        // console.log(reponse007.events.GameMessage.returnValues.mesg);
-        // _setShowResult(reponse007.events.GameMessage.returnValues.mesg);
-      })
-      .catch((err) => {
-        console.log(err.message);
-      });
-  }
+    async function callLuckyRange(bta, response, secretKeyGen, normalBetAmount) {
+
+      const { blastlyContract } = getContractsData();
+      var _txnHash;
+      await blastlyContract.methods.luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen).send({ from: state.account })
+        .then((reponse007) => {
+          setValue(3);        
+          _txnHash= reponse007.transactionHash;
+          // Swal.fire({
+          //   title: "Result",
+          //   text: reponse007.events.GameMessage.returnValues.mesg,
+          //   icon: "success",
+          // });
+          // console.log(reponse007.events.GameMessage.returnValues.mesg);
+          // _setShowResult(reponse007.events.GameMessage.returnValues.mesg);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+        const { supabase } = getContractsData();     
+        let {data, err, stat}=await supabase.from('luckyRange').insert([
+          { player2Address: state.account, player2BetAmount:normalBetAmount, minRange:minRange,  maxRange:maxRange,  luckyNumber: response.data.luckyNumber, txn:_txnHash, playerPayout:response.data.playerPayout / response.data.payoutDivider}
+        ]);
+     
+    }
 
   async function claimBonus() {
     const { blastlyContract } = getContractsData();
@@ -282,7 +288,7 @@ export default function LuckyMain({ allRounds, allRoundsCount }) {
                     <Image width="160px" height="207.98px" src="/51.png" alt="51" />
                   </Flex>
 
-                  <RangeSlider aria-label={["min", "max"]} colorScheme="pink" defaultValue={[10, 30]}>
+                  <RangeSlider aria-label={"['min', 'max']"} colorScheme="pink" defaultValue={[10, 30]}>
                     <RangeSliderTrack>
                       <RangeSliderFilledTrack />
                     </RangeSliderTrack>
