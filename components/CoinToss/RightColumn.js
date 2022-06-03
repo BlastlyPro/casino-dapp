@@ -4,21 +4,17 @@ import { useState,useContext,useEffect } from "react";
 import { TOKEN_CONTRACT_ADDRESS } from "../../env";
 import { MainContext } from "../providers/MainProvider";
 
-const RightColumn = () => {
+const RightColumn = ({allRounds}) => {
 
   const { stateData, web3Data, getContractsData } = useContext(MainContext);
   const [state] = stateData;
-  const [allRounds, setAllRounds]= useState(null);
   const [myBets, setMyBets]= useState(null);
+  const {supabase}=getContractsData();
 
   useEffect(()=>{
 
-    const init = async()=>{      
-      const {supabase}=getContractsData();
-      let { data, error } = await supabase.from('coinFlip').select();
-      console.log(data)
-      setAllRounds(data);
-      data=await supabase.from('coinFlip').select().eq("player2Address",state.account);
+    const init = async()=>{
+      let data=await supabase.from('coinFlip').select().eq("player2Address",state.account);
        setMyBets(data.data);
     }
     init();

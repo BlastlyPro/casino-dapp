@@ -10,18 +10,21 @@ import Swal from "sweetalert2";
 
 export default function Navbar() {
   const { stateData, connect, web3Data, getContractsData } = useContext(MainContext);
-  const {blastlyContract}=getContractsData();
+  const {blastlyContract,tokenContract}=getContractsData();
   const [state] = stateData;
   const bg = useColorModeValue("white", "gray.800");
   const mobileNav = useDisclosure();
   const [bonus, setBonus]= useState(null);
+  const [walletBalance, setWalletBalance]= useState(null);
+  const [web3]=web3Data;
 
   useEffect(()=>{
     const init = async()=>{            
-      const [web3]=web3Data
+
       let _bonus= web3.utils.fromWei(await blastlyContract.methods.allUsers(state.account).call(), "ether"); 
-      console.log(bonus);
       setBonus(_bonus)
+      let _walletBalance = web3.utils.fromWei(await tokenContract.methods.balanceOf(state.account).call());
+      setWalletBalance(_walletBalance);
     }
     if(state.account){
       init();
@@ -111,11 +114,11 @@ export default function Navbar() {
                   {state.account.substring(0, 5) + " ... " + state.account.slice(-4)}
                   </MenuButton>
                   <MenuList>
-                    <MenuGroup title='Claimable Bonus'>
+                  <MenuItem color="#102542"><b>Your Wallet Balance</b></MenuItem>
+                  <MenuItem color="#102542">{walletBalance} Blastly</MenuItem>
+                    <MenuItem color="#102542"><b>Claimable Bonus</b></MenuItem>
                     <MenuItem color="#102542">{bonus} Blastly</MenuItem>
-                    <MenuItem color="#102542"><Button bgColor="#BBD3FD" color="#102542" onClick={()=> claimBonus()}>Claim Bonus</Button></MenuItem>
-                      
-                    </MenuGroup>
+                    <MenuItem color="#102542"><Button bgColor="#BBD3FD" color="#102542" onClick={()=> claimBonus()}>Claim Bonus</Button></MenuItem>                    
                   </MenuList>
                 </Menu>              
             ) : (
