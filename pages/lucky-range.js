@@ -33,7 +33,7 @@ export default function LuckyRangeGame() {
       // }
       const {supabase}=getContractsData();
       let { data, error } = await supabase.from('luckyRange').select();
-      setAllRounds(data);      
+      setAllRounds(data);     
     };
     if (web3 && web3.utils) {
       init();
@@ -53,7 +53,7 @@ export default function LuckyRangeGame() {
             <Flex width={"100%"} alignItems={"center"} justifyContent="center" direction={"column"}>
               <Navbar />
 
-              <LuckyMain allRounds={allRounds} allRoundsCount={allRoundsCount}/>
+              <LuckyMain allRounds={allRounds}/>
               <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
                 <LuckyHistory allRounds={allRounds} />
                 <LuckyHowItWorks />
@@ -73,7 +73,7 @@ export default function LuckyRangeGame() {
 
             <Flex width={"100%"} alignItems={"center"} justifyContent="center" direction={"column"}>
               <Navbar />
-              <LuckyMobile allRounds={allRounds} allRoundsCount={allRoundsCount} executeLuckyRange={executeLuckyRange} />
+              <LuckyMobile allRounds={allRounds}/>
               <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
                 <LuckyHistory />
                 <LuckyHowItWorks />

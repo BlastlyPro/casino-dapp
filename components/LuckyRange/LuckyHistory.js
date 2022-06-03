@@ -4,20 +4,17 @@ import { useEffect, useState, useContext } from "react";
 import { BsArrowLeftShort, BsArrowRightShort } from "react-icons/bs";
 import { MainContext } from "../providers/MainProvider";
 
-export default function LuckyHistory() {
+export default function LuckyHistory({allRounds}) {
 
   const { stateData, web3Data, getContractsData } = useContext(MainContext);
   const [state] = stateData;
-  const [allRounds, setAllRounds]= useState(null);
   const [myBets, setMyBets]= useState(null);
-
+  const {supabase}=getContractsData();
+  
   useEffect(()=>{
 
     const init = async()=>{      
-      const {supabase}=getContractsData();
-      let { data, error } = await supabase.from('luckyRange').select();
-      setAllRounds(data);
-      data=await supabase.from('luckyRange').select().eq("player2Address",state.account);
+      let data=await supabase.from('luckyRange').select().eq("player2Address",state.account);
       setMyBets(data.data);
     }
     init();

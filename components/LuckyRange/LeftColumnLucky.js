@@ -18,7 +18,7 @@ import {
   import { MainContext } from "../providers/MainProvider";
   import { TOKEN_CONTRACT_ADDRESS } from "../../env";
 
-  const LeftColumnLucky = ({allRounds}) => {
+  const LeftColumnLucky = () => {
     
     const { stateData, web3Data, getContractsData } = useContext(MainContext);
     const [totalLuckyRangeRound,setTotalLuckyRangeRound]= useState(null);

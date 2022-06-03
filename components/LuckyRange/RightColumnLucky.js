@@ -4,20 +4,8 @@ import { MainContext } from "../providers/MainProvider";
 import { TOKEN_CONTRACT_ADDRESS } from "../../env";
 import { useState,useContext,useEffect } from "react";
 
-const RightColumnLucky = () => {
-  
-    const { stateData, web3Data, getContractsData } = useContext(MainContext);
-    const [allRounds, setAllRounds]= useState(null);
+const RightColumnLucky = ({allRounds}) => {
 
-    useEffect(()=>{
-
-      const init = async()=>{      
-        const {supabase}=getContractsData();
-        let { data, error } = await supabase.from('luckyRange').select();
-        setAllRounds(data);
-      }
-      init();
-    },[]);
 
   function openLink(_txnHash) {
     window.open(`https://testnet.bscscan.com/tx/` + _txnHash);

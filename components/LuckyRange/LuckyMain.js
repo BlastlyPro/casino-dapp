@@ -8,7 +8,7 @@ import { MainContext } from "../providers/MainProvider";
 import axios from "axios";
 
 
-export default function LuckyMain({allRounds, allRoundsCount, supabase}) {
+export default function LuckyMain({allRounds}) {
   const { stateData, web3Data, getContractsData } = useContext(MainContext);
   const [web3] = web3Data;
   const [state] = stateData;
@@ -139,7 +139,7 @@ export default function LuckyMain({allRounds, allRoundsCount, supabase}) {
         </Text>
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
-        <LeftColumnLucky allRounds={allRounds} />
+        <LeftColumnLucky/>
         {value == 1 && (
           <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column">
             <Flex
