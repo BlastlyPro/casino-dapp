@@ -18,7 +18,7 @@ export default function LuckyHistory() {
       let { data, error } = await supabase.from('luckyRange').select();
       setAllRounds(data);
       data=await supabase.from('luckyRange').select().eq("player2Address",state.account);
-       setMyBets(data.data);
+      setMyBets(data.data);
     }
     init();
   },[]);
