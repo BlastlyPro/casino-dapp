@@ -25,11 +25,18 @@ export default function handler(req, res) {
 
     const nonce = "0x" + crypto.randomBytes(32).toString('hex');
     const hash = "0x" + abi.soliditySHA3(["bool", "uint256"],[true, nonce]).toString('hex');
-    coinFlipContractData.methods._secretKeys(req.body.player2Address,hash).send({from: _account.address}).then((reponse)=>{                
+    console.log("--------------Chekcing nonce")
+    //const accountNonce ='0x' + (_web3.eth.getTransactionCount(_account.address) + 1).toString(16)
+    _web3.eth.getTransactionCount(_account.address, (err, accountNonce) => {
+      console.log(accountNonce,err)
+      accountNonce='0x' + accountNonce.toString(16);
+      console.log(accountNonce);
+      coinFlipContractData.methods._secretKeys(req.body.player2Address,hash).send({from: _account.address, nonce: accountNonce}).then((reponse)=>{                
         res.status(200).json(hash);
       }).catch((err)=>{
         console.log(err.message);
-      });
-
+      });      
+  })    
+    console.log("--------------Chekcing nonce")
   }
 }

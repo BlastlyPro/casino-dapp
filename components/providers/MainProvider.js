@@ -4,6 +4,9 @@ import { COINFLIP_CONTRACT_ADDRESS, TOKEN_CONTRACT_ADDRESS, NODE_PRODIVER_URL } 
 import CoinFlipPrediction from "../../lib/abi.json";
 import Mgtoken from "../../lib/tokenContractAbi.json";
 import { createClient } from '@supabase/supabase-js'
+import Web3Modal from "web3modal";
+import WalletConnectProvider from "@walletconnect/web3-provider";
+
 
 export const MainContext = createContext();
 
@@ -49,18 +52,41 @@ export function MainProvider({ children }) {
   }, [state]);
 
   const connect = async () => {
-    window.ethereum
-      .request({ method: "eth_requestAccounts" })
-      .then((accounts) => {
-        setState((prevState) => ({ ...prevState, account: accounts[0] }));
-      })
-      .catch((err) => {
-        if (err.code === 4001) {
-          console.log("Please connect to MetaMask.");
-        } else {
-          console.error(err);
-        }
+      const providerOptions = {
+        // binancechainwallet: {
+        //   package: true
+        // }
+        walletconnect: {
+          package: WalletConnectProvider, // required
+          options: {
+            network: "binance", // required
+            rpc: {
+              56: 'https://bsc-dataseed.binance.org/'
+            },
+          network: 'mainnet', 
+          }
+        }      
+      };    
+      const web3Modal = new Web3Modal({
+        providerOptions // required
       });
+      const provider = await web3Modal.connect();
+      let _accounts=web3.eth.getAccounts().then(acc => {
+        console.log(acc[0]);
+        setState((prevState) => ({ ...prevState, account: acc[0] }));
+      });
+    // window.ethereum
+    //   .request({ method: "eth_requestAccounts" })
+    //   .then((accounts) => {
+    //     setState((prevState) => ({ ...prevState, account: accounts[0] }));
+    //   })
+    //   .catch((err) => {
+    //     if (err.code === 4001) {
+    //       console.log("Please connect to MetaMask.");
+    //     } else {
+    //       console.error(err);
+    //     }
+    //   });
   };
 
   const initWeb3WithoutWallet = async () => {
@@ -70,7 +96,7 @@ export function MainProvider({ children }) {
   };
 
   const initWeb3WithMetamask = async () => {
-    console.log("initWeb3WithMetamask");
+    console.log("initWeb3WithMetamask");    
     setWeb3(new Web3(window.ethereum));
     window.ethereum
       .request({ method: "eth_accounts" })

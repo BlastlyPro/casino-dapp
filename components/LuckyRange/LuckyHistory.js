@@ -139,9 +139,10 @@ export default function LuckyHistory() {
                         </Flex>
 
                         <Flex w="7.5rem" alignItems="center">
-                          <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                          {round.txn ? (<Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
                           {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)}
-                          </Text>
+                          </Text>):"cancelled"}
+
                         </Flex>                        
                       </Flex>
                     </>
@@ -263,9 +264,9 @@ export default function LuckyHistory() {
                     </Flex>
 
                     <Flex w="7.5rem" alignItems="center">
-                      <Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
-                      {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)} 
-                      </Text>
+                      {round.txn ? (<Text fontSize="xs" fontWeight="bold" color={"#FFFFFF"}>
+                        {round.txn.substring(0,3)+ '...' + round.txn.slice(-3)}
+                      </Text>):"cancelled"}
                     </Flex>                    
                   </Flex>  
                   </>
