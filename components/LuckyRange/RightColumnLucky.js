@@ -1,7 +1,12 @@
 import { Flex, Text, Button, Divider, Input } from "@chakra-ui/react";
 import Image from "next/image";
+import { MainContext } from "../providers/MainProvider";
+import { TOKEN_CONTRACT_ADDRESS } from "../../env";
+import { useState,useContext,useEffect } from "react";
 
-const RightColumnLucky = ({ allRounds }) => {
+const RightColumnLucky = ({allRounds}) => {
+
+
   function openLink(_txnHash) {
     window.open(`https://testnet.bscscan.com/tx/` + _txnHash);
   }
@@ -22,7 +27,7 @@ const RightColumnLucky = ({ allRounds }) => {
               .reverse()
               .map((round, i) => (
                 <>
-                  <Flex _hover={{ transform: "scale(1.1)", cursor: "pointer" }} transition={"all .3s"} onClick={() => openLink(round.txnHash)} justifyContent={"space-between"} alignItems={"center"} py={"1rem"} key={i}>
+                  <Flex _hover={{ transform: "scale(1.1)", cursor: "pointer" }} transition={"all .3s"} onClick={() => openLink(round.txn)} justifyContent={"space-between"} alignItems={"center"} py={"1rem"} key={i}>
                     <Flex alignItems={"center"} justifyContent={"center"}>
                       <Text fontSize="xs" color={"#FFFFFF"} fontWeight="bold" textDecoration={"underline"}>
                         {round.player2Address.substring(0, 4) + " ... " + round.player2Address.slice(-3)}

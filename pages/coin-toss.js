@@ -20,6 +20,8 @@ export default function CoinToss() {
   const [coinTossState, setCoinTossState] = useState(null);
   const [allRounds, setAllRounds] = useState(null);
   const [showResult, setShowResult] = useState(false);
+  const { supabase } = getContractsData();
+  const { blastlyContract, tokenContract } = getContractsData();
 
   // chakra-ui
   const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
@@ -28,57 +30,26 @@ export default function CoinToss() {
   useEffect(() => {
     const initCoinFlip = async () => {
       setIsLoading(true);
-      const { blastlyContract, tokenContract } = getContractsData();
+     
       let allRoundsCount = await blastlyContract.methods.totalRound().call();
-      let _allRounds = [];
+      const {supabase}=getContractsData();
+      let { data, error } = await supabase.from('coinFlip').select();
+      console.log(data)
+      setAllRounds(data);
 
-      for (var i = 1; i <= allRoundsCount; i++) {
-        var roundObj = await blastlyContract.methods.allRounds(i).call();
-        roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
-        roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
-        roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
-        _allRounds.push(roundObj);
-      }
-      setAllRounds(_allRounds);
-
-      let contractBalance = await blastlyContract.methods.getBalance(TOKEN_CONTRACT_ADDRESS).call();
-      contractBalance = web3.utils.fromWei(contractBalance, "ether");
-      let PROJECT_FEE = await blastlyContract.methods.PROJECT_FEE().call();
-      PROJECT_FEE = (PROJECT_FEE / 1000) * 100;
-      let houseTotalFee = await blastlyContract.methods.houseTotalFee().call();
-      houseTotalFee = web3.utils.fromWei(houseTotalFee, "ether");
+      // for (var i = 1; i <= allRoundsCount; i++) {
+      //   var roundObj = await blastlyContract.methods.allRounds(i).call();
+      //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+      //   roundObj.player2BetChoice = roundObj.player2BetChoice == true ? "Heads" : "Tails";
+      //   roundObj.winningPosition = roundObj.winningPosition == true ? "Heads" : "Tails";
+      //   _allRounds.push(roundObj);
+      // }
+      // setAllRounds(_allRounds);
 
       // if connected with an account
-      if (state.account) {
-        let walletBalance = await tokenContract.methods.balanceOf(state.account).call();
-        walletBalance = web3.utils.fromWei(walletBalance, "ether");
-        let balanceInsideContract = await blastlyContract.methods.allUsers(state.account).call();
-        balanceInsideContract = web3.utils.fromWei(balanceInsideContract, "ether");
-        setCoinTossState({
-          blastlyContractData: blastlyContract,
-          tokenContractData: tokenContract,
-          coinFlip: {
-            allRoundsCount: allRoundsCount,
-            contractBalance: contractBalance,
-            walletBalance: walletBalance,
-            balanceInsideContract: balanceInsideContract,
-            PROJECT_FEE: PROJECT_FEE,
-            houseTotalFee: houseTotalFee,
-          },
-        });
-      }
 
       // if not connected with an account
-      setCoinTossState({
-        blastlyContractData: blastlyContract,
-        tokenContractData: tokenContract,
-        coinFlip: {
-          allRoundsCount: allRoundsCount,
-          contractBalance: contractBalance,
-          PROJECT_FEE: PROJECT_FEE,
-          houseTotalFee: houseTotalFee,
-        },
-      });
+
 
       setIsLoading(false);
     };
@@ -92,7 +63,7 @@ export default function CoinToss() {
     setIsLoading(true);
     var bta = web3.utils.toWei(String(betAmount), "ether");
     var secretKeyGen;
-    let allowance = await coinTossState.tokenContractData.methods.allowance(state.account, coinTossState.blastlyContractData._address).call();
+    let allowance = await blastlyContract.methods.allowance(state.account, coinTossState.blastlyContractData._address).call();
     console.log(allowance);
     axios.post("/api/secretKeyGenerate", { player2Address: state.account }).then((response) => {
       secretKeyGen = response.data;
@@ -101,52 +72,40 @@ export default function CoinToss() {
         console.log("=------------- allowance -----------------");
 
         if (allowance < bta) {
-          coinTossState.tokenContractData.methods
-            .approve(coinTossState.blastlyContractData._address, web3.utils.toWei(String(9 * 1e18), "ether"))
-            .send({ from: state.account })
-            .then((res) => {
-              coinTossState.blastlyContractData.methods
-                .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
-                .send({ from: state.account })
-                .then((reponse007) => {
-                  Swal.fire({
-                    title: "Result",
-                    text: reponse007.events.GameMessage.returnValues.mesg,
-                    icon: "success",
-                  });
-                  setIsLoading(false);
-                  setShowResult(true);
-                })
-                .catch((err) => {
-                  console.log(err.message);
-                  setIsLoading(false);
-                });
+          tokenContract.methods.approve(blastlyContract._address, web3.utils.toWei(String(9 * 1e18), "ether")).send({ from: state.account }).then((res) => {
+               _callCoinFlip(betChoice, bta, response, secretKeyGen, betAmount)
             });
         } else {
           console.log("Direct calling Coinflip sol");
-          coinTossState.blastlyContractData.methods
-            .takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen)
-            .send({ from: state.account })
-            .then((reponse007) => {
-              setShowResult(true);
-              setIsLoading(false);
-            })
-            .catch((err) => {
-              console.log(err.message);
-              setIsLoading(false);
-            });
+           _callCoinFlip(betChoice, bta, response, secretKeyGen, betAmount)
+
         }
       });
     });
   }
 
+  async function _callCoinFlip(betChoice, bta, response, secretKeyGen, normalBetAmount) {
+
+    var _txnHash;
+    await blastlyContract.methods.takeBet(state.account, betChoice, bta, response.data.secretChoice, " ", secretKeyGen).send({ from: state.account }).then((reponse007) => {
+      _txnHash= reponse007.transactionHash;
+      setShowResult(true);
+      setIsLoading(false);
+    }).catch((err) => {
+      console.log(err.message);
+      setIsLoading(false);
+    });
+           
+      let {data, err, stat}=await supabase.from('coinFlip').insert([
+        { player2Address: state.account, player2BetAmount:normalBetAmount, player2BetChoice:betChoice , winningPosition:response.data.secretChoice, txn:_txnHash}
+      ]);
+      console.log(data);
+  }
+
   async function claimBonus() {
     setShowResult(false);
     setIsLoading(true);
-    coinTossState.blastlyContractData.methods
-      .claim()
-      .send({ from: state.account })
-      .then((response) => {
+    blastlyContract.methods.claim().send({ from: state.account }).then((response) => {
         setShowResult(false)
         setIsLoading(false);
         Swal.fire({
@@ -191,17 +150,9 @@ export default function CoinToss() {
               </Flex>
             )}
 
-            {!isLoading && coinTossState ? (
+            {!isLoading ? (
               <>
-                <CoinTossMain
-                  blastlyContractData={coinTossState.blastlyContractData}
-                  coinFlip={executeCoinFlip}
-                  allRounds={allRounds}
-                  allRoundsCount={coinTossState.allRoundsCount}
-                  contractBalance={coinTossState.contractBalance}
-                  PROJECT_FEE={coinTossState.PROJECT_FEE}
-                  _coinFlip={coinTossState}
-                />
+                <CoinTossMain allRounds={allRounds}/>
               </>
             ) : (
               "No Balance"
@@ -281,21 +232,7 @@ export default function CoinToss() {
             <Navbar />
 
             {isLoading && <Spinner color="red.500" size="xl" />}
-
-            {coinTossState ? (
-              <CoinTossMobile
-                blastlyContractData={coinTossState.blastlyContractData}
-                coinFlip={executeCoinFlip}
-                allRounds={allRounds}
-                allRoundsCount={coinTossState.allRoundsCount}
-                contractBalance={coinTossState.contractBalance}
-                PROJECT_FEE={coinTossState.PROJECT_FEE}
-                _coinFlip={coinTossState}
-              />
-            ) : (
-              "No Balance"
-            )}
-
+              <CoinTossMobile allRounds={allRounds}/>
             <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
               <History allRounds={allRounds} />
               <HowItWorks />

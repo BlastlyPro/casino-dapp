@@ -1,18 +1,47 @@
 import { useState, useEffect, useContext } from "react";
-import { Flex, Text, SimpleGrid, Button, Icon, chakra, Box, useColorModeValue, useDisclosure, VStack, IconButton, CloseButton, Menu, MenuButton, MenuList, MenuItem } from "@chakra-ui/react";
+import { Flex, Text, SimpleGrid, Button, Icon, chakra, Box, useColorModeValue, useDisclosure, VStack, IconButton, CloseButton, Menu, MenuButton, MenuList, MenuItem, MenuGroup } from "@chakra-ui/react";
 import Image from "next/image";
 import { AiOutlineMenu } from "react-icons/ai";
 import { RiArrowDropDownLine } from "react-icons/ri";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import Link from "next/link";
 import { MainContext } from "./providers/MainProvider";
+import Swal from "sweetalert2";
 
 export default function Navbar() {
-  const { stateData, connect } = useContext(MainContext);
+  const { stateData, connect, web3Data, getContractsData } = useContext(MainContext);
+  const {blastlyContract,tokenContract}=getContractsData();
   const [state] = stateData;
   const bg = useColorModeValue("white", "gray.800");
   const mobileNav = useDisclosure();
+  const [bonus, setBonus]= useState(null);
+  const [walletBalance, setWalletBalance]= useState(null);
+  const [web3]=web3Data;
 
+  useEffect(()=>{
+    const init = async()=>{            
+
+      let _bonus= web3.utils.fromWei(await blastlyContract.methods.allUsers(state.account).call(), "ether"); 
+      setBonus(_bonus)
+      let _walletBalance = web3.utils.fromWei(await tokenContract.methods.balanceOf(state.account).call());
+      setWalletBalance(_walletBalance);
+    }
+    if(state.account){
+      init();
+    }
+
+  },[]);
+
+  const claimBonus=async() =>{
+    await blastlyContract.methods.claim().send({from:state.account}).then(res => {
+      console.log(res);
+          // Swal.fire({
+          //   title: "Result",
+          //   text: reponse007.events.GameMessage.returnValues.mesg,
+          //   icon: "success",
+          // });      
+    });
+  }
   return (
     <>
       <Flex w="85%" pt={"2"}>
@@ -76,9 +105,22 @@ export default function Navbar() {
 
           <Flex alignItems="center" justifyContent="end" display={{ base: "none", md: "inline-flex" }}>
             {state.account ? (
-              <Button size={"sm"} bgColor="#BBD3FD" borderRadius="1rem" p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]} fontSize="xs" color="#102542">
-                {state.account.substring(0, 5) + " ... " + state.account.slice(-4)}
-              </Button>
+              
+              // <Button size={"sm"} bgColor="#BBD3FD" borderRadius="1rem" p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]} fontSize="xs" color="#102542">
+              //   {state.account.substring(0, 5) + " ... " + state.account.slice(-4)}
+              // </Button>
+                <Menu>
+                  <MenuButton  bgColor="#BBD3FD" color="#102542" as={Button} rightIcon={<ChevronDownIcon />}>
+                  {state.account.substring(0, 5) + " ... " + state.account.slice(-4)}
+                  </MenuButton>
+                  <MenuList>
+                  <MenuItem color="#102542"><b>Your Wallet Balance</b></MenuItem>
+                  <MenuItem color="#102542">{walletBalance} Blastly</MenuItem>
+                    <MenuItem color="#102542"><b>Claimable Bonus</b></MenuItem>
+                    <MenuItem color="#102542">{bonus} Blastly</MenuItem>
+                    <MenuItem color="#102542"><Button bgColor="#BBD3FD" color="#102542" onClick={()=> claimBonus()}>Claim Bonus</Button></MenuItem>                    
+                  </MenuList>
+                </Menu>              
             ) : (
               <Button size={"sm"} onClick={connect} bgColor="#BBD3FD" borderRadius="1rem" p={["0.5rem", "0.5rem", "0.5rem", "0.5rem", "0.5rem"]} fontSize="xs" color="#102542">
                 Connect Your wallet

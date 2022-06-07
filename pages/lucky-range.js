@@ -16,24 +16,24 @@ export default function LuckyRangeGame() {
   const [web3] = web3Data;
   const [allRounds, setAllRounds] = useState(null);
   const [allRoundsCount, setAllRoundsCount] = useState(null);
-  
   // chakta-ui
   const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
   const [isLessThan993] = useMediaQuery("(max-width: 993px)");
-
   useEffect(() => {
     const init = async () => {
-      const { blastlyContract } = getContractsData();
-      let allRoundsCount = await blastlyContract.methods.totalLuckyRangeRound().call();
-      setAllRoundsCount(allRoundsCount);
+      // const { blastlyContract } = getContractsData();
+      // let allRoundsCount = await blastlyContract.methods.totalLuckyRangeRound().call();
+      // setAllRoundsCount(allRoundsCount);
       let _allRounds = [];
 
-      for (var i = 1; i <= allRoundsCount; i++) {
-        var roundObj = await blastlyContract.methods.luckyRangeRounds(i).call();
-        roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
-        _allRounds.push(roundObj);
-      }
-      setAllRounds(_allRounds);
+      // for (var i = 1; i <= allRoundsCount; i++) {
+      //   var roundObj = await blastlyContract.methods.luckyRangeRounds(i).call();
+      //   roundObj.player2BetAmount = web3.utils.fromWei(roundObj.player2BetAmount, "ether");
+      //   _allRounds.push(roundObj);
+      // }
+      const {supabase}=getContractsData();
+      let { data, error } = await supabase.from('luckyRange').select();
+      setAllRounds(data);     
     };
     if (web3 && web3.utils) {
       init();
@@ -53,7 +53,7 @@ export default function LuckyRangeGame() {
             <Flex width={"100%"} alignItems={"center"} justifyContent="center" direction={"column"}>
               <Navbar />
 
-              <LuckyMain allRounds={allRounds} allRoundsCount={allRoundsCount}/>
+              <LuckyMain allRounds={allRounds}/>
               <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
                 <LuckyHistory allRounds={allRounds} />
                 <LuckyHowItWorks />
@@ -73,7 +73,7 @@ export default function LuckyRangeGame() {
 
             <Flex width={"100%"} alignItems={"center"} justifyContent="center" direction={"column"}>
               <Navbar />
-              <LuckyMobile allRounds={allRounds} allRoundsCount={allRoundsCount} executeLuckyRange={executeLuckyRange} />
+              <LuckyMobile allRounds={allRounds}/>
               <Box w="100vw" backgroundImage={'url("/lower-bg.jpg")'} backgroundRepeat={"no-repeat"} backgroundSize={"cover"}>
                 <LuckyHistory />
                 <LuckyHowItWorks />

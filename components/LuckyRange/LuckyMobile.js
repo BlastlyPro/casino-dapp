@@ -1,16 +1,129 @@
-import { useState } from "react";
+import { useState, useEffect, useContext } from "react";
 import { Flex, Text,  chakra, Button, Divider, Input, Box, useMediaQuery, RangeSlider, RangeSliderTrack, RangeSliderFilledTrack, RangeSliderThumb, ChakraProvider } from "@chakra-ui/react";
 import Image from "next/image";
 import RightColumnLucky from "./RightColumnLucky";
 import LeftColumnLucky from "./LeftColumnLucky";
 import Swal from "sweetalert2";
+import { MainContext } from "../providers/MainProvider";
 
-export default function LuckyMobile({ coinFlipContractData, handleChange, coinFlip, allRounds, totalRound, contractBalance, PROJECT_FEE, _coinFlip }) {
- 
+export default function LuckyMobile({ allRounds}) {
+  const { stateData, web3Data, getContractsData } = useContext(MainContext);
+  const [web3] = web3Data;
+  const [state] = stateData;
   const [value, setValue] = useState(1);
-  /*  const [isLargerThan993] = useMediaQuery("(min-width: 993px)");
-  const [isLessThan993] = useMediaQuery("(max-width: 993px)"); */
+  const [minRange, setMinRange] = useState(10);
+  const [maxRange, setMaxRange] = useState(65);
+  const [betAmount, setBetAmount] = useState(0);
 
+  function handleBetAmount(e) {
+    setBetAmount(e.target.value);
+  }
+
+  function setRanges(values) {
+    setMinRange(values[0]);
+    setMaxRange(values[1]);
+  }
+
+  const handleSubmit = async () => {
+    // check if the user is connected
+    if (!state.account) {
+      Swal.fire({
+        title: "Please connect your wallet to play",
+        icon: "warning",
+      });
+      return;
+    }
+
+    if (minRange == null || maxRange == null) {
+      Swal.fire({
+        title: "Please select a range!",
+        icon: "error",
+      });
+      return;
+    }
+
+    if (betAmount < 10) {
+      Swal.fire({
+        title: "Please enter a bet amount atleast 10!",
+        icon: "error",
+      });
+      return;
+    }
+
+    setValue(2);
+    await executeLuckyRange(minRange, maxRange, betAmount);
+  };
+
+  async function executeLuckyRange(minRange, maxRange, betAmount) {
+    // return "hola"
+    const { blastlyContract, tokenContract } = getContractsData();
+    var range = { minRange: minRange, maxRange: maxRange };
+    var bta = web3.utils.toWei(String(betAmount), "ether");
+    var secretKeyGen;
+    ////////////////////////////////////////
+    let allowance = await tokenContract.methods.allowance(state.account, blastlyContract._address).call();
+    console.log(allowance);
+    axios.post("/api/secretKeyGenerate", { player2Address: state.account }).then((response) => {
+      // console.log("------------Secret Key ------------");
+      //   console.log(response.data);
+      secretKeyGen = response.data;
+      axios.post("/api/luckyRange", { betRange: range, betAmount: bta, normalBetAmount: betAmount, player2Address: state.account, txnHash: "0xxxxxx" }).then(async (response) => {
+        console.log(response);
+        console.log("=------------- allowance -----------------");
+        if (allowance < bta) {
+          await tokenContract.methods
+            .approve(blastlyContract._address, web3.utils.toWei(String(9 * 1e18), "ether"))
+            .send({ from: state.account })
+            .then(async (res) => {
+             await callLuckyRange(bta, response, secretKeyGen, betAmount);
+            });
+        } else {
+          console.log("Direct calling lucky range sol");
+          await callLuckyRange(bta, response, secretKeyGen, betAmount);
+        }
+      });
+    });
+  }
+
+    async function callLuckyRange(bta, response, secretKeyGen, normalBetAmount) {
+
+      const { blastlyContract } = getContractsData();
+      var _txnHash;
+      await blastlyContract.methods.luckyRange(state.account, bta, maxRange, response.data.luckyNumber, "0x", response.data.playerPayout, response.data.playerFlag, response.data.payoutDivider, secretKeyGen).send({ from: state.account })
+        .then((reponse007) => {
+          setValue(3);        
+          _txnHash= reponse007.transactionHash;
+          // Swal.fire({
+          //   title: "Result",
+          //   text: reponse007.events.GameMessage.returnValues.mesg,
+          //   icon: "success",
+          // });
+          // console.log(reponse007.events.GameMessage.returnValues.mesg);
+          // _setShowResult(reponse007.events.GameMessage.returnValues.mesg);
+        })
+        .catch((err) => {
+          console.log(err.message);
+        });
+        const { supabase } = getContractsData();     
+        let {data, err, stat}=await supabase.from('luckyRange').insert([
+          { player2Address: state.account, player2BetAmount:normalBetAmount, minRange:minRange,  maxRange:maxRange,  luckyNumber: response.data.luckyNumber, txn:_txnHash, playerPayout:response.data.playerPayout / response.data.payoutDivider}
+        ]);
+     
+    }
+
+  async function claimBonus() {
+    const { blastlyContract } = getContractsData();
+    blastlyContract.methods
+      .claim()
+      .send({ from: state.account })
+      .then((response) => {
+        Swal.fire({
+          title: "Success!",
+          text: "Please Check your Wallet",
+          icon: "success",
+        });
+      });
+  }
   return (
     /* mother flex for all start */
     <Flex w="85%" direction={"column"}>

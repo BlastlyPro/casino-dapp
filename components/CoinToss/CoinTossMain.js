@@ -6,7 +6,7 @@ import RightColumn from "./RightColumn";
 import Swal from "sweetalert2";
 import { MainContext } from "../providers/MainProvider";
 
-export default function CoinTossMain({ coinFlipContractData, coinFlip, allRounds, allRoundsCount, contractBalance, PROJECT_FEE, _coinFlip }) {
+export default function CoinTossMain({ allRounds }) {
   const { stateData } = useContext(MainContext);
   const [state] = stateData;
   const [choice, setChoice] = useState(null);
@@ -59,7 +59,7 @@ export default function CoinTossMain({ coinFlipContractData, coinFlip, allRounds
         </Text>
       </Flex>
       <Flex w="100%" gap="2" direction={["column", "column", "column", "row", "row"]}>
-        <LeftColumn coinFlipContractData={coinFlipContractData} allRoundsCount={allRoundsCount} contractBalance={contractBalance} PROJECT_FEE={PROJECT_FEE} _coinFlip={_coinFlip} />
+        <LeftColumn />
         <Flex w={["100%", "100%", "100%", "50%", "50%"]} alignItems="center" justifyContent="center" direction="column">
           <Flex bgColor={"rgba(86, 146, 250, 0.6)"} w={["100%", "100%", "100%", "94%", "94%"]} h={["30.125rem", "30.125rem", "25.437rem", "25.437rem", "25.437rem"]} opacity={".9"} backdrop-filter="blur(20px)" borderRadius="1rem" direction={"Column"}>
             <Flex direction={"Column"} pt="1.5rem">
